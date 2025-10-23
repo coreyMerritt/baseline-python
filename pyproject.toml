@@ -35,3 +35,7 @@ line_length = 120
 explicit_package_bases = true
 mypy_path = "src"
 
+[tool.ruff.lint]
+select = ["W292", "W391"]
+preview = true
+
