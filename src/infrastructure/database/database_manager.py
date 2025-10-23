@@ -29,6 +29,8 @@ class DatabaseManager:
   def __init__(self, database_config: DatabaseConfig):
     self._logger = LogManager.get_logger(self.__class__.__name__)
     engine = database_config.engine
+    if engine == "postgresql":
+      engine = f"{engine}+psycopg"
     username = database_config.username
     password = quote_plus(database_config.password)
     host = database_config.host
