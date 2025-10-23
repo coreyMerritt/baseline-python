@@ -35,5 +35,5 @@ if [[ ! $venv_existed -eq 1 ]]; then
   pip install .
 fi
 
-PYTHONPATH=src python3 -m uvicorn src.main:app --reload
+python3 ./src/main.py $@
 
