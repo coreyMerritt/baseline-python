@@ -1,0 +1,2 @@
+class LoggerLevelException(Exception):
+  pass

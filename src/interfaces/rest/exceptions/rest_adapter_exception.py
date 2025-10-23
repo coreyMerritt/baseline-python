@@ -1,0 +1,2 @@
+class RestAdapterException(Exception):
+  pass

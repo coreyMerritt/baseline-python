@@ -1,0 +1,2 @@
+class LoggerConfigurationException(Exception):
+  pass

@@ -1,0 +1,2 @@
+class DatabaseEnumMappingException(Exception):
+  pass

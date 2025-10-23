@@ -1,0 +1,2 @@
+class DatabaseSchemaCreationException(Exception):
+  pass

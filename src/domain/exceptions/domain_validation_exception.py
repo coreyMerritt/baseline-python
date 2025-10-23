@@ -1,0 +1,2 @@
+class DomainValidationException(Exception):
+  pass
