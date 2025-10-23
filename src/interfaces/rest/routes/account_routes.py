@@ -18,7 +18,7 @@ async def get_account(uuid: str) -> GetAccountRes:
   except HTTPException:
     raise
   except Exception as e:
-    logger.critical("Unexpected non-HTTPException in routes: %s", exc_info=e)
+    logger.critical("Unexpected non-HTTPException in routes", exc_info=e)
     raise HTTPException(status_code=500, detail="Internal server error") from e
 
 @router.post("/account", response_model=CreateAccountRes)
@@ -28,5 +28,5 @@ async def create_account(req: CreateAccountReq) -> CreateAccountRes:
   except HTTPException:
     raise
   except Exception as e:
-    logger.critical("Unexpected non-HTTPException in routes: %s", exc_info=e)
+    logger.critical("Unexpected non-HTTPException in routes", exc_info=e)
     raise HTTPException(status_code=500, detail="Internal server error") from e

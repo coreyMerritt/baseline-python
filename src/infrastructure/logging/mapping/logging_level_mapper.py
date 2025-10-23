@@ -9,13 +9,12 @@ class LoggingLevelMapper:
   def local_enum_to_logging_const(enum: LoggingLevel) -> int:
     if enum == LoggingLevel.DEBUG:
       return logging.DEBUG
-    elif enum == LoggingLevel.INFO:
+    if enum == LoggingLevel.INFO:
       return logging.INFO
-    elif enum == LoggingLevel.WARNING:
+    if enum == LoggingLevel.WARNING:
       return logging.WARNING
-    elif enum == LoggingLevel.ERROR:
+    if enum == LoggingLevel.ERROR:
       return logging.ERROR
-    elif enum == LoggingLevel.CRITICAL:
+    if enum == LoggingLevel.CRITICAL:
       return logging.CRITICAL
-    else:
-      raise LoggerLevelException(f"Bad log level: {enum}")
+    raise LoggerLevelException(f"Bad log level: {enum}")

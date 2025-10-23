@@ -7,10 +7,9 @@ class AccountTypeMapper:
   def str_to_enum(account_type: str) -> AccountType:
     if account_type.lower() == AccountType.BUSINESS.value.lower():
       return AccountType.BUSINESS
-    elif account_type.lower() == AccountType.PERSONAL.value.lower():
+    if account_type.lower() == AccountType.PERSONAL.value.lower():
       return AccountType.PERSONAL
-    else:
-      raise DomainMapperException()
+    raise DomainMapperException()
 
   @staticmethod
   def enum_to_str(account_type: AccountType) -> str:

@@ -18,6 +18,7 @@ dev = [
   # Linters/Tests
   "isort",
   "mypy",
+  "pylint",
   "pytest",
   "ruff",
 ]
