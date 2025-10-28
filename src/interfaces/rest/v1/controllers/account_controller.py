@@ -4,12 +4,12 @@ from logging import Logger
 from fastapi import HTTPException
 
 from infrastructure.logging.log_manager import LogManager
-from interfaces.rest.adapters.create_account_adapter import CreateAccountAdapter
-from interfaces.rest.adapters.get_account_adapter import GetAccountAdapter
-from interfaces.rest.dto.req.create_account_req import CreateAccountReq
-from interfaces.rest.dto.res.create_account_res import CreateAccountRes
-from interfaces.rest.dto.res.get_account_res import GetAccountRes
-from interfaces.rest.exceptions.rest_adapter_exception import RestAdapterException
+from interfaces.rest.v1.adapters.create_account_adapter import CreateAccountAdapter
+from interfaces.rest.v1.adapters.get_account_adapter import GetAccountAdapter
+from interfaces.rest.v1.dto.req.create_account_req import CreateAccountReq
+from interfaces.rest.v1.dto.res.create_account_res import CreateAccountRes
+from interfaces.rest.v1.dto.res.get_account_res import GetAccountRes
+from interfaces.rest.v1.exceptions.rest_adapter_exception import RestAdapterException
 from services.account_manager import AccountManager
 from services.exceptions.data_exception import DataException
 from services.exceptions.data_validation_exception import DataValidationException

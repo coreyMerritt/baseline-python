@@ -30,11 +30,11 @@ if [[ ! -d .venv ]]; then
 fi
 if [[ -f .venv/bin/activate ]]; then
   source .venv/bin/activate
-  pip install --upgrade pip setuptools wheel
+  ./.venv/bin/pip install --upgrade pip setuptools wheel
 fi
 if [[ ! $venv_existed -eq 1 ]]; then
-  pip install .
+  ./.venv/bin/pip install .
 fi
 
-PYTHONPATH=src python3 -m uvicorn src.main:app --reload
+PYTHONPATH=src ./.venv/bin/python -m uvicorn src.main:app --reload
 

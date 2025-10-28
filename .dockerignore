@@ -5,14 +5,9 @@
 .ruff_cache
 __pycache__
 
-# Package Data
+# Packaging Data
 *.egg-info/
 build/
-
-# Secrets
-.env
-config/backup/
-config/prod/
 
 # Misc
 .venv

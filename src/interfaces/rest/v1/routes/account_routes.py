@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException
 
 from infrastructure.logging.log_manager import LogManager
-from interfaces.rest.controllers.account_controller import AccountController
-from interfaces.rest.dto.req.create_account_req import CreateAccountReq
-from interfaces.rest.dto.res.create_account_res import CreateAccountRes
-from interfaces.rest.dto.res.get_account_res import GetAccountRes
+from interfaces.rest.v1.controllers.account_controller import AccountController
+from interfaces.rest.v1.dto.req.create_account_req import CreateAccountReq
+from interfaces.rest.v1.dto.res.create_account_res import CreateAccountRes
+from interfaces.rest.v1.dto.res.get_account_res import GetAccountRes
 
-router = APIRouter()
+router = APIRouter(prefix="/api/v1")
 controller = AccountController()
 logger = LogManager.get_logger("AccountRoutes")
 
