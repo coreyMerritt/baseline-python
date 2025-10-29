@@ -5,4 +5,5 @@ jobs:
   post-and-get-entity:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/api/post-and-get-entity
