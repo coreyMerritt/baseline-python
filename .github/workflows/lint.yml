@@ -5,16 +5,16 @@ jobs:
   isort:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/isort
+      - uses: ./.github/actions/lint/isort
   mypy:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/mypy
+      - uses: ./.github/actions/lint/mypy
   pylint:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/pylint
+      - uses: ./.github/actions/lint/pylint
   ruff:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/ruff
+      - uses: ./.github/actions/lint/ruff
