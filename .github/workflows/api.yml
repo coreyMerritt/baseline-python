@@ -7,6 +7,7 @@ jobs:
     environment: test
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/api/health-check
       - uses: ./.github/actions/api/post-and-get-entity
         with:
           python-version: ${{ vars.PYTHON_VERSION }}

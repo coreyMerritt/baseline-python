@@ -1,0 +1,26 @@
+name: API Health Check
+inputs:
+  python-version:
+    description: "Python version to use"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: Start server
+      shell: bash
+      run: bash "./start-with-uvicorn.sh" &
+    - name: Wait for server to start
+      shell: bash
+      run: sleep 5   # TODO: This is a placeholder. DO NOT leave this
+    - name: Test "Health Check" endpoint
+      shell: bash
+      run: |
+        curl \
+          --location 'http://127.0.0.1:8000/api/health' \
+          --header 'Content-Type: application/json'

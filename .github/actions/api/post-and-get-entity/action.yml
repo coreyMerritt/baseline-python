@@ -21,7 +21,8 @@ runs:
     - name: POST and GET the entity
       shell: bash
       run: |
-        curl --location 'http://127.0.0.1:8000/api/v1/job_listing' \
+        curl \
+          --location 'http://127.0.0.1:8000/api/v1/job_listing' \
           --header 'Content-Type: application/json' \
           --data '{
             "title": "Some Title",

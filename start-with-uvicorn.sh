@@ -36,5 +36,4 @@ if [[ ! $venv_existed -eq 1 ]]; then
   ./.venv/bin/pip install .
 fi
 
-PYTHONPATH=src ./.venv/bin/python -m uvicorn src.main:app --reload
-
+PYTHONPATH=src ./.venv/bin/python -m uvicorn src.main:routers --reload
