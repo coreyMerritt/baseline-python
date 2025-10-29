@@ -1,4 +1,4 @@
-name: Ruff
+name: isort
 inputs:
   python-version:
     description: "Python version to use"
@@ -19,6 +19,15 @@ runs:
         pip install build
         pip install .
         pip install .[dev]
+    - name: Run isort
+      shell: bash
+      run: isort --check-only ./src/
+    - name: Run mypy
+      shell: bash
+      run: mypy ./src/
+    - name: Run pylint
+      shell: bash
+      run: pylint --disable=fixme ./src/
     - name: Run ruff
       shell: bash
       run: ruff check ./src/

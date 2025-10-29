@@ -7,6 +7,6 @@ jobs:
     environment: test
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/unit-tests/pytest
+      - uses: ./.github/actions/unit-tests
         with:
           python-version: ${{ vars.PYTHON_VERSION }}

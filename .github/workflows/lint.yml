@@ -2,35 +2,11 @@ name: Lint
 on:
   workflow_call:
 jobs:
-  isort:
+  lint:
     runs-on: ubuntu-latest
     environment: test
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/lint/isort
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
-  mypy:
-    runs-on: ubuntu-latest
-    environment: test
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/lint/mypy
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
-  pylint:
-    runs-on: ubuntu-latest
-    environment: test
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/lint/pylint
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
-  ruff:
-    runs-on: ubuntu-latest
-    environment: test
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/lint/ruff
+      - uses: ./.github/actions/lint
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
