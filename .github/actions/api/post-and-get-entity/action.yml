@@ -7,11 +7,7 @@ runs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: ${{ inputs.python-version }}
-    - name: Set database config
-      if: ${{ inputs.database-config-script != '' }}
-      shell: bash
-      run: ${{ inputs.database-config-script }}
+        python-version: ${{ vars.PYTHON_VERSION }}
     - name: Start server
       shell: bash
       run: bash "./start-with-uvicorn.sh" &

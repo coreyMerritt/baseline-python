@@ -4,6 +4,7 @@ on:
 jobs:
   pytest:
     runs-on: ubuntu-latest
+    environment: test
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/unit-tests/pytest
