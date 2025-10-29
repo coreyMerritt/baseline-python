@@ -8,3 +8,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/unit-tests/pytest
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
