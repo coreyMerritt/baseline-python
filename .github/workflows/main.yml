@@ -1,0 +1,13 @@
+name: Entrypoint
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+jobs:
+  api-tests:
+    uses: ./.github/workflows/api/main.yml
+  linting:
+    uses: ./.github/workflows/lint/main.yml
+  unit-tests:
+    uses: ./.github/workflows/unit-tests/main.yml

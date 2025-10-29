@@ -1,0 +1,6 @@
+name: Tests the REST API
+on:
+  workflow_call:
+jobs:
+  post-and-get-entity:
+    uses: ./.github/workflows/api/post_and_get_entity.yml

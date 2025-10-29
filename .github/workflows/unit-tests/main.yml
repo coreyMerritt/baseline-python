@@ -1,0 +1,6 @@
+name: Unit Tests
+on:
+  workflow_call:
+jobs:
+  isort:
+    uses: ./.github/workflows/unit-tests/pytest.yml

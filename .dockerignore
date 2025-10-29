@@ -9,6 +9,11 @@ __pycache__
 *.egg-info/
 build/
 
+# Secrets
+.env
+config/backup/
+config/prod/
+
 # Misc
 .venv
 .vscode

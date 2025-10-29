@@ -1,11 +1,9 @@
-name: Tests the API layer
+name: POSTs an entity, then GETs the entity
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+  workflow_call:
 jobs:
   CHANGE_ME-server:
+    environment: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -13,11 +11,15 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.12
+          python-version: ${{ vars.PYTHON_VERSION }}
+      - name: Set database config
+        run: bash |
+          ...
       - name: Start server
         run: bash "./start-with-uvicorn.sh"
   # Work in progress -- Non-functional
-  client:
+  CHANGE_ME-client:
+    environment: test
     needs: CHANGE_ME-server
     runs-on: ubuntu-latest
     steps:
