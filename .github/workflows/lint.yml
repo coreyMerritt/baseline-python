@@ -1,0 +1,20 @@
+name: Lint
+on:
+  workflow_call:
+jobs:
+  isort:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/isort
+  mypy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/mypy
+  pylint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/pylint
+  ruff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/ruff

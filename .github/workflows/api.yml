@@ -1,0 +1,8 @@
+name: API
+on:
+  workflow_call:
+jobs:
+  post-and-get-entity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/post-and-get-entity
