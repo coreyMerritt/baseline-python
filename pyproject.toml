@@ -30,12 +30,23 @@ build-backend = "setuptools.build_meta"
 [tool.isort]
 indent = "  "
 line_length = 120
+src_paths = ["src", "tests"]
 
 [tool.mypy]
 explicit_package_bases = true
 mypy_path = "src"
 
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+include = [
+  "pyproject.toml",
+  "src/**/*.py",
+  "tests/**/*.py"
+]
+
 [tool.ruff.lint]
 select = ["W292", "W391"]
 preview = true
-
