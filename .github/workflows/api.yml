@@ -8,7 +8,7 @@ jobs:
     steps:
       - name: Start server
         shell: bash
-        run: bash "./tests/system/api/starts.sh"
+        run: bash "${{ github.workspace }}/tests/system/api/starts.sh"
   health-check:
     needs: [starts]
     runs-on: ubuntu-latest
