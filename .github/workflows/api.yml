@@ -6,9 +6,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: test
     steps:
+      - uses: actions/checkout@v4
       - name: Start server
         shell: bash
-        run: bash "${{ github.workspace }}/tests/system/api/starts.sh"
+        run: bash "./tests/system/api/starts.sh"
   health-check:
     needs: [starts]
     runs-on: ubuntu-latest
