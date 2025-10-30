@@ -2,12 +2,19 @@ name: Test API layer
 on:
   workflow_call:
 jobs:
-  post-and-get-entity:
+  health-check:
     runs-on: ubuntu-latest
     environment: test
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/api/health-check
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+  post-and-get-entity:
+    runs-on: ubuntu-latest
+    environment: test
+    steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/api/post-and-get-entity
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
