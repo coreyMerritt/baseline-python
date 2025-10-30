@@ -13,6 +13,7 @@ jobs:
   post-and-get-entity:
     runs-on: ubuntu-latest
     environment: test
+    needs: [health-check]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/api/post-and-get-entity
