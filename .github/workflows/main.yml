@@ -9,5 +9,7 @@ jobs:
     uses: ./.github/workflows/api.yml
   lint:
     uses: ./.github/workflows/lint.yml
+    needs: [api]
   unit-tests:
     uses: ./.github/workflows/unit-tests.yml
+    needs: [lint]
