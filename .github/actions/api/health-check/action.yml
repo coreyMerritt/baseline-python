@@ -18,9 +18,14 @@ runs:
     - name: Wait for server to start
       shell: bash
       run: sleep 30   # TODO: This is a placeholder. DO NOT leave this
-    - name: Test "Health Check" endpoint
-      shell: bash
-      run: |
-        curl \
-          --location 'http://127.0.0.1:8000/api/health' \
-          --header 'Content-Type: application/json'
+    - name: Test "Health Check" endpoint 
+    # shell: bash
+      # run: |
+      uses: .github/actions/tools/shell-retry
+      with:
+        command: |
+          curl \
+            --location 'http://127.0.0.1:8000/api/health' \
+            --header 'Content-Type: application/json'
+        retries: 10
+        sleep: 5
