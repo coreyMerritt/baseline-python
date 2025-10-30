@@ -2,7 +2,15 @@ name: Test API layer
 on:
   workflow_call:
 jobs:
+  starts:
+    runs-on: ubuntu-latest
+    environment: test
+    steps:
+      - name: Start server
+        shell: bash
+        run: bash "./tests/system/api/starts.sh"
   health-check:
+    needs: [starts]
     runs-on: ubuntu-latest
     environment: test
     steps:
@@ -11,9 +19,9 @@ jobs:
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
   post-and-get-entity:
+    needs: [health-check]
     runs-on: ubuntu-latest
     environment: test
-    needs: [health-check]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/api/post-and-get-entity

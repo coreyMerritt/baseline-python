@@ -7,6 +7,9 @@ set -x
 # Ensure we're in the project dir
 script_dir="$(dirname "$(readlink -f "$0")")"
 cd "$script_dir"
+while [[ ! -f src/main.py ]]; do
+  cd ..
+done
 
 # Handle configs if necessary
 if [[ -d "./config" && -d "./config/model" ]]; then
@@ -37,4 +40,3 @@ if [[ ! $venv_existed -eq 1 ]]; then
 fi
 
 python3 ./src/main.py $@
-
