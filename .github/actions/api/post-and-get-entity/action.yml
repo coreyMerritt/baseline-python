@@ -17,7 +17,7 @@ runs:
       run: bash "./start-with-uvicorn.sh" &
     - name: Wait for server to start
       shell: bash
-      run: sleep 5   # TODO: This is a placeholder. DO NOT leave this
+      run: sleep 30   # TODO: This is a placeholder. DO NOT leave this
     - name: POST and GET the entity
       shell: bash
       run: |
