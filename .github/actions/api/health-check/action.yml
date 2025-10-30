@@ -21,7 +21,7 @@ runs:
     - name: Test "Health Check" endpoint 
     # shell: bash
       # run: |
-      uses: .github/actions/tools/shell-retry
+      uses: ./.github/actions/tools/shell-retry
       with:
         command: |
           curl \
