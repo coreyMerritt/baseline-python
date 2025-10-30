@@ -1,4 +1,4 @@
-name: Lint
+name: Run all linters
 on:
   workflow_call:
 jobs:

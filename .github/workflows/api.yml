@@ -1,4 +1,4 @@
-name: API
+name: Test API layer
 on:
   workflow_call:
 jobs:
