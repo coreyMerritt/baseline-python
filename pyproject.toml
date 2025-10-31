@@ -15,32 +15,41 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "pre-commit",
-  "pytest",
+  "isort",  # Import Sorting
+  "mypy",   # Type Checking
+  "pre-commit",   # Local Test Hooks
+  "pylint",   # Linting
+  "pytest",   # Unit Tests
+  "ruff",   # 2nd Linter -- Handles Newlines
   "types-PyYAML>=6.0.12.20250915",
-  # Linters
-  "isort",
-  "mypy",
-  "pylint",
-  "ruff",
 ]
 
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = [
+  "setuptools",
+  "wheel"
+]
 build-backend = "setuptools.build_meta"
 
 [tool.isort]
 indent = "  "
 line_length = 120
-src_paths = ["src", "tests"]
+src_paths = [
+  "src",
+  "tests"
+]
 
 [tool.mypy]
 explicit_package_bases = true
 mypy_path = "src"
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
-testpaths = ["tests"]
+pythonpath = [
+  "src"
+]
+testpaths = [
+  "tests"
+]
 
 [tool.ruff]
 include = [
@@ -50,5 +59,8 @@ include = [
 ]
 
 [tool.ruff.lint]
-select = ["W292", "W391"]
+select = [
+  "W292",   # No Newline at EOF
+  "W391"    # Extra Newline(s) at EOF
+]
 preview = true
