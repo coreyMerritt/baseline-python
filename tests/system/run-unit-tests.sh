@@ -5,4 +5,4 @@ source <(curl -fsS --location "https://raw.githubusercontent.com/coreyMerritt/ba
 cdProjectRoot
 deployVenv
 bash "./scripts/install-dependencies.sh" "dev"
-python3 ".venv/bin/pytest" "-v"
+.venv/bin/python -m pytest -v
