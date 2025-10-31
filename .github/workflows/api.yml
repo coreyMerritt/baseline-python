@@ -25,6 +25,6 @@ jobs:
     environment: test
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/api/post-and-get-entity
+      - uses: ./.github/actions/api/post-and-get-account
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
