@@ -12,12 +12,6 @@ runs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
-    # - name: Test "Health Check" endpoint
-    #   uses: ./.github/actions/tools/shell-retry
-    #   with:
-    #     command: |
-    #       curl \
-    #         --location 'http://127.0.0.1:8000/api/health' \
-    #         --header 'Content-Type: application/json'
-    #     retries: 10
-    #     sleep: 5
+    - name: API Health Check
+      shell: bash
+      run: ./tests/system/api/health-check.sh -vv

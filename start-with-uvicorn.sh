@@ -2,41 +2,16 @@
 
 set -e
 set -E
+set -o pipefail
 set -x
 
-# Ensure we're in the project dir
-script_dir="$(dirname "$(readlink -f "$0")")"
-cd "$script_dir"
-while [[ ! -f src/main.py ]]; do
-  cd ..
-done
+source <(curl -fsS --location "https://raw.githubusercontent.com/coreyMerritt/bash-utils/refs/heads/main/src/import")
+import cdProjectRoot
+import deployVenv
 
-# Handle configs if necessary
-if [[ -d "./config" && -d "./config/model" ]]; then
-  if [[ ! -d "./config/prod" ]]; then
-    mkdir "./config/prod"
-  fi
-  if [[ ! -d "./config/backup" ]]; then
-    mkdir "./config/backup"
-  fi
-
-  if ! find "config/prod" -mindepth 1 | grep -q .; then
-    cp -r ./config/model/* ./config/prod/
-  fi
-fi
-
-# Ensure we're in venv
-venv_existed=1
-if [[ ! -d .venv ]]; then
-  python3 -m venv .venv
-  venv_existed=0
-fi
-if [[ -f .venv/bin/activate ]]; then
-  source .venv/bin/activate
-  ./.venv/bin/pip install --upgrade pip setuptools wheel
-fi
-if [[ ! $venv_existed -eq 1 ]]; then
-  ./.venv/bin/pip install .
-fi
-
+[[ "$1" ]] && export CHANGEME_ENVIRONMENT="$1"
+cdProjectRoot
+bash "./scripts/validate-environment.sh" "$CHANGEME_ENVIRONMENT" "arg1"
+deployVenv
+bash "./scripts/install-dependencies.sh"
 PYTHONPATH=src ./.venv/bin/python -m uvicorn src.main:routers --reload

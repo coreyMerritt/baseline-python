@@ -21,7 +21,7 @@ class AccountManager:
     try:
       self._database_manager = DatabaseManager(database_config)
     except DatabaseSchemaCreationException as e:
-      raise SystemError("Database schema creation failed.", { "config_base_dir": ConfigManager.get_base_dir() }) from e
+      raise SystemError("Database schema creation failed.", { "config_dir": ConfigManager.get_config_dir() }) from e
     self._logger = LogManager.get_logger(self.__class__.__name__)
 
   def get_account(self, uuid: str) -> Account | None:

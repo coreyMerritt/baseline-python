@@ -13,23 +13,25 @@ from infrastructure.config.models.logging_config import LoggingConfig
 # NOTE: Because LogManager reaches to ConfigManager, ConfigManager shouldn't handle any logging
 class ConfigManager:
   _is_configured: bool = False
-  _base_dir: str
+  _environment: str
+  _config_dir: str
   _database_config: DatabaseConfig
   _logging_config: LoggingConfig
 
   @staticmethod
   def refresh_configs() -> None:
-    ConfigManager.refresh_base_dir()
+    ConfigManager.refresh_environment()
     ConfigManager.refresh_database_config()
     ConfigManager.refresh_logging_config()
 
   @staticmethod
-  def refresh_base_dir() -> None:
-    ConfigManager._base_dir = ConfigManager._get_env_var_safe("CHANGEME_CONFIG_BASE_DIR")
+  def refresh_environment() -> None:
+    ConfigManager._environment = ConfigManager._get_env_var_safe("CHANGEME_ENVIRONMENT")
+    ConfigManager._config_dir = f"./config/{ConfigManager._environment}"
 
   @staticmethod
   def refresh_database_config() -> None:
-    database_config_path = f"config/{ConfigManager._base_dir}/database.yml"
+    database_config_path = f"{ConfigManager._config_dir}/database.yml"
     try:
       with open(database_config_path, "r", encoding='utf-8') as database_config_file:
         raw_database_config = yaml.safe_load(database_config_file)
@@ -45,7 +47,7 @@ class ConfigManager:
 
   @staticmethod
   def refresh_logging_config() -> None:
-    logging_config_path = f"config/{ConfigManager._base_dir}/logging.yml"
+    logging_config_path = f"{ConfigManager._config_dir}/logging.yml"
     dacite_config = Config(type_hooks={LoggingLevel: LoggingLevel})
     try:
       with open(logging_config_path, "r", encoding='utf-8') as logging_config_file:
@@ -62,8 +64,12 @@ class ConfigManager:
       raise ConfigParseException() from e
 
   @staticmethod
-  def get_base_dir() -> str:
-    return ConfigManager._base_dir
+  def get_environment() -> str:
+    return ConfigManager._environment
+
+  @staticmethod
+  def get_config_dir() -> str:
+    return ConfigManager._config_dir
 
   @staticmethod
   def get_database_config() -> DatabaseConfig:

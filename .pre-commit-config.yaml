@@ -7,3 +7,9 @@ repos:
         language: script
         always_run: true
         pass_filenames: false
+      - id: health-check
+        name: health-check
+        entry: ./tests/system/api/health-check.sh
+        language: script
+        always_run: true
+        pass_filenames: false

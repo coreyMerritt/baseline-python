@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 
+set -e
+set -E
+set -o pipefail
+set -x
+
 source <(curl -fsS --location "https://raw.githubusercontent.com/coreyMerritt/bash-utils/refs/heads/main/src/main")
 cdProjectRoot
 
-[[ "$1" == "test" ]] || [[ "$1" == "dev" ]] || [[ "$1" == "prod" ]] || error "\n\tMust pass arg1 test|dev|prod\n"
+bash "./scripts/validate-environment.sh" "$1" "arg1"
 db_config_path="./config/$1/database.yml"
 postgres_user="$(uuidgen | cut -c1-8)"
 postgres_password="$(uuidgen | cut -c1-8)"

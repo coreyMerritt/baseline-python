@@ -19,4 +19,3 @@ if [[ "$CHANGEME_ENVIRONMENT" == "dev" ]]; then
   ./.venv/bin/pip install .[dev]
   pre-commit install
 fi
-python3 ./src/main.py $@

@@ -12,6 +12,7 @@ runs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
+    # This is marked as an API test because a this dry run would likely not be possible with a non-fastapi main.py
     - name: System starts
       shell: bash
-      run: ./tests/system/api/system-starts.sh
+      run: ./tests/system/api/system-starts.sh -vv
