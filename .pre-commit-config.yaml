@@ -22,3 +22,10 @@ repos:
         always_run: true
         pass_filenames: false
         stages: [pre-push]
+      - id: run-unit-tests
+        name: run-unit-tests
+        entry: ./tests/system/run-unit-tests.sh
+        language: script
+        always_run: true
+        pass_filenames: false
+        stages: [pre-push]

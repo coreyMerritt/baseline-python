@@ -5,11 +5,11 @@ on:
   pull_request:
     branches: [ main, master ]
 jobs:
+  unit-tests:
+    uses: ./.github/workflows/unit-tests.yml
   api:
     uses: ./.github/workflows/api.yml
+    needs: [unit-tests]
   lint:
     uses: ./.github/workflows/lint.yml
     needs: [api]
-  unit-tests:
-    uses: ./.github/workflows/unit-tests.yml
-    needs: [lint]

@@ -1,4 +1,4 @@
-name: Run all unit tests
+name: Run Unit Tests
 on:
   workflow_call:
 jobs:
