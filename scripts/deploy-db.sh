@@ -5,9 +5,12 @@ set -E
 set -o pipefail
 set -x
 
-source <(curl -fsS --location "https://raw.githubusercontent.com/coreyMerritt/bash-utils/refs/heads/main/src/main")
-cdProjectRoot
+source <(curl -fsS --location "https://raw.githubusercontent.com/coreyMerritt/bash-utils/refs/heads/main/src/import")
+import cdProjectRoot
+import dockerDeployPostgres
 
+cdProjectRoot
+[[ "$1" ]] && export CHANGEME_ENVIRONMENT="$1"
 bash "./scripts/validate-environment.sh" "$1" "arg1"
 db_config_path="./config/$1/database.yml"
 postgres_user="$(uuidgen | cut -c1-8)"
