@@ -15,12 +15,13 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+  "precommit",
+  "pytest",
   "types-PyYAML>=6.0.12.20250915",
-  # Linters/Tests
+  # Linters
   "isort",
   "mypy",
   "pylint",
-  "pytest",
   "ruff",
 ]
 
