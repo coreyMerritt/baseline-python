@@ -7,18 +7,18 @@ repos:
         language: script
         always_run: true
         pass_filenames: false
-        stages: [push]
+        stages: [pre-push]
       - id: health-check
         name: health-check
         entry: ./tests/system/api/health-check.sh
         language: script
         always_run: true
         pass_filenames: false
-        stages: [push]
+        stages: [pre-push]
       - id: post-and-get-account
         name: post-and-get-account
         entry: ./tests/system/api/post-and-get-account.sh
         language: script
         always_run: true
         pass_filenames: false
-        stages: [push]
+        stages: [pre-push]
