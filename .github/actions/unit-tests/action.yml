@@ -14,4 +14,4 @@ runs:
         python-version: ${{ inputs.python-version }}
     - name: Run Unit Tests
       shell: bash
-      run: ./tests/system/run-unit-tests.sh
+      run: ./tests/system/run-unit-tests.sh -vv
