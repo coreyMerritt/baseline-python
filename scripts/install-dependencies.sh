@@ -17,6 +17,6 @@ deployVenv
 ./.venv/bin/pip install .
 if [[ "$CHANGEME_ENVIRONMENT" == "dev" ]]; then
   ./.venv/bin/pip install .[dev]
-  ./.venv/bin/python -m pre-commit install --hook-type pre-commit
-  ./.venv/bin/python -m pre-commit install --hook-type pre-push
+  ./.venv/bin/pre-commit install --hook-type pre-commit
+  ./.venv/bin/pre-commit install --hook-type pre-push
 fi
