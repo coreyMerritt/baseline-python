@@ -1,0 +1,18 @@
+name: POST an Account, then GET the Account
+inputs:
+  python-version:
+    description: "Python version to use"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: POST and GET Account
+      shell: bash
+      run: ./tests/system/api/post-and-get-account.sh -vv
+    
