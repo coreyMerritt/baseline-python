@@ -1,0 +1,17 @@
+name: No webserver dry-run
+inputs:
+  python-version:
+    description: "Python version to use"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: System starts
+      shell: bash
+      run: ./tests/system/api/system-starts.sh

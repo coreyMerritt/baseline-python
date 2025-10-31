@@ -12,9 +12,6 @@ runs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
-    - name: Start server
-      shell: bash
-      run: bash "./start-with-uvicorn.sh"
     # - name: Test "Health Check" endpoint
     #   uses: ./.github/actions/tools/shell-retry
     #   with:

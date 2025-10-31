@@ -1,3 +1,5 @@
+import os
+import sys
 import yaml
 from dacite import Config, from_dict
 
@@ -11,18 +13,25 @@ from infrastructure.config.models.logging_config import LoggingConfig
 # NOTE: Because LogManager reaches to ConfigManager, ConfigManager shouldn't handle any logging
 class ConfigManager:
   _is_configured: bool = False
+  _base_dir: str
   _database_config: DatabaseConfig
   _logging_config: LoggingConfig
 
   @staticmethod
   def refresh_configs() -> None:
+    ConfigManager.refresh_base_dir()
     ConfigManager.refresh_database_config()
     ConfigManager.refresh_logging_config()
 
   @staticmethod
+  def refresh_base_dir() -> None:
+    ConfigManager._base_dir = ConfigManager._get_env_var_safe("CHANGEME_CONFIG_BASE_DIR")
+
+  @staticmethod
   def refresh_database_config() -> None:
+    database_config_path = f"config/{ConfigManager._base_dir}/database.yml"
     try:
-      with open("config/prod/database.yml", "r", encoding='utf-8') as database_config_file:
+      with open(database_config_path, "r", encoding='utf-8') as database_config_file:
         raw_database_config = yaml.safe_load(database_config_file)
     except Exception as e:
       raise ConfigLoadException() from e
@@ -36,9 +45,10 @@ class ConfigManager:
 
   @staticmethod
   def refresh_logging_config() -> None:
+    logging_config_path = f"config/{ConfigManager._base_dir}/logging.yml"
     dacite_config = Config(type_hooks={LoggingLevel: LoggingLevel})
     try:
-      with open("config/prod/logging.yml", "r", encoding='utf-8') as logging_config_file:
+      with open(logging_config_path, "r", encoding='utf-8') as logging_config_file:
         raw_logging_config = yaml.safe_load(logging_config_file)
     except Exception as e:
       raise ConfigLoadException() from e
@@ -50,6 +60,10 @@ class ConfigManager:
       )
     except Exception as e:
       raise ConfigParseException() from e
+
+  @staticmethod
+  def get_base_dir() -> str:
+    return ConfigManager._base_dir
 
   @staticmethod
   def get_database_config() -> DatabaseConfig:
@@ -64,5 +78,13 @@ class ConfigManager:
       ConfigManager.refresh_configs()
       ConfigManager._is_configured = True
     return ConfigManager._logging_config
+
+  @staticmethod
+  def _get_env_var_safe(var_name: str) -> str:
+    var_value = os.getenv(var_name)
+    if not var_value:
+      print(f"\n\tSet {var_name} and try again.")
+      sys.exit(1)
+    return var_value
 
 ConfigManager.refresh_configs()

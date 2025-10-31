@@ -5,6 +5,7 @@ from domain.enums.account_type import AccountType
 from domain.exceptions.domain_validation_exception import DomainValidationException
 from infrastructure.config.config_manager import ConfigManager
 from infrastructure.database.database_manager import DatabaseManager
+from infrastructure.database.exceptions.database_schema_creation_exception import DatabaseSchemaCreationException
 from infrastructure.database.exceptions.database_select_exception import DatabaseSelectException
 from infrastructure.logging.log_manager import LogManager
 from services.exceptions.data_exception import DataException
@@ -17,7 +18,10 @@ class AccountManager:
 
   def __init__(self):
     database_config = ConfigManager.get_database_config()
-    self._database_manager = DatabaseManager(database_config)
+    try:
+      self._database_manager = DatabaseManager(database_config)
+    except DatabaseSchemaCreationException as e:
+      raise SystemError("Database schema creation failed.", { "config_base_dir": ConfigManager.get_base_dir() }) from e
     self._logger = LogManager.get_logger(self.__class__.__name__)
 
   def get_account(self, uuid: str) -> Account | None:
