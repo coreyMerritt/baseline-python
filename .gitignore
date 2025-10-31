@@ -13,8 +13,10 @@ build/
 .env
 config/test/*
 config/dev/*
-config/backup/*
 config/prod/*
+!config/test/.gitkeep
+!config/dev/.gitkeep
+!config/prod/.gitkeep
 
 # Misc
 .venv

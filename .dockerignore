@@ -13,7 +13,6 @@ build/
 .env
 config/test/*
 config/dev/*
-config/backup/*
 config/prod/*
 
 # Misc
