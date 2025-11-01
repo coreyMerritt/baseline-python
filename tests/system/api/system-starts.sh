@@ -15,4 +15,4 @@ btInfo "Setting up test environment..."
   bash "./scripts/deploy-db.sh" "test"
 
 btStartTest "Dry run with no webserver does not throw"
-  CHANGEME_ENVIRONMENT="test" python3 ./src/main.py $@
+  PROJECTNAME_ENVIRONMENT="test" python3 ./src/main.py $@

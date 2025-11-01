@@ -10,12 +10,12 @@ import cdProjectRoot
 import dockerDeployPostgres
 
 cdProjectRoot
-[[ "$1" ]] && export CHANGEME_ENVIRONMENT="$1"
+[[ "$1" ]] && export PROJECTNAME_ENVIRONMENT="$1"
 bash "./scripts/validate-environment.sh" "$1" "arg1"
 db_config_path="./config/$1/database.yml"
 postgres_user="$(uuidgen | cut -c1-8)"
 postgres_password="$(uuidgen | cut -c1-8)"
-postgres_name="CHANGEME-$1"
+postgres_name="PROJECTNAME-$1"
 [[ "$1" == "test" ]] && postgres_port=5435  || true   # Avoid collision with potential real dbs on the host
 [[ "$1" == "dev" ]] && postgres_port=5435 || true   # Avoid collision with potential real dbs on the host
 [[ "$1" == "prod" ]] && postgres_port=5432 || true

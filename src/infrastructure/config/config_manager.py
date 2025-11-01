@@ -27,7 +27,7 @@ class ConfigManager:
 
   @staticmethod
   def refresh_environment() -> None:
-    ConfigManager._environment = ConfigManager._get_env_var_safe("CHANGEME_ENVIRONMENT")
+    ConfigManager._environment = ConfigManager._get_env_var_safe("PROJECTNAME_ENVIRONMENT")
     ConfigManager._config_dir = f"./config/{ConfigManager._environment}"
 
   @staticmethod

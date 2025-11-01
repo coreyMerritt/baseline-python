@@ -9,13 +9,13 @@ source <(curl -fsS --location "https://raw.githubusercontent.com/coreyMerritt/ba
 import cdProjectRoot
 import deployVenv
 
-[[ "$1" ]] && export CHANGEME_ENVIRONMENT="$1"
+[[ "$1" ]] && export PROJECTNAME_ENVIRONMENT="$1"
 cdProjectRoot
-bash "./scripts/validate-environment.sh" "$CHANGEME_ENVIRONMENT" "arg1"
+bash "./scripts/validate-environment.sh" "$PROJECTNAME_ENVIRONMENT" "arg1"
 deployVenv
 ./.venv/bin/pip install --upgrade pip setuptools wheel
 ./.venv/bin/pip install .
-if [[ "$CHANGEME_ENVIRONMENT" == "dev" ]]; then
+if [[ "$PROJECTNAME_ENVIRONMENT" == "dev" ]]; then
   ./.venv/bin/pip install .[dev]
   pre-commit install
 fi

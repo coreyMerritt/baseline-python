@@ -9,9 +9,9 @@ source <(curl -fsS --location "https://raw.githubusercontent.com/coreyMerritt/ba
 import cdProjectRoot
 import deployVenv
 
-[[ "$1" ]] && export CHANGEME_ENVIRONMENT="$1"
+[[ "$1" ]] && export PROJECTNAME_ENVIRONMENT="$1"
 cdProjectRoot
-bash "./scripts/validate-environment.sh" "$CHANGEME_ENVIRONMENT" "arg1"
+bash "./scripts/validate-environment.sh" "$PROJECTNAME_ENVIRONMENT" "arg1"
 deployVenv
 bash "./scripts/install-dependencies.sh"
 PYTHONPATH=src ./.venv/bin/python -m uvicorn src.main:routers --reload
