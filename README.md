@@ -1,6 +1,6 @@
 # Python Baseline
 This is a foundation project designed to be cloned and used as a starting point for Pythonic systems.
-Everything in `src` is fully functional, but should be treated as an example, as it is an actual implementation of a hypothetical domain.
+Everything in `src` is fully functional, but should be treated as an example, as it is an actual implementation of a simple hypothetical domain.
 
 To adjust this project to your needs:
 1. Find every instance of `PROJECTNAME` and replace it with your project name. Use your judgement for the context regarding casing/spacing/etc.

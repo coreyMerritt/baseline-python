@@ -11,6 +11,7 @@ import dockerDeployPostgres
 
 cdProjectRoot
 [[ "$1" ]] && export PROJECTNAME_ENVIRONMENT="$1"
+[[ "$2" ]] && allow_removal="$2" || allow_removal="false"
 bash "./scripts/validate-environment.sh" "$1" "arg1"
 db_config_path="./config/$1/database.yml"
 postgres_user="$(uuidgen | cut -c1-8)"
@@ -35,4 +36,5 @@ dockerDeployPostgres \
   "$postgres_name" \
   "$postgres_port" \
   "$container_name" \
-  "$container_version"
+  "$container_version" \
+  "$allow_removal"

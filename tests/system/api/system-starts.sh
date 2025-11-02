@@ -12,7 +12,7 @@ btInfo "Setting up test environment..."
   pip install .
   [[ -d "./config/test/" ]] || mkdir "./config/test/"
   cp -r ./config/model/* "./config/test/"
-  bash "./scripts/deploy-db.sh" "test"
+  bash "./scripts/deploy-db.sh" "test" "true"
 
 btStartTest "Dry run with no webserver does not throw"
   PROJECTNAME_ENVIRONMENT="test" python3 ./src/main.py $@
