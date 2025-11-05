@@ -6,8 +6,8 @@ import string
 import docker
 from dotenv import load_dotenv
 import yaml
-from scripts.get_project_name import get_project_name
-from scripts.get_project_root import get_project_root
+from utilities.get_project_name import get_project_name
+from utilities.get_project_root import get_project_root
 
 
 def deploy_db() -> None:

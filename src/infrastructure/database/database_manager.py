@@ -36,9 +36,16 @@ class DatabaseManager:
     host = database_config.host
     port = database_config.port
     name = database_config.name
-    self._logger.debug("Attempting to create %s database \"%s\": %s@%s:%s...", engine, name, username, host, port)
+    self._logger.debug(
+      "Initializing %s engine for database %s: %s@%s:%s...",
+      engine, name, username, host, port
+    )
     try:
       self._engine = create_engine(f"{engine}://{username}:{password}@{host}:{port}/{name}")
+      self._logger.debug(
+        "Initialized %s engine for database %s: %s@%s:%s",
+        engine, name, username, host, port
+      )
     except SQLAlchemyError as e:
       raise DatabaseEngineCreationException() from e
     self._session_factory = sessionmaker(bind=self._engine, future=True, expire_on_commit=False)
@@ -46,10 +53,12 @@ class DatabaseManager:
       self.create_schema()
       DatabaseManager._first_instantiation = False
 
+
   def create_schema(self) -> None:
-    self._logger.debug("Attempting to create schema...")
+    self._logger.debug("Attempting to create database schema...")
     try:
       Base.metadata.create_all(self._engine)
+      self._logger.debug("Created database schema.")
     except SQLAlchemyError as e:
       raise DatabaseSchemaCreationException() from e
 
@@ -87,7 +96,7 @@ class DatabaseManager:
     self,
     uuid: str
   ) -> Account | None:
-    self._logger.debug("Attempting to get account for uuid: %s", uuid)
+    self._logger.debug("Attempting to retrieve account for uuid: %s", uuid)
     try:
       with self.get_session() as session:
         first_account_orm_match = (
@@ -96,6 +105,7 @@ class DatabaseManager:
           .filter(AccountORM.uuid == uuid)
           .first()
         )
+      self._logger.debug("Retrieved account for uuid: %s", uuid)
     except SQLAlchemyError as e:
       raise DatabaseSelectException() from e
     # Handling this inside the session is important because of lazy loading? Hmmm

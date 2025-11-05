@@ -1,11 +1,21 @@
 #!/usr/bin/env bash
 
+set -e
+set -E
+set -o pipefail
+set -x
 sudo true
-source <(curl -fsS --location "https://raw.githubusercontent.com/coreyMerritt/bash-utils/refs/heads/main/src/main")
-import "bash-test" $@
 
-btInfo "Setting up test environment..."
-  cdProjectRoot
+# Ensure we're in the project root
+while true; do
+  if [[ -f "$(pwd)/pyproject.toml" ]]; then
+    break
+  elif [[ "$(pwd)" == "/" ]]; then
+    echo -e "\n\tFailed to find project root.\n"; exit 1
+  else
+    cd ..
+  fi
+done
   deployVenv
   source .venv/bin/activate
   pip install --upgrade pip setuptools wheel
