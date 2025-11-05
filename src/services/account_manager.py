@@ -8,6 +8,7 @@ from infrastructure.database.database_manager import DatabaseManager
 from infrastructure.database.exceptions.database_schema_creation_exception import DatabaseSchemaCreationException
 from infrastructure.database.exceptions.database_select_exception import DatabaseSelectException
 from infrastructure.logging.log_manager import LogManager
+from services.exceptions.account_service_initialization_exception import AccountServiceInitializationException
 from services.exceptions.data_exception import DataException
 from services.exceptions.data_validation_exception import DataValidationException
 
@@ -21,7 +22,10 @@ class AccountManager:
     try:
       self._database_manager = DatabaseManager(database_config)
     except DatabaseSchemaCreationException as e:
-      raise SystemError("Database schema creation failed.", { "config_dir": ConfigManager.get_config_dir() }) from e
+      raise AccountServiceInitializationException(
+        "Database schema creation failed.",
+        { "config_dir": ConfigManager.get_config_dir() }
+      ) from e
     self._logger = LogManager.get_logger(self.__class__.__name__)
 
   def get_account(self, uuid: str) -> Account | None:

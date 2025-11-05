@@ -4,6 +4,7 @@ version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [
   "dacite==1.9.2",
+  "dotenv==0.9.9",
   "fastapi==0.120.0",
   "pre-commit==4.3.0",
   "psycopg==3.2.11",
@@ -15,13 +16,18 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "isort",  # Import Sorting
-  "mypy",   # Type Checking
-  "pre-commit",   # Local Test Hooks
-  "pylint",   # Linting
-  "pytest",   # Unit Tests
-  "ruff",   # 2nd Linter -- Handles Newlines
-  "types-PyYAML>=6.0.12.20250915",
+  "isort",
+  "mypy",
+  "pre-commit",
+  "pylint",
+  "pytest",
+  "ruff",
+  "types-docker",
+  "types-PyYAML",
+]
+infra = [
+  "docker",
+  "types-docker"
 ]
 
 [build-system]

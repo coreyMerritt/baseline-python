@@ -1,0 +1,122 @@
+#!/usr/bin/env python3
+import os
+import sys
+import secrets
+import string
+import docker
+from dotenv import load_dotenv
+import yaml
+from scripts.get_project_name import get_project_name
+from scripts.get_project_root import get_project_root
+
+
+def deploy_db() -> None:
+  __require_sudo()
+  load_dotenv()
+  ENVIRONMENT = os.getenv("PROJECTNAME_ENVIRONMENT")
+  print(f"Checking .env for environment: {ENVIRONMENT}")
+  PROJECT_NAME = get_project_name()
+  PROJECT_ROOT = get_project_root()
+  DB_CONFIG_PATH = f"{PROJECT_ROOT}/config/{ENVIRONMENT}/database.yml"
+  POSTGRES_USERNAME = f"{PROJECT_NAME}-user"
+  POSTGRES_PASSWORD = __generate_password(16)
+  POSTGRES_DBNAME = f"{PROJECT_NAME}-{ENVIRONMENT}"
+  if ENVIRONMENT == "test":
+    HOST_PORT = 5434
+  elif ENVIRONMENT == "dev":
+    HOST_PORT = 5433
+  elif ENVIRONMENT == "prod":
+    HOST_PORT = 5432
+  else:
+    raise RuntimeError(f"Unknown environment: {ENVIRONMENT}")
+  CONTAINER_NAME = f"postgres-{ENVIRONMENT}"
+  IMAGE_VERSION = "latest"
+  if ENVIRONMENT == "test" or ENVIRONMENT == "dev":
+    __create_new_config(
+      new_config_path=DB_CONFIG_PATH,
+      port=HOST_PORT,
+      dbname=POSTGRES_DBNAME,
+      username=POSTGRES_USERNAME,
+      password=POSTGRES_PASSWORD
+    )
+
+  CLIENT = docker.from_env()
+  for container in CLIENT.containers.list(all=True):
+    if container.name == CONTAINER_NAME:
+      print(f"Stopping container: {container.name}")
+      container.stop()
+      print(f"Removing container: {container.name}")
+      container.remove()
+      break
+  print(f"Running container: {CONTAINER_NAME}")
+  if ENVIRONMENT == "prod":
+    CLIENT.containers.run(
+      detach=True,
+      remove=False,
+      name=CONTAINER_NAME,
+      environment={
+        "POSTGRES_DB": POSTGRES_DBNAME,
+        "POSTGRES_USER": POSTGRES_USERNAME,
+        "POSTGRES_PASSWORD": POSTGRES_PASSWORD
+      },
+      ports={
+        "5432/tcp": HOST_PORT
+      },
+      volumes={
+        "pgdata": {
+            "bind": "/var/lib/postgresql/data",
+            "mode": "rw",
+        }
+      },
+      image=f"postgres:{IMAGE_VERSION}"
+    )
+  else:
+    CLIENT.containers.run(
+      detach=True,
+      remove=False,
+      name=CONTAINER_NAME,
+      environment={
+        "POSTGRES_DB": POSTGRES_DBNAME,
+        "POSTGRES_USER": POSTGRES_USERNAME,
+        "POSTGRES_PASSWORD": POSTGRES_PASSWORD
+      },
+      ports={
+        "5432/tcp": HOST_PORT
+      },
+      image=f"postgres:{IMAGE_VERSION}"
+    )
+  print("\npsql \\")
+  print("  --host=127.0.0.1 \\")
+  print(f"  --port={HOST_PORT} \\")
+  print(f"  --dbname={POSTGRES_DBNAME} \\")
+  print(f"  --username={POSTGRES_USERNAME}")
+  print(f"Password: {POSTGRES_PASSWORD}")
+  print()
+
+
+def __require_sudo():
+  if os.geteuid() != 0:
+    print("Run with sudo.")
+    sys.exit(1)
+
+def __generate_password(length: int) -> str:
+  print("Generating password...")
+  alphabet = string.ascii_letters + string.digits
+  return ''.join(secrets.choice(alphabet) for _ in range(length))
+
+def __create_new_config(new_config_path: str, port: int, dbname: str, username: str, password: str) -> None:
+  print(f"New config: {new_config_path}")
+  new_config = {
+    "engine": "postgresql",
+    "host": "127.0.0.1",
+    "port": port,
+    "name": dbname,
+    "username": username,
+    "password": password
+  }
+  with open(new_config_path, "w", encoding='utf-8') as config_file:
+    yaml.safe_dump(new_config, config_file)
+
+
+if __name__ == "__main__":
+  deploy_db()

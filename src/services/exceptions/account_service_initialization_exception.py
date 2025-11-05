@@ -1,0 +1,2 @@
+class AccountServiceInitializationException(Exception):
+  pass

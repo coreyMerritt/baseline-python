@@ -1,4 +1,11 @@
-#!/usr/bin/env python3
+from fastapi import FastAPI
+from interfaces.rest import routers
 
-# Web server hooks
-from interfaces.rest.routers import app, routers  # pylint: disable=unused-import
+app: FastAPI | None = None
+
+def create_app() -> FastAPI:
+  global app
+  if app is None:
+    routers_module = routers
+    app = routers_module.app
+  return app

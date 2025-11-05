@@ -11,6 +11,7 @@ from interfaces.rest.v1.dto.res.create_account_res import CreateAccountRes
 from interfaces.rest.v1.dto.res.get_account_res import GetAccountRes
 from interfaces.rest.v1.exceptions.rest_adapter_exception import RestAdapterException
 from services.account_manager import AccountManager
+from services.exceptions.account_service_initialization_exception import AccountServiceInitializationException
 from services.exceptions.data_exception import DataException
 from services.exceptions.data_validation_exception import DataValidationException
 
@@ -32,6 +33,9 @@ class AccountController:
         raise HTTPException(status_code=404, detail="Account not found")
       self._logger.info("Successfully retrieved account for uuid: %s", uuid)
       return GetAccountAdapter.domain_to_res(account)
+    except AccountServiceInitializationException as e:
+      self._logger.error("Failed to initialize Account Service", exc_info=e)
+      raise HTTPException(status_code=500, detail="Internal server error") from e
     except DataException as e:
       self._logger.error("Something went wrong at the data level", exc_info=e)
       raise HTTPException(status_code=500, detail="Internal server error") from e

@@ -3,6 +3,7 @@ import sys
 
 import yaml
 from dacite import Config, from_dict
+from dotenv import load_dotenv
 
 from infrastructure.config.enums.logging_level import LoggingLevel
 from infrastructure.config.exceptions.config_load_exception import ConfigLoadException
@@ -27,6 +28,7 @@ class ConfigManager:
 
   @staticmethod
   def refresh_environment() -> None:
+    load_dotenv()
     ConfigManager._environment = ConfigManager._get_env_var_safe("PROJECTNAME_ENVIRONMENT")
     ConfigManager._config_dir = f"./config/{ConfigManager._environment}"
 
