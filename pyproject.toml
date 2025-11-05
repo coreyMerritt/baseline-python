@@ -42,16 +42,18 @@ indent = "  "
 line_length = 120
 src_paths = [
   "src",
+  "scripts",
   "tests"
 ]
 
 [tool.mypy]
 explicit_package_bases = true
-mypy_path = "src"
+mypy_path = "src:scripts:tests"
 
 [tool.pytest.ini_options]
 pythonpath = [
-  "src"
+  "src",
+  "scripts"
 ]
 testpaths = [
   "tests"
@@ -61,6 +63,7 @@ testpaths = [
 include = [
   "pyproject.toml",
   "src/**/*.py",
+  "scripts/**/*.py",
   "tests/**/*.py"
 ]
 
