@@ -32,7 +32,7 @@ source .venv/bin/activate
 
 # Ensure dependencies are installed
 pip install --upgrade pip setuptools wheel
-  pip install -e .[infra]
+pip install -e .[infra]
 if [[ "$project_environment" == "dev" ]]; then
   pip install -e .
   pip install -e .[dev]
