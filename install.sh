@@ -44,6 +44,9 @@ elif [[ "$project_environment" == "prod" ]]; then
 fi
 
 # Ensure basic non-sensitive configs are in place
+if [[ ! -f ".env" ]]; then
+  cp -r .env.model .env
+fi
 if [[ ! -d "./config/${project_environment}/logging.yml" ]]; then
   cp -r "./config/model/logging.yml" "./config/${project_environment}/logging.yml"
 fi
