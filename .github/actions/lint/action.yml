@@ -14,7 +14,7 @@ runs:
         python-version: ${{ inputs.python-version }}
     - name: Install Dependencies
       shell: bash
-      run: ./install.sh "test"
+      run: ./install.sh "dev"
     - name: Run Linters
       shell: bash
       run: ./tests/system_tests/run-linters.sh
