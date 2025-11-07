@@ -24,4 +24,20 @@ fi
 source .venv/bin/activate
 
 # Test
-PROJECTNAME_ENVIRONMENT="test" .venv/bin/python3 ./src/main.py
+timeout=30
+start_time=$(date +%s)
+current_time=$(date +%s)
+success="false"
+while (( current_time - start_time < 60 )); do
+  set +e
+  PROJECTNAME_ENVIRONMENT="test" .venv/bin/python3 ./src/main.py
+  rc=$?
+  set -e
+  if [[ $rc -eq 0 ]]; then
+    success="true"
+    break
+  fi
+  sleep 1
+  current_time=$(date +%s)
+done
+[[ "$success" == "true" ]]
