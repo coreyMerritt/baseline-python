@@ -15,6 +15,9 @@ runs:
     - name: Install Dependencies
       shell: bash
       run: ./install.sh "test"
+    - name: Run Database
+      shell: bash
+      run: sudo PYTHONPATH=. ./scripts/deploy_db.py test
     - name: POST and GET Account
       shell: bash
       run: ./tests/system_tests/api/post-and-get-account.sh

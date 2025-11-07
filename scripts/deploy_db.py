@@ -4,7 +4,6 @@ import sys
 import secrets
 import string
 import docker
-from dotenv import load_dotenv
 import yaml
 from utilities.get_project_name import get_project_name
 from utilities.get_project_root import get_project_root
@@ -12,27 +11,28 @@ from utilities.get_project_root import get_project_root
 
 def deploy_db() -> None:
   __require_sudo()
-  load_dotenv()
-  ENVIRONMENT = os.getenv("PROJECTNAME_ENVIRONMENT")
-  print(f"Checking .env for environment: {ENVIRONMENT}")
+  if not sys.argv[1]:
+    print("\n\targ1 must be arg1 must be test|dev|prod\n")
+  PROJECT_ENVIRONMENT = sys.argv[1]
+  print(f"Checking .env for environment: {PROJECT_ENVIRONMENT}")
   PROJECT_NAME = get_project_name()
   PROJECT_ROOT = get_project_root()
-  DB_CONFIG_PATH = f"{PROJECT_ROOT}/config/{ENVIRONMENT}/database.yml"
+  DB_CONFIG_PATH = f"{PROJECT_ROOT}/config/{PROJECT_ENVIRONMENT}/database.yml"
   POSTGRES_USERNAME = f"{PROJECT_NAME}-user"
   POSTGRES_PASSWORD = __generate_password(16)
-  POSTGRES_DBNAME = f"{PROJECT_NAME}-{ENVIRONMENT}"
-  if ENVIRONMENT == "test":
+  POSTGRES_DBNAME = f"{PROJECT_NAME}-{PROJECT_ENVIRONMENT}"
+  if PROJECT_ENVIRONMENT == "test":
     HOST_PORT = 5434
-  elif ENVIRONMENT == "dev":
+  elif PROJECT_ENVIRONMENT == "dev":
     HOST_PORT = 5433
-  elif ENVIRONMENT == "prod":
+  elif PROJECT_ENVIRONMENT == "prod":
     HOST_PORT = 5432
   else:
-    raise RuntimeError(f"Unknown environment: {ENVIRONMENT}")
-  CONTAINER_NAME = f"postgres-{ENVIRONMENT}"
+    raise RuntimeError(f"Unknown environment: {PROJECT_ENVIRONMENT}")
+  CONTAINER_NAME = f"postgres-{PROJECT_ENVIRONMENT}"
   IMAGE_VERSION = "latest"
   created_new_config = False
-  if ENVIRONMENT == "test" or ENVIRONMENT == "dev":
+  if PROJECT_ENVIRONMENT == "test" or PROJECT_ENVIRONMENT == "dev":
     __create_new_config(
       new_config_path=DB_CONFIG_PATH,
       port=HOST_PORT,
@@ -51,7 +51,7 @@ def deploy_db() -> None:
       container.remove()
       break
   print(f"Running container: {CONTAINER_NAME}")
-  if ENVIRONMENT == "prod":
+  if PROJECT_ENVIRONMENT == "prod":
     CLIENT.containers.run(
       detach=True,
       remove=False,
