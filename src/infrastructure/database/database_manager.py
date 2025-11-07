@@ -53,7 +53,6 @@ class DatabaseManager:
       self.create_schema()
       DatabaseManager._first_instantiation = False
 
-
   def create_schema(self) -> None:
     self._logger.debug("Attempting to create database schema...")
     try:

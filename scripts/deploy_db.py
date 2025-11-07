@@ -31,6 +31,7 @@ def deploy_db() -> None:
     raise RuntimeError(f"Unknown environment: {ENVIRONMENT}")
   CONTAINER_NAME = f"postgres-{ENVIRONMENT}"
   IMAGE_VERSION = "latest"
+  created_new_config = False
   if ENVIRONMENT == "test" or ENVIRONMENT == "dev":
     __create_new_config(
       new_config_path=DB_CONFIG_PATH,
@@ -39,6 +40,7 @@ def deploy_db() -> None:
       username=POSTGRES_USERNAME,
       password=POSTGRES_PASSWORD
     )
+    created_new_config=True
 
   CLIENT = docker.from_env()
   for container in CLIENT.containers.list(all=True):
@@ -89,8 +91,15 @@ def deploy_db() -> None:
   print("  --host=127.0.0.1 \\")
   print(f"  --port={HOST_PORT} \\")
   print(f"  --dbname={POSTGRES_DBNAME} \\")
-  print(f"  --username={POSTGRES_USERNAME}")
-  print(f"Password: {POSTGRES_PASSWORD}")
+  print(f"  --username={POSTGRES_USERNAME}\n")
+  if created_new_config:
+    print(f"Created new config with creds at: {DB_CONFIG_PATH}")
+  else:
+    print("Host: 127.0.0.1")
+    print(f"Port: {HOST_PORT}")
+    print(f"Database Name: {POSTGRES_DBNAME}")
+    print(f"Username: {POSTGRES_USERNAME}")
+    print(f"Password: {POSTGRES_PASSWORD}")
   print()
 
 

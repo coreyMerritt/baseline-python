@@ -1,35 +1,44 @@
 #!/usr/bin/env bash
 
-sudo true
-source <(curl -fsS --location "https://raw.githubusercontent.com/coreyMerritt/bash-utils/refs/heads/main/src/main")
-import "bash-test" $@
+set -e
+set -E
+set -u
+set -o pipefail
+set -x
 
-btInfo "Setting up test environment..."
-  cdProjectRoot
-  deployVenv
-  source .venv/bin/activate
-  pip install --upgrade pip setuptools wheel
-  pip install .
-  [[ -d "./config/test/" ]] || mkdir "./config/test/"
-  cp -r ./config/model/* "./config/test/"
-  bash "./scripts/deploy-db.sh" "test" "true"
-  bash "./start-with-uvicorn.sh" "test" &
+# Ensure we're in the project root
+while true; do
+  if [[ -f "$(pwd)/pyproject.toml" ]]; then
+    break
+  elif [[ "$(pwd)" == "/" ]]; then
+    echo -e "\n\tFailed to find project root.\n"; exit 1
+  else
+    cd ..
+  fi
+done
 
+# venv
+if [[ ! -d ".venv" ]]; then
+  python3 -m venv ".venv"
+fi
+source .venv/bin/activate
+
+# Wait for system to start
+bash "./start.sh" "test" &
 timeout=60
 start_time=$(date +%s)
 current_time=$(date +%s)
-btInfo "Waiting for system to start..."
-  while (( current_time - start_time < 60 )); do
-    health_check_results="$(curl --location "http://127.0.0.1:8000/api/health/")" || true
-    healthy="$(echo "$health_check_results" | jq .healthy)" || true
-    if [[ "$healthy" == "true" || "$healthy" == "True" ]]; then
-      break
-    fi
-    sleep 1
-    current_time=$(date +%s)
-  done
+while (( current_time - start_time < 60 )); do
+  health_check_results="$(curl --location "http://127.0.0.1:8000/api/health/")" || true
+  healthy="$(echo "$health_check_results" | jq .healthy)" || true
+  if [[ "$healthy" == "true" || "$healthy" == "True" ]]; then
+    break
+  fi
+  sleep 1
+  current_time=$(date +%s)
+done
 
-btStartTest "Post Account"
+# Post the Account
   result="$(
     curl \
       --location 'http://127.0.0.1:8000/api/v1/account' \
@@ -45,7 +54,7 @@ btStartTest "Post Account"
   uuid="$(echo "$result" | jq -r .uuid)"
   [[ "$status" == "Success" ]]
 
-btStartTest "Get Account"
+# Get the Account
   account="$(curl --location "http://127.0.0.1:8000/api/v1/account?uuid=$uuid")"
   get_time=$(date +%s%3N)
   name="$(echo "$account" | jq -r .name)"
@@ -55,7 +64,8 @@ btStartTest "Get Account"
   [[ $age -eq 23 ]]
   [[ "$account_type" == "business" ]]
 
-btInfo "Delay was: $(( get_time - post_time ))ms"
+# Some extra output
+echo -e "\n\tDEBUG: Delay was: $(( get_time - post_time ))ms\n"
 
 # Cleanup
 pkill -f uvicorn

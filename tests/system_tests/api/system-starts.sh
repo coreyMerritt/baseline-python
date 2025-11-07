@@ -1,18 +1,27 @@
 #!/usr/bin/env bash
 
-sudo true
-source <(curl -fsS --location "https://raw.githubusercontent.com/coreyMerritt/bash-utils/refs/heads/main/src/main")
-import "bash-test" $@
+set -e
+set -E
+set -u
+set -o pipefail
+set -x
 
-btInfo "Setting up test environment..."
-  cdProjectRoot
-  deployVenv
-  source .venv/bin/activate
-  pip install --upgrade pip setuptools wheel
-  pip install .
-  [[ -d "./config/test/" ]] || mkdir "./config/test/"
-  cp -r ./config/model/* "./config/test/"
-  bash "./scripts/deploy-db.sh" "test" "true"
+# Ensure we're in the project root
+while true; do
+  if [[ -f "$(pwd)/pyproject.toml" ]]; then
+    break
+  elif [[ "$(pwd)" == "/" ]]; then
+    echo -e "\n\tFailed to find project root.\n"; exit 1
+  else
+    cd ..
+  fi
+done
 
-btStartTest "Dry run with no webserver does not throw"
-  PROJECTNAME_ENVIRONMENT="test" python3 ./src/main.py $@
+# venv
+if [[ ! -d ".venv" ]]; then
+  python3 -m venv ".venv"
+fi
+source .venv/bin/activate
+
+# Test
+PROJECTNAME_ENVIRONMENT="test" .venv/bin/python3 ./src/main.py

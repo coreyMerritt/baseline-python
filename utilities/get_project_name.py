@@ -15,4 +15,4 @@ def get_project_name() -> str:
 
 
 if __name__ == "__main__":
-  get_project_name()
+  print(get_project_name())

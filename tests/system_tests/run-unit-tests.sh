@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 set -E
+set -u
 set -o pipefail
 set -x
 
@@ -20,8 +21,12 @@ if [[ ! -d ".venv" ]]; then
   python3 -m venv ".venv"
 fi
 
-# Install dev dependencies if not already installed
-.venv/bin/pip install .[dev]
+# Validate some binaries
+which .venv/bin/pip
+which .venv/bin/python
+
+# Validate some packages
+.venv/bin/pip show pytest
 
 # Test
 echo -e "\n\tRunning unit tests...\n"
