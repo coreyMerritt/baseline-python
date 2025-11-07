@@ -11,7 +11,7 @@ repos:
           - pre-push
       - name: Run Linters
         id: run-linters
-        entry: ./tests/system/run-linters.sh
+        entry: ./tests/system_tests/run-linters.sh
         language: script
         always_run: true
         pass_filenames: false
@@ -19,7 +19,7 @@ repos:
           - pre-push
       - name: Run Unit Tests
         id: run-unit-tests
-        entry: ./tests/system/run-unit-tests.sh
+        entry: ./tests/system_tests/run-unit-tests.sh
         language: script
         always_run: true
         pass_filenames: false
@@ -27,7 +27,7 @@ repos:
           - pre-push
       - name: System Starts
         id: system-starts
-        entry: ./tests/system/api/system-starts.sh
+        entry: ./tests/system_tests/api/system-starts.sh
         language: script
         always_run: true
         pass_filenames: false
@@ -35,7 +35,7 @@ repos:
           - pre-push
       - name: Health Check Passes
         id: health-check
-        entry: ./tests/system/api/health-check.sh
+        entry: ./tests/system_tests/api/health-check.sh
         language: script
         always_run: true
         pass_filenames: false
@@ -43,7 +43,7 @@ repos:
           - pre-push
       - name: POST and GET Account
         id: post-and-get-account
-        entry: ./tests/system/api/post-and-get-account.sh
+        entry: ./tests/system_tests/api/post-and-get-account.sh
         language: script
         always_run: true
         pass_filenames: false

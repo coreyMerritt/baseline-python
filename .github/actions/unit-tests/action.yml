@@ -12,6 +12,9 @@ runs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
+    - name: Install Dependencies
+      shell: bash
+      run: ./install.sh "test"
     - name: Run Unit Tests
       shell: bash
-      run: ./tests/system/run-unit-tests.sh -vv
+      run: ./tests/system_tests/run-unit-tests.sh
