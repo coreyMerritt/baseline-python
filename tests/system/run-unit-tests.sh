@@ -30,4 +30,4 @@ which .venv/bin/python
 
 # Test
 echo -e "\n\tRunning unit tests...\n"
-.venv/bin/python3 -m pytest -v ./tests/unit_tests
+.venv/bin/python3 -m pytest -v ./tests/unit
