@@ -21,4 +21,4 @@ runs:
     # This is marked as an API test because a this dry run would likely not be possible with a non-fastapi main.py
     - name: System starts
       shell: bash
-      run: ./tests/system_tests/api/system-starts.sh
+      run: ./tests/system/api/system-starts.sh

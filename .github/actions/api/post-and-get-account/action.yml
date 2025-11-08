@@ -20,5 +20,5 @@ runs:
       run: sudo PYTHONPATH=. .venv/bin/python ./scripts/deploy_db.py test
     - name: POST and GET Account
       shell: bash
-      run: ./tests/system_tests/api/post-and-get-account.sh
+      run: ./tests/system/api/post-and-get-account.sh
     

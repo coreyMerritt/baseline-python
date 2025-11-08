@@ -20,4 +20,4 @@ runs:
       run: sudo PYTHONPATH=. .venv/bin/python ./scripts/deploy_db.py test
     - name: API Health Check
       shell: bash
-      run: ./tests/system_tests/api/health-check.sh
+      run: ./tests/system/api/health-check.sh

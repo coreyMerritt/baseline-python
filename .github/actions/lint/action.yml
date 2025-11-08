@@ -17,4 +17,4 @@ runs:
       run: ./install.sh "dev"
     - name: Run Linters
       shell: bash
-      run: ./tests/system_tests/run-linters.sh
+      run: ./tests/system/run-linters.sh
