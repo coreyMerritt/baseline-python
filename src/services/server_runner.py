@@ -7,11 +7,10 @@ from infrastructure.config.mapping.environment_mapper import EnvironmentMapper
 
 
 class ServerRunner:
-  def run(self, env: str, host: str, port: int):
-    env_enum = EnvironmentMapper.str_to_enum(env)
-    ConfigManager.refresh_configs()
-    ConfigManager.set_environment(env_enum)
-    if env == Environment.DEV:
+  def run(self, env_str: str, host: str, port: int):
+    env_enum = EnvironmentMapper.str_to_enum(env_str)
+    ConfigManager.refresh_environment(env_str)
+    if env_enum == Environment.DEV:
       uvicorn.run(
         "interfaces.rest.routers:create_app",
         host=host,
@@ -19,14 +18,14 @@ class ServerRunner:
         reload=True,
         reload_excludes=[".venv/*", "*/__pycache__/*", "*.pyc", ".git"]
       )
-    elif env == Environment.PROD:
+    elif env_enum == Environment.PROD:
       uvicorn.run(
         "interfaces.rest.routers:create_app",
         host=host,
         port=port,
         reload=False
       )
-    elif env == Environment.TEST:
+    elif env_enum == Environment.TEST:
       uvicorn.run(
         "interfaces.rest.routers:create_app",
         host=host,

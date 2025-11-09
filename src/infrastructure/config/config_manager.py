@@ -26,17 +26,11 @@ class ConfigManager:
   _logging_config: LoggingConfig
 
   @staticmethod
-  def refresh_configs() -> None:
-    ConfigManager.refresh_environment()
-
-  @staticmethod
-  def refresh_environment() -> None:
+  def refresh_environment(env_str: str) -> None:
     load_dotenv()
-    env_str = ConfigManager._get_env_var_safe("PROJECTNAME_ENVIRONMENT")
     env_enum = EnvironmentMapper.str_to_enum(env_str)
     ConfigManager._environment = env_enum
     ConfigManager._config_dir = f"./config/{ConfigManager._environment.value}"
-    # TODO: I don't like this here... but these configs must be updated when refresh_environment is updated
     ConfigManager.refresh_database_config()
     ConfigManager.refresh_health_check_config()
     ConfigManager.refresh_logging_config()

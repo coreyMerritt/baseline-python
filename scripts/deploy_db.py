@@ -14,7 +14,7 @@ def deploy_db() -> None:
   if not sys.argv[1]:
     print("\n\targ1 must be arg1 must be test|dev|prod\n")
   PROJECT_ENVIRONMENT = sys.argv[1]
-  print(f"Checking .env for environment: {PROJECT_ENVIRONMENT}")
+  print(f"Environment: {PROJECT_ENVIRONMENT}")
   PROJECT_NAME = get_project_name()
   PROJECT_ROOT = get_project_root()
   DB_CONFIG_PATH = f"{PROJECT_ROOT}/config/{PROJECT_ENVIRONMENT}/database.yml"
@@ -29,8 +29,8 @@ def deploy_db() -> None:
     HOST_PORT = 5432
   else:
     raise RuntimeError(f"Unknown environment: {PROJECT_ENVIRONMENT}")
-  CONTAINER_NAME = f"postgres-{PROJECT_ENVIRONMENT}"
-  IMAGE_VERSION = "latest"
+  IMAGE_VERSION = "18"
+  CONTAINER_NAME = f"postgres-{IMAGE_VERSION}-{PROJECT_NAME}-{PROJECT_ENVIRONMENT}"
   created_new_config = False
   if PROJECT_ENVIRONMENT == "test" or PROJECT_ENVIRONMENT == "dev":
     __create_new_config(
@@ -65,9 +65,9 @@ def deploy_db() -> None:
         "5432/tcp": HOST_PORT
       },
       volumes={
-        "pgdata": {
-            "bind": "/var/lib/postgresql/data",
-            "mode": "rw",
+        f"{CONTAINER_NAME}-volume": {
+          "bind": "/var/lib/postgresql",
+          "mode": "rw",
         }
       },
       image=f"postgres:{IMAGE_VERSION}"
