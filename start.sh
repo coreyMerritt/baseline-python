@@ -18,17 +18,4 @@ while true; do
   fi
 done
 
-# Vars & Validation
-source .env
-[[ -n "$PYTHONPATH" ]]
-export PYTHONPATH
-
-# Start uvicorn
-.venv/bin/uvicorn src.main:app \
-  --host "$UVICORN_HOST" \
-  --port "$UVICORN_PORT" \
-  --reload \
-  --reload-exclude '.venv/*' \
-  --reload-exclude '*/__pycache__/*' \
-  --reload-exclude '*.pyc' \
-  --reload-exclude '.git'
+./src/main.py $@
