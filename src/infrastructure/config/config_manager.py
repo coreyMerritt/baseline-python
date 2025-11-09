@@ -27,7 +27,6 @@ class ConfigManager:
 
   @staticmethod
   def refresh_configs() -> None:
-    input("I've been called")
     ConfigManager.refresh_environment()
 
   @staticmethod
@@ -148,7 +147,10 @@ class ConfigManager:
     env_enum = EnvironmentMapper.str_to_enum(environment)
     ConfigManager._environment = env_enum
     ConfigManager._config_dir = f"./config/{ConfigManager._environment.value}"
-    input(f"environment set: {ConfigManager._environment.value}")
+    ConfigManager.refresh_database_config()
+    ConfigManager.refresh_health_check_config()
+    ConfigManager.refresh_logging_config()
+    ConfigManager._is_configured = True
 
   @staticmethod
   def _get_env_var_safe(var_name: str) -> str:

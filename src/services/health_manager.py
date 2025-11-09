@@ -1,8 +1,11 @@
+from logging import Logger
 from infrastructure.config.config_manager import ConfigManager
 from infrastructure.config.models.hardware_util_config import HardwareUtilConfig
 from infrastructure.database.database_manager import DatabaseManager
+from infrastructure.database.exceptions.database_schema_creation_exception import DatabaseSchemaCreationException
 from infrastructure.logging.log_manager import LogManager
 from infrastructure.system_monitoring.system_monitor import SystemMonitor
+from services.exceptions.health_manager_initialization_exception import HealthManagerInitializationException
 from services.value_objects.config_health_report import ConfigHealthReport
 from services.value_objects.database_health_report import DatabaseHealthReport
 from services.value_objects.full_health_report import FullHealthReport
@@ -11,6 +14,20 @@ from services.value_objects.logger_health_report import LoggerHealthReport
 
 
 class HealthManager:
+  _database_manager: DatabaseManager
+  _logger: Logger
+
+  def __init__(self):
+    database_config = ConfigManager.get_database_config()
+    try:
+      self._database_manager = DatabaseManager(database_config)
+    except DatabaseSchemaCreationException as e:
+      raise HealthManagerInitializationException(
+        "Database schema creation failed.",
+        { "config_dir": ConfigManager.get_config_dir() }
+      ) from e
+    self._logger = LogManager.get_logger(self.__class__.__name__)
+
   def get_full_health_report(self) -> FullHealthReport:
     health_check_config = ConfigManager.get_health_check_config()
     hardware_util_config = health_check_config.hardware_util
@@ -58,13 +75,11 @@ class HealthManager:
     )
 
   def get_database_health_report(self) -> DatabaseHealthReport:
-    database_config = ConfigManager.get_database_config()
-    database_manager = DatabaseManager(database_config)
-    can_perform_basic_select = database_manager.can_perform_basic_select()
-    first_instantiation_is_set = database_manager.first_instantiation_is_set()
-    is_engine = database_manager.is_engine()
-    is_logger = database_manager.is_logger()
-    is_session_factory = database_manager.is_session_factory()
+    can_perform_basic_select = self._database_manager.can_perform_basic_select()
+    first_instantiation_is_set = self._database_manager.first_instantiation_is_set()
+    is_engine = self._database_manager.is_engine()
+    is_logger = self._database_manager.is_logger()
+    is_session_factory = self._database_manager.is_session_factory()
     healthy = can_perform_basic_select and first_instantiation_is_set and is_engine and is_logger and is_session_factory
     return DatabaseHealthReport(
       can_perform_basic_select=can_perform_basic_select,
