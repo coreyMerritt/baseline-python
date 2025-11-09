@@ -22,10 +22,12 @@ dev = [
   "pytest",
   "ruff",
   "types-docker",
+  "types-psutil==7.0.0.20251001",
   "types-PyYAML",
 ]
 infra = [
   "docker",
+  "psutil==7.1.3",
   "types-docker",
   "uvicorn==0.38.0"
 ]

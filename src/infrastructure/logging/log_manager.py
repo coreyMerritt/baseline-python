@@ -20,6 +20,14 @@ class LogManager:
   _logging_config: LoggingConfig
 
   @staticmethod
+  def configured_is_set() -> bool:
+    return LogManager._is_configured is not None
+
+  @staticmethod
+  def is_logging_config() -> bool:
+    return LogManager._logging_config is not None
+
+  @staticmethod
   def get_logger(service_name: str) -> logging.Logger:
     if not LogManager._is_configured:
       LogManager._configure_logger()

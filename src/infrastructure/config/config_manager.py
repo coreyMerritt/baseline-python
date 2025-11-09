@@ -9,6 +9,7 @@ from infrastructure.config.enums.logging_level import LoggingLevel
 from infrastructure.config.exceptions.config_load_exception import ConfigLoadException
 from infrastructure.config.exceptions.config_parse_exception import ConfigParseException
 from infrastructure.config.models.database_config import DatabaseConfig
+from infrastructure.config.models.health_check_config import HealthCheckConfig
 from infrastructure.config.models.logging_config import LoggingConfig
 
 
@@ -18,12 +19,14 @@ class ConfigManager:
   _environment: str
   _config_dir: str
   _database_config: DatabaseConfig
+  _health_check_config: HealthCheckConfig
   _logging_config: LoggingConfig
 
   @staticmethod
   def refresh_configs() -> None:
     ConfigManager.refresh_environment()
     ConfigManager.refresh_database_config()
+    ConfigManager.refresh_health_check_config()
     ConfigManager.refresh_logging_config()
 
   @staticmethod
@@ -49,6 +52,22 @@ class ConfigManager:
       raise ConfigParseException() from e
 
   @staticmethod
+  def refresh_health_check_config() -> None:
+    health_check_config_path = f"{ConfigManager._config_dir}/health_check.yml"
+    try:
+      with open(health_check_config_path, "r", encoding='utf-8') as health_check_config_file:
+        raw_health_check_config = yaml.safe_load(health_check_config_file)
+    except Exception as e:
+      raise ConfigLoadException() from e
+    try:
+      ConfigManager._health_check_config = from_dict(
+        data_class=HealthCheckConfig,
+        data=raw_health_check_config
+      )
+    except Exception as e:
+      raise ConfigParseException() from e
+
+  @staticmethod
   def refresh_logging_config() -> None:
     logging_config_path = f"{ConfigManager._config_dir}/logging.yml"
     dacite_config = Config(type_hooks={LoggingLevel: LoggingLevel})
@@ -67,6 +86,30 @@ class ConfigManager:
       raise ConfigParseException() from e
 
   @staticmethod
+  def is_configured() -> bool:
+    return ConfigManager._is_configured
+
+  @staticmethod
+  def is_environment() -> bool:
+    return ConfigManager._environment is not None
+
+  @staticmethod
+  def is_config_dir() -> bool:
+    return ConfigManager._config_dir is not None
+
+  @staticmethod
+  def is_database_config() -> bool:
+    return ConfigManager._database_config is not None
+
+  @staticmethod
+  def is_health_check_config() -> bool:
+    return ConfigManager._health_check_config is not None
+
+  @staticmethod
+  def is_logging_config() -> bool:
+    return ConfigManager._logging_config is not None
+
+  @staticmethod
   def get_environment() -> str:
     return ConfigManager._environment
 
@@ -82,6 +125,13 @@ class ConfigManager:
     return ConfigManager._database_config
 
   @staticmethod
+  def get_health_check_config() -> HealthCheckConfig:
+    if not ConfigManager._is_configured:
+      ConfigManager.refresh_configs()
+      ConfigManager._is_configured = True
+    return ConfigManager._health_check_config
+
+  @staticmethod
   def get_logging_config() -> LoggingConfig:
     if not ConfigManager._is_configured:
       ConfigManager.refresh_configs()
@@ -95,5 +145,6 @@ class ConfigManager:
       print(f"\n\tSet {var_name} and try again.")
       sys.exit(1)
     return var_value
+
 
 ConfigManager.refresh_configs()

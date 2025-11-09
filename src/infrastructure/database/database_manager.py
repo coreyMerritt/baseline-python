@@ -1,7 +1,7 @@
 from logging import Logger
 from urllib.parse import quote_plus
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, sessionmaker
@@ -52,6 +52,26 @@ class DatabaseManager:
     if DatabaseManager._first_instantiation:
       self.create_schema()
       DatabaseManager._first_instantiation = False
+
+  def first_instantiation_is_set(self) -> bool:
+    return self._first_instantiation is not None
+
+  def is_engine(self) -> bool:
+    return self._engine is not None
+
+  def is_logger(self) -> bool:
+    return self._logger is not None
+
+  def is_session_factory(self) -> bool:
+    return self._session_factory is not None
+
+  def can_perform_basic_select(self) -> bool:
+    try:
+      with self._engine.connect() as conn:
+        conn.execute(text("SELECT 1"))
+      return True
+    except SQLAlchemyError:
+      return False
 
   def create_schema(self) -> None:
     self._logger.debug("Attempting to create database schema...")

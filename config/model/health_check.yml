@@ -1,0 +1,5 @@
+hardware_util:
+  cpu_check_interval_seconds: 1.0
+  maximum_healthy_cpu_usage_percentage: 90.0
+  maximum_healthy_disk_usage_percentage: 90.0
+  maximum_healthy_memory_usage_percentage: 90.0

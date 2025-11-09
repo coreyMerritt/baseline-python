@@ -1,6 +1,15 @@
 from dataclasses import dataclass
 
+from services.value_objects.abc_health_report import HealthReport
+from services.value_objects.config_health_report import ConfigHealthReport
+from services.value_objects.database_health_report import DatabaseHealthReport
+from services.value_objects.hardware_util_health_report import HardwareUtilHealthReport
+from services.value_objects.logger_health_report import LoggerHealthReport
+
 
 @dataclass
-class FullHealthReport:
-  healthy: bool
+class FullHealthReport(HealthReport):
+  config_health_report: ConfigHealthReport
+  database_health_report: DatabaseHealthReport
+  hardware_util_health_report: HardwareUtilHealthReport
+  logger_health_report: LoggerHealthReport
