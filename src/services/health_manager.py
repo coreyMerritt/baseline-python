@@ -1,4 +1,5 @@
 from logging import Logger
+
 from infrastructure.config.config_manager import ConfigManager
 from infrastructure.config.models.hardware_util_config import HardwareUtilConfig
 from infrastructure.database.database_manager import DatabaseManager

@@ -1,5 +1,5 @@
-import sys
 import argparse
+import sys
 
 from interfaces.command_line.enums.command import Command
 from interfaces.command_line.enums.run_target import RunTarget
