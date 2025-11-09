@@ -24,6 +24,7 @@ fi
 source .venv/bin/activate
 
 bash "./start.sh" "test" &
+pid=$!
 
 timeout=60
 start_time=$(date +%s)
@@ -47,5 +48,6 @@ done
 [[ "$health_check_healthy" == "true" ]]
 
 # Cleanup
-pkill -f uvicorn
+pid=$(ss -lntp | awk -F 'pid=' '/:8000/ { split($2, a, ","); print a[1] }')
+kill "$pid"
 sleep 1

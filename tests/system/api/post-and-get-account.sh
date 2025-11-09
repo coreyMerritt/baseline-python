@@ -76,5 +76,6 @@ done
 echo -e "\n\tDEBUG: Delay was: $(( get_time - post_time ))ms\n"
 
 # Cleanup
-pkill -f uvicorn
+pid=$(ss -lntp | awk -F 'pid=' '/:8000/ { split($2, a, ","); print a[1] }')
+kill "$pid"
 sleep 1
