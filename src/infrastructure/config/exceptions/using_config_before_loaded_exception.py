@@ -1,0 +1,2 @@
+class UsingConfigBeforeLoadedException(Exception):
+  pass

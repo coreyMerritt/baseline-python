@@ -5,9 +5,12 @@ import yaml
 from dacite import Config, from_dict
 from dotenv import load_dotenv
 
+from infrastructure.config.enums.environment import Environment
 from infrastructure.config.enums.logging_level import LoggingLevel
 from infrastructure.config.exceptions.config_load_exception import ConfigLoadException
 from infrastructure.config.exceptions.config_parse_exception import ConfigParseException
+from infrastructure.config.exceptions.using_config_before_loaded_exception import UsingConfigBeforeLoadedException
+from infrastructure.config.mapping.environment_mapper import EnvironmentMapper
 from infrastructure.config.models.database_config import DatabaseConfig
 from infrastructure.config.models.health_check_config import HealthCheckConfig
 from infrastructure.config.models.logging_config import LoggingConfig
@@ -16,7 +19,7 @@ from infrastructure.config.models.logging_config import LoggingConfig
 # NOTE: Because LogManager reaches to ConfigManager, ConfigManager shouldn't handle any logging
 class ConfigManager:
   _is_configured: bool = False
-  _environment: str
+  _environment: Environment
   _config_dir: str
   _database_config: DatabaseConfig
   _health_check_config: HealthCheckConfig
@@ -24,16 +27,21 @@ class ConfigManager:
 
   @staticmethod
   def refresh_configs() -> None:
+    input("I've been called")
     ConfigManager.refresh_environment()
-    ConfigManager.refresh_database_config()
-    ConfigManager.refresh_health_check_config()
-    ConfigManager.refresh_logging_config()
 
   @staticmethod
   def refresh_environment() -> None:
     load_dotenv()
-    ConfigManager._environment = ConfigManager._get_env_var_safe("PROJECTNAME_ENVIRONMENT")
-    ConfigManager._config_dir = f"./config/{ConfigManager._environment}"
+    env_str = ConfigManager._get_env_var_safe("PROJECTNAME_ENVIRONMENT")
+    env_enum = EnvironmentMapper.str_to_enum(env_str)
+    ConfigManager._environment = env_enum
+    ConfigManager._config_dir = f"./config/{ConfigManager._environment.value}"
+    # TODO: I don't like this here... but these configs must be updated when refresh_environment is updated
+    ConfigManager.refresh_database_config()
+    ConfigManager.refresh_health_check_config()
+    ConfigManager.refresh_logging_config()
+    ConfigManager._is_configured = True
 
   @staticmethod
   def refresh_database_config() -> None:
@@ -110,7 +118,7 @@ class ConfigManager:
     return ConfigManager._logging_config is not None
 
   @staticmethod
-  def get_environment() -> str:
+  def get_environment() -> Environment:
     return ConfigManager._environment
 
   @staticmethod
@@ -120,23 +128,27 @@ class ConfigManager:
   @staticmethod
   def get_database_config() -> DatabaseConfig:
     if not ConfigManager._is_configured:
-      ConfigManager.refresh_configs()
-      ConfigManager._is_configured = True
+      raise UsingConfigBeforeLoadedException()
     return ConfigManager._database_config
 
   @staticmethod
   def get_health_check_config() -> HealthCheckConfig:
     if not ConfigManager._is_configured:
-      ConfigManager.refresh_configs()
-      ConfigManager._is_configured = True
+      raise UsingConfigBeforeLoadedException()
     return ConfigManager._health_check_config
 
   @staticmethod
   def get_logging_config() -> LoggingConfig:
     if not ConfigManager._is_configured:
-      ConfigManager.refresh_configs()
-      ConfigManager._is_configured = True
+      raise UsingConfigBeforeLoadedException()
     return ConfigManager._logging_config
+
+  @staticmethod
+  def set_environment(environment: str) -> None:
+    env_enum = EnvironmentMapper.str_to_enum(environment)
+    ConfigManager._environment = env_enum
+    ConfigManager._config_dir = f"./config/{ConfigManager._environment.value}"
+    input(f"environment set: {ConfigManager._environment.value}")
 
   @staticmethod
   def _get_env_var_safe(var_name: str) -> str:
@@ -145,6 +157,3 @@ class ConfigManager:
       print(f"\n\tSet {var_name} and try again.")
       sys.exit(1)
     return var_value
-
-
-ConfigManager.refresh_configs()
