@@ -1,2 +1,2 @@
 class DatabaseMultipleMatchesException(Exception):
-  pass
+  ...

@@ -1,2 +1,2 @@
 class LoggerLevelException(Exception):
-  pass
+  ...

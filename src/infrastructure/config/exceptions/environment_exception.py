@@ -1,2 +1,2 @@
 class EnvironmentException(Exception):
-  pass
+  ...

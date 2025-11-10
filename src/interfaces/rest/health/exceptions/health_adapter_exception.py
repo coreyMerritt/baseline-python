@@ -1,2 +1,2 @@
 class HealthAdapterException(Exception):
-  pass
+  ...

@@ -15,12 +15,13 @@ class CustomFormatter(logging.Formatter):
     t = time.localtime(record.created)
     return time.strftime("%Y-%m-%d %H:%M:%S", t) + f".{int(record.msecs):03d}"
 
+
 class LogManager(Infrastructure):
   _is_configured: bool = False
   _logging_config: LoggingConfig
 
   @staticmethod
-  def get_health_report() -> LoggerHealthReport:    # pylint: disable=arguments-differ
+  def get_health_report() -> LoggerHealthReport:
     is_configured = LogManager.is_configured()
     is_logging_config = LogManager.is_logging_config()
     healthy = is_configured and is_logging_config

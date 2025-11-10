@@ -1,2 +1,2 @@
 class DatabaseEngineCreationException(Exception):
-  pass
+  ...

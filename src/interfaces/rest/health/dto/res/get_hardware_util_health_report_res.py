@@ -2,4 +2,4 @@ from interfaces.rest.health.dto.res.abc_get_health_report_res import GetHealthRe
 
 
 class GetHardwareUtilHealthReportRes(GetHealthReportRes):
-  pass
+  ...

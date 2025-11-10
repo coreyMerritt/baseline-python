@@ -1,2 +1,2 @@
 class LoggerFilterException(Exception):
-  pass
+  ...

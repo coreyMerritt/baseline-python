@@ -1,2 +1,2 @@
 class UnknownRunTargetException(Exception):
-  pass
+  ...

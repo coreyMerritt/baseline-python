@@ -7,7 +7,7 @@ from infrastructure.system_monitoring.models.hardware_util_health_report import 
 
 class SystemMonitor(Infrastructure):
   @staticmethod
-  def get_health_report(hardware_util_config: HardwareUtilConfig) -> HardwareUtilHealthReport:    # pylint: disable=arguments-renamed,arguments-differ
+  def get_health_report(hardware_util_config: HardwareUtilConfig) -> HardwareUtilHealthReport:
     cpu_check_interval_seconds = hardware_util_config.cpu_check_interval_seconds
     maximum_healthy_cpu_usage_percentage = hardware_util_config.maximum_healthy_cpu_usage_percentage
     maximum_healthy_disk_usage_percentage = hardware_util_config.maximum_healthy_disk_usage_percentage

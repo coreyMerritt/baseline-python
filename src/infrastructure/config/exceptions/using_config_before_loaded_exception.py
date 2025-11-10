@@ -1,2 +1,2 @@
 class UsingConfigBeforeLoadedException(Exception):
-  pass
+  ...

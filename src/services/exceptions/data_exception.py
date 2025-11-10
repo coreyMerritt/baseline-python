@@ -1,2 +1,2 @@
 class DataException(Exception):
-  pass
+  ...

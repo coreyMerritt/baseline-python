@@ -1,2 +1,2 @@
 class BlogRetrievalException(Exception):
-  pass
+  ...

@@ -1,2 +1,2 @@
 class DatabaseInsertException(Exception):
-  pass
+  ...

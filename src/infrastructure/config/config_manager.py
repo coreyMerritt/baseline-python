@@ -30,7 +30,7 @@ class ConfigManager(Infrastructure):
   _logging_config: LoggingConfig
 
   @staticmethod
-  def get_health_report() -> ConfigHealthReport:    # pylint: disable=arguments-differ
+  def get_health_report() -> ConfigHealthReport:
     is_config_dir = ConfigManager._config_dir is not None
     is_configured = ConfigManager._is_configured
     is_database_config = ConfigManager._database_config is not None

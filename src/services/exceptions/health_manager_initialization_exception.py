@@ -1,2 +1,2 @@
 class HealthManagerInitializationException(Exception):
-  pass
+  ...

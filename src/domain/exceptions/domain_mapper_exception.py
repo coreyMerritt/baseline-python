@@ -1,2 +1,2 @@
 class DomainMapperException(Exception):
-  pass
+  ...

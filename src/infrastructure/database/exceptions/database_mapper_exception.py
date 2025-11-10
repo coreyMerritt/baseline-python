@@ -1,2 +1,2 @@
 class DatabaseMapperException(Exception):
-  pass
+  ...

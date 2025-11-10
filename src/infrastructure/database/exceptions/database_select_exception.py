@@ -1,2 +1,2 @@
 class DatabaseSelectException(Exception):
-  pass
+  ...
