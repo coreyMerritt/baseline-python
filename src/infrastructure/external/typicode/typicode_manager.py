@@ -1,5 +1,6 @@
-from pydantic import ValidationError
 import requests
+from pydantic import ValidationError
+
 from infrastructure.config.models.external_config import ExternalConfig
 from infrastructure.external.exceptions.requests_parse_exception import RequestsParseException
 from infrastructure.external.exceptions.requests_status_exception import RequestsStatusException
