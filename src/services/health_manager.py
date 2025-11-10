@@ -1,12 +1,8 @@
-from logging import Logger
-
 from infrastructure.config.config_manager import ConfigManager
 from infrastructure.config.models.hardware_util_config import HardwareUtilConfig
-from infrastructure.database.database_manager import DatabaseManager
-from infrastructure.database.exceptions.database_schema_creation_exception import DatabaseSchemaCreationException
 from infrastructure.logging.log_manager import LogManager
 from infrastructure.system_monitoring.system_monitor import SystemMonitor
-from services.exceptions.health_manager_initialization_exception import HealthManagerInitializationException
+from services.abc_service import Service
 from services.value_objects.config_health_report import ConfigHealthReport
 from services.value_objects.database_health_report import DatabaseHealthReport
 from services.value_objects.full_health_report import FullHealthReport
@@ -14,21 +10,7 @@ from services.value_objects.hardware_util_health_report import HardwareUtilHealt
 from services.value_objects.logger_health_report import LoggerHealthReport
 
 
-class HealthManager:
-  _database_manager: DatabaseManager
-  _logger: Logger
-
-  def __init__(self):
-    database_config = ConfigManager.get_database_config()
-    try:
-      self._database_manager = DatabaseManager(database_config)
-    except DatabaseSchemaCreationException as e:
-      raise HealthManagerInitializationException(
-        "Database schema creation failed.",
-        { "config_dir": ConfigManager.get_config_dir() }
-      ) from e
-    self._logger = LogManager.get_logger(self.__class__.__name__)
-
+class HealthManager(Service):
   def get_full_health_report(self) -> FullHealthReport:
     health_check_config = ConfigManager.get_health_check_config()
     hardware_util_config = health_check_config.hardware_util

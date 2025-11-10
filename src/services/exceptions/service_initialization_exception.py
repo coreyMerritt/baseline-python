@@ -1,0 +1,2 @@
+class ServiceInitializationException(Exception):
+  pass
