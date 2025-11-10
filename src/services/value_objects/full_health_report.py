@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 
-from infrastructure.models.abc_health_report import HealthReport
 from infrastructure.config.models.config_health_report import ConfigHealthReport
 from infrastructure.database.models.database_health_report import DatabaseHealthReport
-from infrastructure.system_monitoring.models.hardware_util_health_report import HardwareUtilHealthReport
 from infrastructure.logging.models.logger_health_report import LoggerHealthReport
+from infrastructure.models.abc_health_report import HealthReport
+from infrastructure.system_monitoring.models.hardware_util_health_report import HardwareUtilHealthReport
 
 
 @dataclass
