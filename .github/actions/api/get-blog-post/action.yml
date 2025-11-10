@@ -1,4 +1,4 @@
-name: API Health Check
+name: POST an Account, then GET the Account
 inputs:
   python-version:
     description: "Python version to use"
@@ -18,6 +18,6 @@ runs:
     - name: Run Database
       shell: bash
       run: sudo PYTHONPATH=. .venv/bin/python ./scripts/deploy_db.py test
-    - name: API Health Check
+    - name: GET Blog Post
       shell: bash
-      run: ./tests/system/api/health-check.sh
+      run: ./tests/system/api/get-blog-post.sh

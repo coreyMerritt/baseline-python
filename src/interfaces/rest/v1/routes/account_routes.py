@@ -10,7 +10,6 @@ router = APIRouter(prefix="/api/v1/account")
 controller = AccountController()
 logger = LogManager.get_logger("AccountRoutes")
 
-# NOTE: Most GETs will not use a Req, just one or more query params ex) /account?uuid=123
 @router.get(
   path="/",
   response_model=GetAccountRes,

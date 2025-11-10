@@ -1,0 +1,2 @@
+class RequestsParseException(Exception):
+  pass

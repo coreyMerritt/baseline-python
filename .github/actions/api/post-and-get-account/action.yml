@@ -21,4 +21,3 @@ runs:
     - name: POST and GET Account
       shell: bash
       run: ./tests/system/api/post-and-get-account.sh
-    

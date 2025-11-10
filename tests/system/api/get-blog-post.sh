@@ -46,36 +46,18 @@ done
 [[ "$health_check_hit" == "true" ]]
 [[ "$health_check_healthy" == "true" ]]
 
-# Post the Account
-result="$(
-  curl \
-    --silent \
-    --location 'http://127.0.0.1:8000/api/v1/account' \
-    --header 'Content-Type: application/json' \
-    --data '{
-      "name": "Test Name",
-      "age": "23",
-      "account_type": "business"
-    }' \
-      | jq  
-)"
-post_time=$(date +%s%3N)
-status="$(echo "$result" | jq -r .status)"
-uuid="$(echo "$result" | jq -r .uuid)"
-[[ "$status" == "Success" ]]
-
 # Get the Account
-account="$(curl --silent --location "http://127.0.0.1:8000/api/v1/account?uuid=$uuid" | jq)"
-get_time=$(date +%s%3N)
-name="$(echo "$account" | jq -r .name)"
-age=$(echo "$account" | jq -r .age)
-account_type="$(echo "$account" | jq -r .account_type)"
-[[ "$name" == "Test Name" ]]
-[[ $age -eq 23 ]]
-[[ "$account_type" == "business" ]]
-
-# Some extra output
-echo -e "\n\tDEBUG: Delay was: $(( get_time - post_time ))ms\n"
+blog_post="$(curl --silent --location "http://127.0.0.1:8000/api/v1/blog?user_id=1&post_number=1" | jq)"
+user_id="$(echo "$blog_post" | jq -r .user_id)"
+id="$(echo "$blog_post" | jq -r .id)"
+title="$(echo "$blog_post" | jq -r .title)"
+body="$(echo "$blog_post" | jq -r .body)"
+[[ $user_id -eq 1 ]]
+[[ $id -eq 1 ]]
+expected=$'sunt aut facere repellat provident occaecati excepturi optio reprehenderit'
+[[ "$title" == "$expected" ]]
+expected=$'quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto'
+[[ "$body" == "$expected" ]]
 
 # Cleanup
 pid=$(ss -lntp | awk -F 'pid=' '/:8000/ { split($2, a, ","); print a[1] }')

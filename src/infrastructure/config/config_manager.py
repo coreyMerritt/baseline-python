@@ -12,6 +12,7 @@ from infrastructure.config.exceptions.config_parse_exception import ConfigParseE
 from infrastructure.config.exceptions.using_config_before_loaded_exception import UsingConfigBeforeLoadedException
 from infrastructure.config.mapping.environment_mapper import EnvironmentMapper
 from infrastructure.config.models.database_config import DatabaseConfig
+from infrastructure.config.models.external_config import ExternalConfig
 from infrastructure.config.models.health_check_config import HealthCheckConfig
 from infrastructure.config.models.logging_config import LoggingConfig
 
@@ -22,6 +23,7 @@ class ConfigManager:
   _environment: Environment
   _config_dir: str
   _database_config: DatabaseConfig
+  _external_config: ExternalConfig
   _health_check_config: HealthCheckConfig
   _logging_config: LoggingConfig
 
@@ -32,6 +34,7 @@ class ConfigManager:
     ConfigManager._environment = env_enum
     ConfigManager._config_dir = f"./config/{ConfigManager._environment.value}"
     ConfigManager.refresh_database_config()
+    ConfigManager.refresh_external_config()
     ConfigManager.refresh_health_check_config()
     ConfigManager.refresh_logging_config()
     ConfigManager._is_configured = True
@@ -48,6 +51,22 @@ class ConfigManager:
       ConfigManager._database_config = from_dict(
         data_class=DatabaseConfig,
         data=raw_database_config
+      )
+    except Exception as e:
+      raise ConfigParseException() from e
+
+  @staticmethod
+  def refresh_external_config() -> None:
+    external_config_path = f"{ConfigManager._config_dir}/external.yml"
+    try:
+      with open(external_config_path, "r", encoding='utf-8') as external_config_file:
+        raw_external_config = yaml.safe_load(external_config_file)
+    except Exception as e:
+      raise ConfigLoadException() from e
+    try:
+      ConfigManager._external_config = from_dict(
+        data_class=ExternalConfig,
+        data=raw_external_config
       )
     except Exception as e:
       raise ConfigParseException() from e
@@ -125,6 +144,12 @@ class ConfigManager:
     return ConfigManager._database_config
 
   @staticmethod
+  def get_external_config() -> ExternalConfig:
+    if not ConfigManager._is_configured:
+      raise UsingConfigBeforeLoadedException()
+    return ConfigManager._external_config
+
+  @staticmethod
   def get_health_check_config() -> HealthCheckConfig:
     if not ConfigManager._is_configured:
       raise UsingConfigBeforeLoadedException()
@@ -135,16 +160,6 @@ class ConfigManager:
     if not ConfigManager._is_configured:
       raise UsingConfigBeforeLoadedException()
     return ConfigManager._logging_config
-
-  @staticmethod
-  def set_environment(environment: str) -> None:
-    env_enum = EnvironmentMapper.str_to_enum(environment)
-    ConfigManager._environment = env_enum
-    ConfigManager._config_dir = f"./config/{ConfigManager._environment.value}"
-    ConfigManager.refresh_database_config()
-    ConfigManager.refresh_health_check_config()
-    ConfigManager.refresh_logging_config()
-    ConfigManager._is_configured = True
 
   @staticmethod
   def _get_env_var_safe(var_name: str) -> str:

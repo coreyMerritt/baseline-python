@@ -19,3 +19,12 @@ jobs:
       - uses: ./.github/actions/api/post-and-get-account
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
+  get-blog-post:
+    needs: [post-and-get-entity]
+    runs-on: ubuntu-latest
+    environment: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/api/get-blog-post
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}

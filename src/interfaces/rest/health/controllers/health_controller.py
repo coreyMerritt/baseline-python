@@ -30,5 +30,5 @@ class HealthController:
       # We give proper error codes when possible with "detail" matching the error code summary
       raise HTTPException(status_code=400, detail="Bad request") from e
     except Exception as e:
-      self._logger.error("Unknown exception -- Failed to get full health report", exc_info=e)
+      self._logger.error("Caught Vague Exception -- Failed to get full health report", exc_info=e)
       raise HTTPException(status_code=500, detail="Internal server error") from e

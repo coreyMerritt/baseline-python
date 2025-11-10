@@ -41,3 +41,11 @@ repos:
         pass_filenames: false
         stages:
           - pre-push
+      - name: GET Blog Post
+        id: get-blog-post
+        entry: ./tests/system/api/get-blog-post.sh
+        language: script
+        always_run: true
+        pass_filenames: false
+        stages:
+          - pre-push

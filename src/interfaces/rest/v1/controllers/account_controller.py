@@ -23,7 +23,6 @@ class AccountController:
     self._logger = LogManager.get_logger(self.__class__.__name__)
     self._account_manager = AccountManager()
 
-  # NOTE: Most GETs will not use a Req, just one or more query params /account?uuid=123
   async def get_account(self, uuid: str) -> GetAccountRes:
     try:
       account = await asyncio.to_thread(self._account_manager.get_account, uuid)
@@ -41,7 +40,7 @@ class AccountController:
       # We give proper error codes when possible with "detail" matching the error code summary
       raise HTTPException(status_code=400, detail="Bad request") from e
     except Exception as e:
-      self._logger.error("Unknown exception -- Failed to get account for uuid: %s", uuid, exc_info=e)
+      self._logger.error("Caught Vague Exception -- Failed to get account for uuid: %s", uuid, exc_info=e)
       raise HTTPException(status_code=500, detail="Internal server error") from e
 
   async def create_account(self, req: CreateAccountReq) -> CreateAccountRes:
@@ -69,5 +68,5 @@ class AccountController:
       # We give proper error codes when possible with "detail" matching the error code summary
       raise HTTPException(status_code=400, detail="Bad request") from e
     except Exception as e:
-      self._logger.error("Unknown exception -- Failed to create account", exc_info=e)
+      self._logger.error("Caught Vague Exception -- Failed to create account", exc_info=e)
       raise HTTPException(status_code=500, detail="Internal server error") from e
