@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 
-from infrastructure.logging.log_manager import LogManager
 from interfaces.rest.v1.controllers.blog_controller import BlogController
 from interfaces.rest.v1.dto.res.get_blog_post_res import GetBlogPostRes
 

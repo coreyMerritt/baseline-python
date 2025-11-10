@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 
-from infrastructure.logging.log_manager import LogManager
 from interfaces.rest.v1.controllers.account_controller import AccountController
 from interfaces.rest.v1.dto.req.create_account_req import CreateAccountReq
 from interfaces.rest.v1.dto.res.create_account_res import CreateAccountRes
