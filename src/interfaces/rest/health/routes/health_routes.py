@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 
-from infrastructure.logging.log_manager import LogManager
 from interfaces.rest.health.controllers.health_controller import HealthController
 from interfaces.rest.health.dto.res.get_full_health_report_res import GetFullHealthReportRes
 
