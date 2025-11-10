@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-from pathlib import Path
 import tomllib
+from pathlib import Path
 
 
 def get_project_name() -> str:
@@ -9,7 +9,7 @@ def get_project_name() -> str:
     data = tomllib.load(f)
   if "project" in data and "name" in data["project"]:
     return data["project"]["name"]
-  elif "tool" in data and "poetry" in data["tool"] and "name" in data["tool"]["poetry"]:
+  if "tool" in data and "poetry" in data["tool"] and "name" in data["tool"]["poetry"]:
     return data["tool"]["poetry"]["name"]
   raise KeyError("Project name not found in pyproject.toml")
 

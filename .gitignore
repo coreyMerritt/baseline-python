@@ -20,4 +20,3 @@ config/prod/*
 
 # Misc
 .venv
-.vscode

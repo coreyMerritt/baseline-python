@@ -1,0 +1,10 @@
+{
+  "pylint.args": ["--output-format=json"],
+  "pylint.severity": {
+    "convention": "Information",
+    "refactor": "Information",
+    "warning": "Warning",
+    "error": "Error",
+    "fatal": "Error"
+  }
+}

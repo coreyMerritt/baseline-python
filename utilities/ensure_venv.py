@@ -4,8 +4,8 @@ import subprocess
 import sys
 import venv
 from pathlib import Path
-from utilities.get_project_root import get_project_root
 
+from utilities.get_project_root import get_project_root
 
 VENV_DIR = get_project_root() / ".venv"
 

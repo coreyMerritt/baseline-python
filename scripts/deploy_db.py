@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 import os
-import sys
 import secrets
 import string
+import sys
 import time
 
 import docker
-import yaml
 import psycopg
+import yaml
 
 from utilities.get_project_name import get_project_name
 from utilities.get_project_root import get_project_root
@@ -25,18 +25,11 @@ def deploy_db() -> None:
   POSTGRES_USERNAME = f"{PROJECT_NAME}-user"
   POSTGRES_PASSWORD = __generate_password(16)
   POSTGRES_DBNAME = f"{PROJECT_NAME}-{PROJECT_ENVIRONMENT}"
-  if PROJECT_ENVIRONMENT == "test":
-    HOST_PORT = 5434
-  elif PROJECT_ENVIRONMENT == "dev":
-    HOST_PORT = 5433
-  elif PROJECT_ENVIRONMENT == "prod":
-    HOST_PORT = 5432
-  else:
-    raise RuntimeError(f"Unknown environment: {PROJECT_ENVIRONMENT}")
+  HOST_PORT = __get_host_port(PROJECT_ENVIRONMENT)
   IMAGE_VERSION = "18"
   CONTAINER_NAME = f"postgres-{IMAGE_VERSION}-{PROJECT_NAME}-{PROJECT_ENVIRONMENT}"
   created_new_config = False
-  if PROJECT_ENVIRONMENT == "test" or PROJECT_ENVIRONMENT == "dev":
+  if PROJECT_ENVIRONMENT in ["dev", "test"]:
     __create_new_config(
       new_config_path=DB_CONFIG_PATH,
       port=HOST_PORT,
@@ -56,7 +49,7 @@ def deploy_db() -> None:
       break
   print(f"Running container: {CONTAINER_NAME}")
   if PROJECT_ENVIRONMENT == "prod":
-    container = CLIENT.containers.run(
+    CLIENT.containers.run(
       detach=True,
       remove=False,
       name=CONTAINER_NAME,
@@ -77,7 +70,7 @@ def deploy_db() -> None:
       image=f"postgres:{IMAGE_VERSION}"
     )
   else:
-    container = CLIENT.containers.run(
+    CLIENT.containers.run(
       detach=True,
       remove=False,
       name=CONTAINER_NAME,
@@ -110,8 +103,7 @@ def deploy_db() -> None:
     password=POSTGRES_PASSWORD,
     dbname=POSTGRES_DBNAME,
     port=HOST_PORT,
-    host="127.0.0.1",
-    timeout=15
+    host="127.0.0.1"
   )
   print()
 
@@ -139,8 +131,9 @@ def __create_new_config(new_config_path: str, port: int, dbname: str, username: 
   with open(new_config_path, "w", encoding='utf-8') as config_file:
     yaml.safe_dump(new_config, config_file)
 
-def __wait_for_healthy_db(user, password, dbname, port, host="localhost", timeout=15):
+def __wait_for_healthy_db(user, password, dbname, port, host="localhost"):
   print("Waiting for database to become healthy...")
+  timeout = 15
   start = time.time()
   while time.time() - start < timeout:
     try:
@@ -157,6 +150,15 @@ def __wait_for_healthy_db(user, password, dbname, port, host="localhost", timeou
     except psycopg.OperationalError:
       time.sleep(1)
   raise TimeoutError("Timed out waiting for database health.")
+
+def __get_host_port(env_str: str) -> int:
+  if env_str == "test":
+    return 5434
+  if env_str == "dev":
+    return 5433
+  if env_str == "prod":
+    return 5432
+  raise RuntimeError(f"Unknown environment: {env_str}")
 
 
 if __name__ == "__main__":

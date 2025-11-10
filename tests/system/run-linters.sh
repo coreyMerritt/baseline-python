@@ -34,8 +34,8 @@ which .venv/bin/python
 
 # Test
 echo -e "\n\tStarting linting/formating tests...\n"
-.venv/bin/python -m isort --check-only ./src/
-.venv/bin/python -m mypy ./src/
-.venv/bin/python -m pylint --disable=fixme ./src/
-.venv/bin/python -m ruff check ./src/
+.venv/bin/python -m isort --check-only .
+.venv/bin/python -m mypy .
+.venv/bin/python -m pylint --rcfile=./.pylintrc ./src/ ./scripts/ ./utilities/ ./tests/
+.venv/bin/python -m ruff check .
 exit 0

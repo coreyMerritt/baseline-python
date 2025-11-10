@@ -43,19 +43,21 @@ build-backend = "setuptools.build_meta"
 indent = "  "
 line_length = 120
 src_paths = [
-  "src",
   "scripts",
-  "tests"
+  "src",
+  "tests",
+  "utilities"
 ]
 
 [tool.mypy]
 explicit_package_bases = true
-mypy_path = "src:scripts:tests"
+mypy_path = ["scripts", "src", "tests"]
 
 [tool.pytest.ini_options]
 pythonpath = [
+  "scripts",
   "src",
-  "scripts"
+  "utilities"
 ]
 testpaths = [
   "tests"
@@ -64,9 +66,10 @@ testpaths = [
 [tool.ruff]
 include = [
   "pyproject.toml",
-  "src/**/*.py",
   "scripts/**/*.py",
-  "tests/**/*.py"
+  "src/**/*.py",
+  "tests/**/*.py",
+  "utilities/**/*.py"
 ]
 
 [tool.ruff.lint]
