@@ -18,8 +18,8 @@ class LogManager:
   _logging_config: LoggingConfig
 
   @staticmethod
-  def configured_is_set() -> bool:
-    return LogManager._is_configured is not None
+  def is_configured() -> bool:
+    return LogManager._is_configured
 
   @staticmethod
   def is_logging_config() -> bool:
@@ -50,8 +50,6 @@ class LogManager:
     logging_level_const = LoggingLevelMapper.local_enum_to_logging_const(logging_level_enum)
     try:
       logging.basicConfig(
-        format='%(asctime)-25s %(service_name)-20s %(levelname)-8s %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
         level=logging_level_const
       )
     except Exception as e:
@@ -60,7 +58,7 @@ class LogManager:
   @staticmethod
   def _inject_custom_formatter() -> None:
     for handler in logging.getLogger().handlers:
-      handler.setFormatter(CustomFormatter("%(asctime)-25s %(levelname)-8s %(message)s"))
+      handler.setFormatter(CustomFormatter("%(asctime)-24s %(levelname)-9s %(message)s"))
 
   @staticmethod
   def _silence_noisy_loggers(noisy_loggers: List[str]) -> None:
@@ -69,8 +67,3 @@ class LogManager:
         logging.getLogger(name).setLevel(logging.WARNING)
     except Exception:
       logging.error("Failed to silence noisy loggers: %s", noisy_loggers)
-
-  @staticmethod
-  def _custom_time(record: logging.LogRecord) -> str:
-    t = time.localtime(record.created)
-    return time.strftime("%Y-%m-%d %H:%M:%S", t) + f".{int(record.msecs):03d}"

@@ -59,16 +59,16 @@ class HealthManager(Service):
 
   def get_database_health_report(self) -> DatabaseHealthReport:
     can_perform_basic_select = self._database_manager.can_perform_basic_select()
-    first_instantiation_is_set = self._database_manager.first_instantiation_is_set()
+    is_not_first_instantiation = not self._database_manager.is_first_instantiation()
     is_engine = self._database_manager.is_engine()
     is_logger = self._database_manager.is_logger()
     is_session_factory = self._database_manager.is_session_factory()
-    healthy = can_perform_basic_select and first_instantiation_is_set and is_engine and is_logger and is_session_factory
+    healthy = can_perform_basic_select and is_not_first_instantiation and is_engine and is_logger and is_session_factory
     return DatabaseHealthReport(
       can_perform_basic_select=can_perform_basic_select,
-      first_instantiation_is_set=first_instantiation_is_set,
       is_engine=is_engine,
       is_logger=is_logger,
+      is_not_first_instantiation=is_not_first_instantiation,
       is_session_factory=is_session_factory,
       healthy=healthy
     )
@@ -94,11 +94,11 @@ class HealthManager(Service):
     )
 
   def get_logger_health_report(self) -> LoggerHealthReport:
-    configured_is_set = LogManager.configured_is_set()
+    is_configured = LogManager.is_configured()
     is_logging_config = LogManager.is_logging_config()
-    healthy = configured_is_set and is_logging_config
+    healthy = is_configured and is_logging_config
     return LoggerHealthReport(
-      configured_is_set=configured_is_set,
+      is_configured=is_configured,
       is_logging_config=is_logging_config,
       healthy=healthy
     )

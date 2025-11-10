@@ -53,8 +53,8 @@ class DatabaseManager:
       self.create_schema()
       DatabaseManager._first_instantiation = False
 
-  def first_instantiation_is_set(self) -> bool:
-    return self._first_instantiation is not None
+  def is_first_instantiation(self) -> bool:
+    return self._first_instantiation
 
   def is_engine(self) -> bool:
     return self._engine is not None
