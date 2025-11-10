@@ -7,6 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, sessionmaker
 
 from domain.entities.account import Account
+from infrastructure.abc_infrastructure import Infrastructure
 from infrastructure.config.models.database_config import DatabaseConfig
 from infrastructure.database.base import Base
 from infrastructure.database.exceptions.database_engine_creation_exception import DatabaseEngineCreationException
@@ -16,11 +17,12 @@ from infrastructure.database.exceptions.database_multiple_matches_exception impo
 from infrastructure.database.exceptions.database_schema_creation_exception import DatabaseSchemaCreationException
 from infrastructure.database.exceptions.database_select_exception import DatabaseSelectException
 from infrastructure.database.mappers.account_orm_mapper import AccountMapper
+from infrastructure.database.models.database_health_report import DatabaseHealthReport
 from infrastructure.database.orm.account_orm import AccountORM
 from infrastructure.logging.log_manager import LogManager
 
 
-class DatabaseManager:
+class DatabaseManager(Infrastructure):
   _logger: Logger
   _first_instantiation: bool = True
   _engine: Engine
@@ -53,17 +55,21 @@ class DatabaseManager:
       self.create_schema()
       DatabaseManager._first_instantiation = False
 
-  def is_first_instantiation(self) -> bool:
-    return self._first_instantiation
-
-  def is_engine(self) -> bool:
-    return self._engine is not None
-
-  def is_logger(self) -> bool:
-    return self._logger is not None
-
-  def is_session_factory(self) -> bool:
-    return self._session_factory is not None
+  def get_health_report(self) -> DatabaseHealthReport:
+    can_perform_basic_select = self.can_perform_basic_select()
+    is_not_first_instantiation = not self._first_instantiation
+    is_engine = self._engine is not None
+    is_logger = self._logger is not None
+    is_session_factory = self._session_factory is not None
+    healthy = can_perform_basic_select and is_not_first_instantiation and is_engine and is_logger and is_session_factory
+    return DatabaseHealthReport(
+      can_perform_basic_select=can_perform_basic_select,
+      is_engine=is_engine,
+      is_logger=is_logger,
+      is_not_first_instantiation=is_not_first_instantiation,
+      is_session_factory=is_session_factory,
+      healthy=healthy
+    )
 
   def can_perform_basic_select(self) -> bool:
     try:

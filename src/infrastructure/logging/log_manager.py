@@ -2,10 +2,12 @@ import logging
 import time
 from typing import List
 
+from infrastructure.abc_infrastructure import Infrastructure
 from infrastructure.config.config_manager import ConfigManager
 from infrastructure.config.models.logging_config import LoggingConfig
 from infrastructure.logging.exceptions.logger_configuration_exception import LoggerConfigurationException
 from infrastructure.logging.mapping.logging_level_mapper import LoggingLevelMapper
+from infrastructure.logging.models.logger_health_report import LoggerHealthReport
 
 
 class CustomFormatter(logging.Formatter):
@@ -13,9 +15,20 @@ class CustomFormatter(logging.Formatter):
     t = time.localtime(record.created)
     return time.strftime("%Y-%m-%d %H:%M:%S", t) + f".{int(record.msecs):03d}"
 
-class LogManager:
+class LogManager(Infrastructure):
   _is_configured: bool = False
   _logging_config: LoggingConfig
+
+  @staticmethod
+  def get_health_report() -> LoggerHealthReport:    # pylint: disable=arguments-differ
+    is_configured = LogManager.is_configured()
+    is_logging_config = LogManager.is_logging_config()
+    healthy = is_configured and is_logging_config
+    return LoggerHealthReport(
+      is_configured=is_configured,
+      is_logging_config=is_logging_config,
+      healthy=healthy
+    )
 
   @staticmethod
   def is_configured() -> bool:

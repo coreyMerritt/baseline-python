@@ -10,16 +10,16 @@ from services.value_objects.full_health_report import FullHealthReport
 class GetFullHealthReportAdapter:
   @staticmethod
   def valueobject_to_res(value_object: FullHealthReport) -> GetFullHealthReportRes:
-    config_health_report = GetConfigHealthReportAdapter.valueobject_to_res(
+    config_health_report = GetConfigHealthReportAdapter.model_to_res(
       value_object.config_health_report
     )
-    database_health_report = GetDatabaseHealthReportAdapter.valueobject_to_res(
+    database_health_report = GetDatabaseHealthReportAdapter.model_to_res(
       value_object.database_health_report
     )
-    hardware_util_health_report = GetHardwareUtilHealthReportAdapter.valueobject_to_res(
+    hardware_util_health_report = GetHardwareUtilHealthReportAdapter.model_to_res(
       value_object.hardware_util_health_report
     )
-    logger_health_report = GetLoggerHealthReportAdapter.valueobject_to_res(
+    logger_health_report = GetLoggerHealthReportAdapter.model_to_res(
       value_object.logger_health_report
     )
     healthy = (

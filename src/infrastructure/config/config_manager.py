@@ -5,12 +5,14 @@ import yaml
 from dacite import Config, from_dict
 from dotenv import load_dotenv
 
+from infrastructure.abc_infrastructure import Infrastructure
 from infrastructure.config.enums.environment import Environment
 from infrastructure.config.enums.logging_level import LoggingLevel
 from infrastructure.config.exceptions.config_load_exception import ConfigLoadException
 from infrastructure.config.exceptions.config_parse_exception import ConfigParseException
 from infrastructure.config.exceptions.using_config_before_loaded_exception import UsingConfigBeforeLoadedException
 from infrastructure.config.mapping.environment_mapper import EnvironmentMapper
+from infrastructure.config.models.config_health_report import ConfigHealthReport
 from infrastructure.config.models.database_config import DatabaseConfig
 from infrastructure.config.models.external_config import ExternalConfig
 from infrastructure.config.models.health_check_config import HealthCheckConfig
@@ -18,7 +20,7 @@ from infrastructure.config.models.logging_config import LoggingConfig
 
 
 # NOTE: Because LogManager reaches to ConfigManager, ConfigManager shouldn't handle any logging
-class ConfigManager:
+class ConfigManager(Infrastructure):
   _is_configured: bool = False
   _environment: Environment
   _config_dir: str
@@ -26,6 +28,32 @@ class ConfigManager:
   _external_config: ExternalConfig
   _health_check_config: HealthCheckConfig
   _logging_config: LoggingConfig
+
+  @staticmethod
+  def get_health_report() -> ConfigHealthReport:    # pylint: disable=arguments-differ
+    is_config_dir = ConfigManager._config_dir is not None
+    is_configured = ConfigManager._is_configured
+    is_database_config = ConfigManager._database_config is not None
+    is_environment = ConfigManager._environment is not None
+    is_health_check_config = ConfigManager._health_check_config is not None
+    is_logging_config = ConfigManager._logging_config is not None
+    healthy = (
+      is_config_dir
+      and is_configured
+      and is_database_config
+      and is_environment
+      and is_health_check_config
+      and is_logging_config
+    )
+    return ConfigHealthReport(
+      is_config_dir=is_config_dir,
+      is_configured=is_configured,
+      is_database_config=is_database_config,
+      is_environment=is_environment,
+      is_health_check_config=is_health_check_config,
+      is_logging_config=is_logging_config,
+      healthy=healthy
+    )
 
   @staticmethod
   def refresh_environment(env_str: str) -> None:
@@ -104,30 +132,6 @@ class ConfigManager:
       )
     except Exception as e:
       raise ConfigParseException() from e
-
-  @staticmethod
-  def is_configured() -> bool:
-    return ConfigManager._is_configured
-
-  @staticmethod
-  def is_environment() -> bool:
-    return ConfigManager._environment is not None
-
-  @staticmethod
-  def is_config_dir() -> bool:
-    return ConfigManager._config_dir is not None
-
-  @staticmethod
-  def is_database_config() -> bool:
-    return ConfigManager._database_config is not None
-
-  @staticmethod
-  def is_health_check_config() -> bool:
-    return ConfigManager._health_check_config is not None
-
-  @staticmethod
-  def is_logging_config() -> bool:
-    return ConfigManager._logging_config is not None
 
   @staticmethod
   def get_environment() -> Environment:

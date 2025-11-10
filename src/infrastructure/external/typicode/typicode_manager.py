@@ -7,7 +7,7 @@ from infrastructure.external.exceptions.requests_status_exception import Request
 from infrastructure.external.typicode.models.blog_post import BlogPost
 
 
-class TypicodeManager:
+class TypicodeManager():
   _external_config: ExternalConfig
 
   def __init__(self, external_config: ExternalConfig):
