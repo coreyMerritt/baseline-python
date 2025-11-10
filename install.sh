@@ -53,3 +53,5 @@ fi
 if [[ ! -d "./config/${project_environment}/health_check.yml" ]]; then
   cp -r "./config/model/health_check.yml" "./config/${project_environment}/health_check.yml"
 fi
+
+exit 0

@@ -19,3 +19,4 @@ while true; do
 done
 
 ./src/main.py $@
+exit 0

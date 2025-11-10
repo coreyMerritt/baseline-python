@@ -26,7 +26,7 @@ source .venv/bin/activate
 # Test
 bash "./start.sh" "run" "server" "--host" "127.0.0.1" "--port" "8000" "test" &
 pid=$!
-timeout=60
+timeout=5
 start_time=$(date +%s)
 current_time=$(date +%s)
 health_check_hit="false"

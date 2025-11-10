@@ -3,8 +3,12 @@ import os
 import sys
 import secrets
 import string
+import time
+
 import docker
 import yaml
+import psycopg
+
 from utilities.get_project_name import get_project_name
 from utilities.get_project_root import get_project_root
 
@@ -52,7 +56,7 @@ def deploy_db() -> None:
       break
   print(f"Running container: {CONTAINER_NAME}")
   if PROJECT_ENVIRONMENT == "prod":
-    CLIENT.containers.run(
+    container = CLIENT.containers.run(
       detach=True,
       remove=False,
       name=CONTAINER_NAME,
@@ -73,7 +77,7 @@ def deploy_db() -> None:
       image=f"postgres:{IMAGE_VERSION}"
     )
   else:
-    CLIENT.containers.run(
+    container = CLIENT.containers.run(
       detach=True,
       remove=False,
       name=CONTAINER_NAME,
@@ -101,6 +105,15 @@ def deploy_db() -> None:
     print(f"Username: {POSTGRES_USERNAME}")
     print(f"Password: {POSTGRES_PASSWORD}")
   print()
+  __wait_for_healthy_db(
+    user=POSTGRES_USERNAME,
+    password=POSTGRES_PASSWORD,
+    dbname=POSTGRES_DBNAME,
+    port=HOST_PORT,
+    host="127.0.0.1",
+    timeout=15
+  )
+  print()
 
 
 def __require_sudo():
@@ -125,6 +138,25 @@ def __create_new_config(new_config_path: str, port: int, dbname: str, username: 
   }
   with open(new_config_path, "w", encoding='utf-8') as config_file:
     yaml.safe_dump(new_config, config_file)
+
+def __wait_for_healthy_db(user, password, dbname, port, host="localhost", timeout=15):
+  print("Waiting for database to become healthy...")
+  start = time.time()
+  while time.time() - start < timeout:
+    try:
+      with psycopg.connect(
+        dbname=dbname,
+        user=user,
+        password=password,
+        host=host,
+        port=port,
+        connect_timeout=2,
+      ):
+        print("Confirmed database is healthy.")
+        return
+    except psycopg.OperationalError:
+      time.sleep(1)
+  raise TimeoutError("Timed out waiting for database health.")
 
 
 if __name__ == "__main__":
