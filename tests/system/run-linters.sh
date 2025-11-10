@@ -38,3 +38,4 @@ echo -e "\n\tStarting linting/formating tests...\n"
 .venv/bin/python -m mypy ./src/
 .venv/bin/python -m pylint --disable=fixme ./src/
 .venv/bin/python -m ruff check ./src/
+exit 0

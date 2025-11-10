@@ -24,14 +24,14 @@ fi
 source .venv/bin/activate
 
 # Wait for system to start
-bash "./start.sh" "test" &
+bash "./start.sh" "run" "server" "--host" "127.0.0.1" "--port" "8000" "test" &
 timeout=60
 start_time=$(date +%s)
 current_time=$(date +%s)
 health_check_hit="false"
 health_check_healthy="false"
 while (( current_time - start_time < 60 )); do
-  health_check_results="$(curl --location "http://127.0.0.1:8000/api/health/")" || true
+  health_check_results="$(curl --silent --location "http://127.0.0.1:8000/api/health/" | jq)" || true
   healthy="$(echo "$health_check_results" | jq .healthy)" || true
   if [[ "$health_check_hit" == "false" && -n "$healthy" ]]; then
     health_check_hit="true"
@@ -49,13 +49,15 @@ done
 # Post the Account
   result="$(
     curl \
+      --silent \
       --location 'http://127.0.0.1:8000/api/v1/account' \
       --header 'Content-Type: application/json' \
       --data '{
         "name": "Test Name",
         "age": "23",
         "account_type": "business"
-      }'
+      }' \
+        | jq  
   )"
   post_time=$(date +%s%3N)
   status="$(echo "$result" | jq -r .status)"
@@ -63,7 +65,7 @@ done
   [[ "$status" == "Success" ]]
 
 # Get the Account
-  account="$(curl --location "http://127.0.0.1:8000/api/v1/account?uuid=$uuid")"
+  account="$(curl --silent --location "http://127.0.0.1:8000/api/v1/account?uuid=$uuid" | jq)"
   get_time=$(date +%s%3N)
   name="$(echo "$account" | jq -r .name)"
   age=$(echo "$account" | jq -r .age)
@@ -79,3 +81,4 @@ echo -e "\n\tDEBUG: Delay was: $(( get_time - post_time ))ms\n"
 pid=$(ss -lntp | awk -F 'pid=' '/:8000/ { split($2, a, ","); print a[1] }')
 kill "$pid"
 sleep 1
+exit 0

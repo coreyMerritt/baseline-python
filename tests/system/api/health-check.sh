@@ -23,16 +23,16 @@ if [[ ! -d ".venv" ]]; then
 fi
 source .venv/bin/activate
 
-bash "./start.sh" "test" &
+# Test
+bash "./start.sh" "run" "server" "--host" "127.0.0.1" "--port" "8000" "test" &
 pid=$!
-
 timeout=60
 start_time=$(date +%s)
 current_time=$(date +%s)
 health_check_hit="false"
 health_check_healthy="false"
 while (( current_time - start_time < 60 )); do
-  health_check_results="$(curl --location "http://127.0.0.1:8000/api/health/")" || true
+  health_check_results="$(curl --silent --location "http://127.0.0.1:8000/api/health/" | jq)" || true
   healthy="$(echo "$health_check_results" | jq .healthy)" || true
   if [[ "$health_check_hit" == "false" && -n "$healthy" ]]; then
     health_check_hit="true"
@@ -51,3 +51,4 @@ done
 pid=$(ss -lntp | awk -F 'pid=' '/:8000/ { split($2, a, ","); print a[1] }')
 kill "$pid"
 sleep 1
+exit 0
