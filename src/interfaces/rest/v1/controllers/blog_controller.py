@@ -44,11 +44,3 @@ class BlogController:
       self._logger.warning("Bad request")
       # We give proper error codes when possible with "detail" matching the error code summary
       raise HTTPException(status_code=400, detail="Bad request") from e
-    except Exception as e:
-      self._logger.error(
-        "Caught Vague Exception -- Failed to get blog for user_id-post_number: %s-%s",
-        user_id,
-        post_number,
-        exc_info=e
-      )
-      raise HTTPException(status_code=500, detail="Internal server error") from e

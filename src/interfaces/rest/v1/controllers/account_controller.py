@@ -39,9 +39,6 @@ class AccountController:
       self._logger.warning("Bad request")
       # We give proper error codes when possible with "detail" matching the error code summary
       raise HTTPException(status_code=400, detail="Bad request") from e
-    except Exception as e:
-      self._logger.error("Caught Vague Exception -- Failed to get account for uuid: %s", uuid, exc_info=e)
-      raise HTTPException(status_code=500, detail="Internal server error") from e
 
   async def create_account(self, req: CreateAccountReq) -> CreateAccountRes:
     try:
@@ -67,6 +64,3 @@ class AccountController:
       self._logger.warning("Bad request")
       # We give proper error codes when possible with "detail" matching the error code summary
       raise HTTPException(status_code=400, detail="Bad request") from e
-    except Exception as e:
-      self._logger.error("Caught Vague Exception -- Failed to create account", exc_info=e)
-      raise HTTPException(status_code=500, detail="Internal server error") from e

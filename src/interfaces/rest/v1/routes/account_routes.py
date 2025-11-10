@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 from infrastructure.logging.log_manager import LogManager
 from interfaces.rest.v1.controllers.account_controller import AccountController
@@ -16,13 +16,7 @@ logger = LogManager.get_logger("AccountRoutes")
   status_code=200
 )
 async def get_account(uuid: str) -> GetAccountRes:
-  try:
-    return await controller.get_account(uuid)
-  except HTTPException:
-    raise
-  except Exception as e:
-    logger.critical("Unexpected non-HTTPException in routes", exc_info=e)
-    raise HTTPException(status_code=500, detail="Internal server error") from e
+  return await controller.get_account(uuid)
 
 @router.post(
   path="/",
@@ -30,10 +24,4 @@ async def get_account(uuid: str) -> GetAccountRes:
   status_code=201
 )
 async def create_account(req: CreateAccountReq) -> CreateAccountRes:
-  try:
-    return await controller.create_account(req)
-  except HTTPException:
-    raise
-  except Exception as e:
-    logger.critical("Unexpected non-HTTPException in routes", exc_info=e)
-    raise HTTPException(status_code=500, detail="Internal server error") from e
+  return await controller.create_account(req)

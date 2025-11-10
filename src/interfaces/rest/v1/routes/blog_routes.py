@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 from infrastructure.logging.log_manager import LogManager
 from interfaces.rest.v1.controllers.blog_controller import BlogController
@@ -15,10 +15,4 @@ logger = LogManager.get_logger("BlogRoutes")
   status_code=200
 )
 async def get_blog(user_id: int, post_number: int) -> GetBlogPostRes:
-  try:
-    return await controller.get_blog_post(user_id=user_id, post_number=post_number)
-  except HTTPException:
-    raise
-  except Exception as e:
-    logger.critical("Unexpected non-HTTPException in routes", exc_info=e)
-    raise HTTPException(status_code=500, detail="Internal server error") from e
+  return await controller.get_blog_post(user_id=user_id, post_number=post_number)
