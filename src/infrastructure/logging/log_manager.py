@@ -5,8 +5,6 @@ from typing import List
 from infrastructure.config.config_manager import ConfigManager
 from infrastructure.config.models.logging_config import LoggingConfig
 from infrastructure.logging.exceptions.logger_configuration_exception import LoggerConfigurationException
-from infrastructure.logging.exceptions.logger_filter_exception import LoggerFilterException
-from infrastructure.logging.filters.service_name_filter import ServiceNameFilter
 from infrastructure.logging.mapping.logging_level_mapper import LoggingLevelMapper
 
 
@@ -32,7 +30,6 @@ class LogManager:
     if not LogManager._is_configured:
       LogManager._configure_logger()
     logger = logging.getLogger(service_name)
-    LogManager._add_filters(service_name, logger)
     return logger
 
   @staticmethod
@@ -46,13 +43,6 @@ class LogManager:
     if noisy_loggers:
       LogManager._silence_noisy_loggers(noisy_loggers)
     LogManager._is_configured = True
-
-  @staticmethod
-  def _add_filters(service_name: str, logger: logging.Logger) -> None:
-    try:
-      logger.addFilter(ServiceNameFilter(service_name))
-    except Exception as e:
-      raise LoggerFilterException() from e
 
   @staticmethod
   def _configure_base_logging() -> None:
@@ -70,7 +60,7 @@ class LogManager:
   @staticmethod
   def _inject_custom_formatter() -> None:
     for handler in logging.getLogger().handlers:
-      handler.setFormatter(CustomFormatter("%(asctime)-25s %(service_name)-20s %(levelname)-8s %(message)s"))
+      handler.setFormatter(CustomFormatter("%(asctime)-25s %(levelname)-8s %(message)s"))
 
   @staticmethod
   def _silence_noisy_loggers(noisy_loggers: List[str]) -> None:
