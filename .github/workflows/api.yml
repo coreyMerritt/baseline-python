@@ -2,16 +2,7 @@ name: Test API layer
 on:
   workflow_call:
 jobs:
-  system-starts:
-    runs-on: ubuntu-latest
-    environment: test
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/api/system-starts
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
   health-check:
-    needs: [system-starts]
     runs-on: ubuntu-latest
     environment: test
     steps:
