@@ -22,5 +22,6 @@ def __register_routes(app: FastAPI) -> FastAPI:
   app.include_router(health_routes.router)
   return app
 
+
 if __name__ == "__main__":
   create_app()
