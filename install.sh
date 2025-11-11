@@ -32,29 +32,28 @@ source .venv/bin/activate
 
 # Ensure dependencies are installed
 pip install --upgrade pip setuptools wheel
-pip install -e .[infra]
 if [[ "$project_environment" == "dev" ]]; then
-  pip install -e .
-  pip install -e .[dev]
+  pip install -e .[infra,dev]
   pre-commit install
 elif [[ "$project_environment" == "test" ]]; then
-  pip install -e .
+  pip install -e .[infra]
 elif [[ "$project_environment" == "prod" ]]; then
-  pip install .
+  pip install .[infra]
 fi
 
 # Ensure basic non-sensitive configs are in place
 if [[ ! -f ".env" ]]; then
   cp -r .env.model .env
 fi
-if [[ ! -d "./config/${project_environment}/logging.yml" ]]; then
-  cp -r "./config/model/logging.yml" "./config/${project_environment}/logging.yml"
-fi
-if [[ ! -d "./config/${project_environment}/health_check.yml" ]]; then
-  cp -r "./config/model/health_check.yml" "./config/${project_environment}/health_check.yml"
-fi
-if [[ ! -d "./config/${project_environment}/external.yml" ]]; then
-  cp -r "./config/model/external.yml" "./config/${project_environment}/external.yml"
-fi
-
+config_file_names=(
+  "database.yml"
+  "external_services.yml"
+  "health_check.yml"
+  "logging.yml"
+)
+for file_name in "${config_file_names[@]}"; do
+  if [[ ! -f "./config/${project_environment}/${file_name}" ]]; then
+    cp -r "./config/model/${file_name}" "./config/${project_environment}/${file_name}"
+  fi
+done
 exit 0

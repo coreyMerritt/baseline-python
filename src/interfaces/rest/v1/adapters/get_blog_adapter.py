@@ -1,4 +1,4 @@
-from infrastructure.external.typicode.models.blog_post import BlogPost
+from infrastructure.external_services.typicode.models.blog_post import BlogPost
 from interfaces.rest.v1.dto.res.get_blog_post_res import GetBlogPostRes
 
 

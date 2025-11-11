@@ -1,0 +1,4 @@
+global_:
+  request_timeout: 15.0
+typicode: 
+  placeholder: "placeholder"

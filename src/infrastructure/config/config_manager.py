@@ -9,7 +9,7 @@ from infrastructure.config.exceptions.config_parse_exception import ConfigParseE
 from infrastructure.config.mapping.app_environment_mapper import AppEnvironmentMapper
 from infrastructure.config.models.config_health_report import ConfigHealthReport
 from infrastructure.config.models.database_config import DatabaseConfig
-from infrastructure.config.models.external_config import ExternalConfig
+from infrastructure.config.models.external_services_config import ExternalServicesConfig
 from infrastructure.config.models.health_check_config import HealthCheckConfig
 from infrastructure.config.models.logging_config import LoggingConfig
 from infrastructure.environment.environment_manager import EnvironmentManager
@@ -21,7 +21,7 @@ class ConfigManager(Infrastructure):
   _environment: Environment
   _config_dir: str
   _database_config: DatabaseConfig
-  _external_config: ExternalConfig
+  _external_services_config: ExternalServicesConfig
   _health_check_config: HealthCheckConfig
   _logging_config: LoggingConfig
 
@@ -31,7 +31,7 @@ class ConfigManager(Infrastructure):
     is_configured = ConfigManager._is_configured
     is_database_config = ConfigManager._database_config is not None
     is_environment = ConfigManager._environment is not None
-    is_external_config = ConfigManager._external_config is not None
+    is_external_services_config = ConfigManager._external_services_config is not None
     is_health_check_config = ConfigManager._health_check_config is not None
     is_logging_config = ConfigManager._logging_config is not None
     healthy = (
@@ -39,6 +39,7 @@ class ConfigManager(Infrastructure):
       and is_configured
       and is_database_config
       and is_environment
+      and is_external_services_config
       and is_health_check_config
       and is_logging_config
     )
@@ -47,7 +48,7 @@ class ConfigManager(Infrastructure):
       is_configured=is_configured,
       is_database_config=is_database_config,
       is_environment=is_environment,
-      is_external_config=is_external_config,
+      is_external_services_config=is_external_services_config,
       is_health_check_config=is_health_check_config,
       is_logging_config=is_logging_config,
       healthy=healthy
@@ -83,15 +84,15 @@ class ConfigManager(Infrastructure):
 
   @staticmethod
   def refresh_external_config() -> None:
-    external_config_path = f"{ConfigManager._config_dir}/external.yml"
+    external_config_path = f"{ConfigManager._config_dir}/external_services.yml"
     try:
       with open(external_config_path, "r", encoding='utf-8') as external_config_file:
         raw_external_config = yaml.safe_load(external_config_file)
     except Exception as e:
       raise ConfigLoadException(str(e)) from e
     try:
-      ConfigManager._external_config = from_dict(
-        data_class=ExternalConfig,
+      ConfigManager._external_services_config = from_dict(
+        data_class=ExternalServicesConfig,
         data=raw_external_config
       )
     except Exception as e:
@@ -146,10 +147,10 @@ class ConfigManager(Infrastructure):
     return ConfigManager._database_config
 
   @staticmethod
-  def get_external_config() -> ExternalConfig:
+  def get_external_config() -> ExternalServicesConfig:
     if not ConfigManager._is_configured:
       ConfigManager.refresh()
-    return ConfigManager._external_config
+    return ConfigManager._external_services_config
 
   @staticmethod
   def get_health_check_config() -> HealthCheckConfig:
