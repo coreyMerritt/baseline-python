@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from infrastructure.config.models.config_health_report import ConfigHealthReport
+from services.models.config_health_report import ConfigHealthReport
 from infrastructure.database.models.database_health_report import DatabaseHealthReport
 from infrastructure.logging.models.logger_health_report import LoggerHealthReport
 from infrastructure.models.abc_health_report import HealthReport

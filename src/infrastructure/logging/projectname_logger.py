@@ -3,9 +3,9 @@ from logging import WARNING, Formatter, Logger, LogRecord, basicConfig, error, g
 from typing import List
 
 from infrastructure.abc_infrastructure import Infrastructure
-from infrastructure.config.enums.logging_level import LoggingLevel
 from infrastructure.logging.exceptions.logger_configuration_exception import LoggerConfigurationException
 from infrastructure.logging.mapping.logging_level_mapper import LoggingLevelMapper
+from services.enums.logging_level import LoggingLevel
 
 
 class CustomFormatter(Formatter):

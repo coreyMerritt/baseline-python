@@ -2,12 +2,12 @@ import requests
 from pydantic import ValidationError
 
 from infrastructure.abc_infrastructure import Infrastructure
-from infrastructure.config.models.external_services_global_config import ExternalServicesGlobalConfig
-from infrastructure.config.models.typicode_config import TypicodeConfig
 from infrastructure.external_services.exceptions.requests_parse_exception import RequestsParseException
 from infrastructure.external_services.exceptions.requests_status_exception import RequestsStatusException
 from infrastructure.external_services.typicode.models.blog_post import BlogPost
 from infrastructure.external_services.typicode.models.typicode_health_report import TypicodeHealthReport
+from services.models.external_services_global_config import ExternalServicesGlobalConfig
+from services.models.typicode_config import TypicodeConfig
 
 
 class TypicodeManager(Infrastructure):

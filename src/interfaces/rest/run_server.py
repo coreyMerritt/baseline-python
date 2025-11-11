@@ -1,10 +1,10 @@
 import uvicorn
 
-from infrastructure.config.config_manager import ConfigManager
-from infrastructure.config.enums.environment import Environment
-from infrastructure.config.exceptions.environment_exception import EnvironmentException
-from infrastructure.config.mapping.app_environment_mapper import AppEnvironmentMapper
 from infrastructure.environment.environment_manager import EnvironmentManager
+from services.config_manager import ConfigManager
+from services.enums.environment import Environment
+from services.exceptions.environment_exception import EnvironmentException
+from services.mapping.app_environment_mapper import AppEnvironmentMapper
 
 
 def run_server(env_str: str, host: str, port: int):

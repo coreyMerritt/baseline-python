@@ -2,17 +2,17 @@ import yaml
 from dacite import Config, from_dict
 
 from infrastructure.abc_infrastructure import Infrastructure
-from infrastructure.config.enums.environment import Environment
-from infrastructure.config.enums.logging_level import LoggingLevel
-from infrastructure.config.exceptions.config_load_exception import ConfigLoadException
-from infrastructure.config.exceptions.config_parse_exception import ConfigParseException
-from infrastructure.config.mapping.app_environment_mapper import AppEnvironmentMapper
-from infrastructure.config.models.config_health_report import ConfigHealthReport
-from infrastructure.config.models.database_config import DatabaseConfig
-from infrastructure.config.models.external_services_config import ExternalServicesConfig
-from infrastructure.config.models.health_check_config import HealthCheckConfig
-from infrastructure.config.models.logging_config import LoggingConfig
 from infrastructure.environment.environment_manager import EnvironmentManager
+from services.enums.environment import Environment
+from services.enums.logging_level import LoggingLevel
+from services.exceptions.config_load_exception import ConfigLoadException
+from services.exceptions.config_parse_exception import ConfigParseException
+from services.mapping.app_environment_mapper import AppEnvironmentMapper
+from services.models.config_health_report import ConfigHealthReport
+from services.models.database_config import DatabaseConfig
+from services.models.external_services_config import ExternalServicesConfig
+from services.models.health_check_config import HealthCheckConfig
+from services.models.logging_config import LoggingConfig
 
 
 # NOTE: Because LogManager reaches to ConfigManager, ConfigManager shouldn't handle any logging

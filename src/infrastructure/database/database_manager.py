@@ -8,7 +8,6 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from domain.entities.account import Account
 from infrastructure.abc_infrastructure import Infrastructure
-from infrastructure.config.models.database_config import DatabaseConfig
 from infrastructure.database.base import Base
 from infrastructure.database.exceptions.database_engine_creation_exception import DatabaseEngineCreationException
 from infrastructure.database.exceptions.database_enum_mapping_exception import DatabaseEnumMappingException
@@ -20,6 +19,7 @@ from infrastructure.database.mappers.account_orm_mapper import AccountMapper
 from infrastructure.database.models.database_health_report import DatabaseHealthReport
 from infrastructure.database.orm.account_orm import AccountORM
 from infrastructure.logging.projectname_logger import ProjectnameLogger
+from services.models.database_config import DatabaseConfig
 
 
 class DatabaseManager(Infrastructure):

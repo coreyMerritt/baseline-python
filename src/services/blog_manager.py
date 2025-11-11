@@ -1,8 +1,8 @@
-from infrastructure.config.config_manager import ConfigManager
 from infrastructure.external_services.exceptions.requests_parse_exception import RequestsParseException
 from infrastructure.external_services.exceptions.requests_status_exception import RequestsStatusException
 from infrastructure.external_services.typicode.typicode_manager import TypicodeManager
 from services.abc_service import Service
+from services.config_manager import ConfigManager
 from services.exceptions.blog_retrieval_exception import BlogRetrievalException
 
 

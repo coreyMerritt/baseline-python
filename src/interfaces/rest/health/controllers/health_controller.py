@@ -24,7 +24,7 @@ class HealthController:
     try:
       health_report = await asyncio.to_thread(self._health_manager.get_full_health_report)
       self._logger.info("Successfully retrieved full health report")
-      return GetFullHealthReportAdapter.valueobject_to_res(health_report)
+      return GetFullHealthReportAdapter.model_to_res(health_report)
     except HealthAdapterException as e:
       # We drop exec_info=e for low-concern exceptions
       self._logger.warning("Bad request")

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from infrastructure.config.models.hardware_util_config import HardwareUtilConfig
+from services.models.hardware_util_config import HardwareUtilConfig
 
 
 @dataclass(frozen=True)

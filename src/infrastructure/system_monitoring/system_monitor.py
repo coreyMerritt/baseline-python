@@ -1,8 +1,8 @@
 import psutil
 
 from infrastructure.abc_infrastructure import Infrastructure
-from infrastructure.config.models.hardware_util_config import HardwareUtilConfig
 from infrastructure.system_monitoring.models.hardware_util_health_report import HardwareUtilHealthReport
+from services.models.hardware_util_config import HardwareUtilConfig
 
 
 class SystemMonitor(Infrastructure):
