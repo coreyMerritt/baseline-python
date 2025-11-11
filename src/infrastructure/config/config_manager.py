@@ -31,6 +31,7 @@ class ConfigManager(Infrastructure):
     is_configured = ConfigManager._is_configured
     is_database_config = ConfigManager._database_config is not None
     is_environment = ConfigManager._environment is not None
+    is_external_config = ConfigManager._external_config is not None
     is_health_check_config = ConfigManager._health_check_config is not None
     is_logging_config = ConfigManager._logging_config is not None
     healthy = (
@@ -46,6 +47,7 @@ class ConfigManager(Infrastructure):
       is_configured=is_configured,
       is_database_config=is_database_config,
       is_environment=is_environment,
+      is_external_config=is_external_config,
       is_health_check_config=is_health_check_config,
       is_logging_config=is_logging_config,
       healthy=healthy
