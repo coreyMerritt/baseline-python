@@ -53,7 +53,7 @@ class DatabaseManager(Infrastructure):
     if not getattr(self._engine, "_schema_initialized", False):
       self.create_schema()
       setattr(self._engine, "_schema_initialized", True)
-
+    self._engine.connect().close()
 
   def get_health_report(self) -> DatabaseHealthReport:
     can_perform_basic_select = self.can_perform_basic_select()
@@ -77,6 +77,9 @@ class DatabaseManager(Infrastructure):
     except SQLAlchemyError:
       return False
 
+  def get_session(self) -> Session:
+    return self._session_factory()
+
   def create_schema(self) -> None:
     self._logger.debug("Attempting to create database schema...")
     try:
@@ -84,9 +87,6 @@ class DatabaseManager(Infrastructure):
       self._logger.debug("Created database schema.")
     except SQLAlchemyError as e:
       raise DatabaseSchemaCreationException(str(e)) from e
-
-  def get_session(self) -> Session:
-    return self._session_factory()
 
   def get_id_from_account(
     self,
