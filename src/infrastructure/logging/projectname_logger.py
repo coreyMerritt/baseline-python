@@ -1,5 +1,5 @@
-from logging import Formatter, Logger, LogRecord, basicConfig, error, getLogger, WARNING
 import time
+from logging import WARNING, Formatter, Logger, LogRecord, basicConfig, error, getLogger
 from typing import List
 
 from infrastructure.abc_infrastructure import Infrastructure
