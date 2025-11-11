@@ -1,4 +1,5 @@
 from abc import ABC
+
 from infrastructure.logging.projectname_logger import Logger, ProjectnameLogger
 
 

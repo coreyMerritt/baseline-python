@@ -5,7 +5,7 @@ from interfaces.command_line.enums.command import Command
 from interfaces.command_line.enums.run_target import RunTarget
 from interfaces.command_line.exceptions.unknown_command_exception import UnknownCommandException
 from interfaces.command_line.exceptions.unknown_run_target_exception import UnknownRunTargetException
-from services.server_runner import ServerRunner
+from interfaces.rest.run_server import run_server
 
 
 class CommandLineInterface:
@@ -27,8 +27,7 @@ class CommandLineInterface:
     args = parser.parse_args()
     if args.command.lower() == Command.RUN.value:
       if args.target.lower() == RunTarget.SERVER.value:
-        server_runner = ServerRunner(args.env)
-        server_runner.run(args.host, args.port)
+        run_server(args.env, args.host, args.port)
       else:
         raise UnknownRunTargetException()
     else:
