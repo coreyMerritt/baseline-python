@@ -7,7 +7,7 @@ router = APIRouter(prefix="/api/v1/blog")
 
 # This example is basically just a full passthrough to an external service, 0 transformation
 @router.get(
-  path="/",
+  path="",
   response_model=GetBlogPostRes,
   status_code=200
 )

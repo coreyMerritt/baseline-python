@@ -26,7 +26,6 @@ def create_app() -> FastAPI:
         "Database schema creation failed.",
         {"config_dir": ConfigManager.get_config_dir()}
       ) from e
-    app.state.db.create_schema()
 
     yield  # Application runs during this period
 

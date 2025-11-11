@@ -8,7 +8,7 @@ from interfaces.rest.v1.dto.res.get_account_res import GetAccountRes
 router = APIRouter(prefix="/api/v1/account")
 
 @router.get(
-  path="/",
+  path="",
   response_model=GetAccountRes,
   status_code=200
 )
