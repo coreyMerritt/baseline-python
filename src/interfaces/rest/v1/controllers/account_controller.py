@@ -1,7 +1,7 @@
 import asyncio
 from logging import Logger
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 
 from infrastructure.logging.log_manager import LogManager
 from interfaces.rest.v1.adapters.create_account_adapter import CreateAccountAdapter
@@ -16,12 +16,14 @@ from services.exceptions.data_validation_exception import DataValidationExceptio
 
 
 class AccountController:
+  _req: Request
   _logger: Logger
   _account_manager: AccountManager
 
-  def __init__(self):
+  def __init__(self, req: Request):
+    self._req = req
     self._logger = LogManager.get_logger(self.__class__.__name__)
-    self._account_manager = AccountManager()
+    self._account_manager = AccountManager(req.app.state.db)
 
   async def get_account(self, uuid: str) -> GetAccountRes:
     try:

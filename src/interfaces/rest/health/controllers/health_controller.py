@@ -1,7 +1,7 @@
 import asyncio
 from logging import Logger
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 
 from infrastructure.logging.log_manager import LogManager
 from interfaces.rest.health.adapters.get_full_health_report_adapter import GetFullHealthReportAdapter
@@ -11,12 +11,14 @@ from services.health_manager import HealthManager
 
 
 class HealthController:
+  _req: Request
   _logger: Logger
   _health_manager: HealthManager
 
-  def __init__(self):
+  def __init__(self, req: Request):
+    self._req = req
     self._logger = LogManager.get_logger(self.__class__.__name__)
-    self._health_manager = HealthManager()
+    self._health_manager = HealthManager(req.app.state.db)
 
   # NOTE: Most GETs will not use a Req, just one or more query params /health?uuid=123
   async def get_full_health_report(self) -> GetFullHealthReportRes:

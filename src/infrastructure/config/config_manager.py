@@ -1,22 +1,18 @@
-import os
-import sys
-
 import yaml
 from dacite import Config, from_dict
-from dotenv import load_dotenv
 
 from infrastructure.abc_infrastructure import Infrastructure
 from infrastructure.config.enums.environment import Environment
 from infrastructure.config.enums.logging_level import LoggingLevel
 from infrastructure.config.exceptions.config_load_exception import ConfigLoadException
 from infrastructure.config.exceptions.config_parse_exception import ConfigParseException
-from infrastructure.config.exceptions.using_config_before_loaded_exception import UsingConfigBeforeLoadedException
-from infrastructure.config.mapping.environment_mapper import EnvironmentMapper
+from infrastructure.config.mapping.app_environment_mapper import AppEnvironmentMapper
 from infrastructure.config.models.config_health_report import ConfigHealthReport
 from infrastructure.config.models.database_config import DatabaseConfig
 from infrastructure.config.models.external_config import ExternalConfig
 from infrastructure.config.models.health_check_config import HealthCheckConfig
 from infrastructure.config.models.logging_config import LoggingConfig
+from infrastructure.environment.environment_manager import EnvironmentManager
 
 
 # NOTE: Because LogManager reaches to ConfigManager, ConfigManager shouldn't handle any logging
@@ -56,9 +52,9 @@ class ConfigManager(Infrastructure):
     )
 
   @staticmethod
-  def refresh_environment(env_str: str) -> None:
-    load_dotenv()
-    env_enum = EnvironmentMapper.str_to_enum(env_str)
+  def refresh() -> None:
+    env_str = EnvironmentManager.get_env_var("PROJECTNAME_ENVIRONMENT")
+    env_enum = AppEnvironmentMapper.str_to_enum(env_str)
     ConfigManager._environment = env_enum
     ConfigManager._config_dir = f"./config/{ConfigManager._environment.value}"
     ConfigManager.refresh_database_config()
@@ -144,31 +140,23 @@ class ConfigManager(Infrastructure):
   @staticmethod
   def get_database_config() -> DatabaseConfig:
     if not ConfigManager._is_configured:
-      raise UsingConfigBeforeLoadedException()
+      ConfigManager.refresh()
     return ConfigManager._database_config
 
   @staticmethod
   def get_external_config() -> ExternalConfig:
     if not ConfigManager._is_configured:
-      raise UsingConfigBeforeLoadedException()
+      ConfigManager.refresh()
     return ConfigManager._external_config
 
   @staticmethod
   def get_health_check_config() -> HealthCheckConfig:
     if not ConfigManager._is_configured:
-      raise UsingConfigBeforeLoadedException()
+      ConfigManager.refresh()
     return ConfigManager._health_check_config
 
   @staticmethod
   def get_logging_config() -> LoggingConfig:
     if not ConfigManager._is_configured:
-      raise UsingConfigBeforeLoadedException()
+      ConfigManager.refresh()
     return ConfigManager._logging_config
-
-  @staticmethod
-  def _get_env_var_safe(var_name: str) -> str:
-    var_value = os.getenv(var_name)
-    if not var_value:
-      print(f"\n\tSet {var_name} and try again.")
-      sys.exit(1)
-    return var_value

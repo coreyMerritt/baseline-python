@@ -88,6 +88,9 @@ class DatabaseManager(Infrastructure):
     except SQLAlchemyError as e:
       raise DatabaseSchemaCreationException(str(e)) from e
 
+  def dispose(self):
+    self._engine.dispose()
+
   def get_id_from_account(
     self,
     account: Account

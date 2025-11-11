@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 from interfaces.rest.v1.controllers.blog_controller import BlogController
 from interfaces.rest.v1.dto.res.get_blog_post_res import GetBlogPostRes
@@ -11,6 +11,6 @@ router = APIRouter(prefix="/api/v1/blog")
   response_model=GetBlogPostRes,
   status_code=200
 )
-async def get_blog(user_id: int, post_number: int) -> GetBlogPostRes:
-  controller = BlogController()
+async def get_blog(req: Request, user_id: int, post_number: int) -> GetBlogPostRes:
+  controller = BlogController(req)
   return await controller.get_blog_post(user_id=user_id, post_number=post_number)

@@ -2,12 +2,12 @@ from domain.entities.account import Account
 from domain.enums.account_type import AccountType
 from domain.exceptions.domain_validation_exception import DomainValidationException
 from infrastructure.database.exceptions.database_select_exception import DatabaseSelectException
-from services.abc_service import Service
+from services.abc_database_aware_service import DatabaseAwareService
 from services.exceptions.data_exception import DataException
 from services.exceptions.data_validation_exception import DataValidationException
 
 
-class AccountManager(Service):
+class AccountManager(DatabaseAwareService):
   def get_account(self, uuid: str) -> Account | None:
     try:
       account = self._database_manager.get_account_from_id(uuid)

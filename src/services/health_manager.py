@@ -9,11 +9,11 @@ from infrastructure.logging.log_manager import LogManager
 from infrastructure.logging.models.logger_health_report import LoggerHealthReport
 from infrastructure.system_monitoring.models.hardware_util_health_report import HardwareUtilHealthReport
 from infrastructure.system_monitoring.system_monitor import SystemMonitor
-from services.abc_service import Service
+from services.abc_database_aware_service import DatabaseAwareService
 from services.value_objects.full_health_report import FullHealthReport
 
 
-class HealthManager(Service):
+class HealthManager(DatabaseAwareService):
   def get_full_health_report(self) -> FullHealthReport:
     health_check_config = ConfigManager.get_health_check_config()
     hardware_util_config = health_check_config.hardware_util

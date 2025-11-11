@@ -2,7 +2,7 @@ from infrastructure.config.enums.environment import Environment
 from infrastructure.config.exceptions.environment_exception import EnvironmentException
 
 
-class EnvironmentMapper:
+class AppEnvironmentMapper:
   @staticmethod
   def str_to_enum(string: str) -> Environment:
     for enum in Environment:

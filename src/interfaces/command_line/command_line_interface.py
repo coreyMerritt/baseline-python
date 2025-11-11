@@ -2,6 +2,7 @@ import argparse
 import sys
 
 from infrastructure.config.config_manager import ConfigManager
+from infrastructure.environment.environment_manager import EnvironmentManager
 from interfaces.command_line.enums.command import Command
 from interfaces.command_line.enums.run_target import RunTarget
 from interfaces.command_line.exceptions.unknown_command_exception import UnknownCommandException
@@ -28,9 +29,10 @@ class CommandLineInterface:
     args = parser.parse_args()
     if args.command.lower() == Command.RUN.value:
       if args.target.lower() == RunTarget.SERVER.value:
-        ConfigManager.refresh_environment(args.env)
+        EnvironmentManager.set_env_var("PROJECTNAME_ENVIRONMENT", args.env)
+        ConfigManager.refresh()
         server_runner = ServerRunner()
-        server_runner.run(args.env, args.host, args.port)
+        server_runner.run(args.host, args.port)
       else:
         raise UnknownRunTargetException()
     else:

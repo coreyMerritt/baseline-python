@@ -1,7 +1,7 @@
 import asyncio
 from logging import Logger
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 
 from infrastructure.logging.log_manager import LogManager
 from interfaces.rest.v1.adapters.get_blog_adapter import GetBlogAdapter
@@ -12,10 +12,12 @@ from services.exceptions.blog_retrieval_exception import BlogRetrievalException
 
 
 class BlogController:
+  _req: Request
   _logger: Logger
   _blog_manager: BlogManager
 
-  def __init__(self):
+  def __init__(self, req: Request):
+    self._req = req
     self._logger = LogManager.get_logger(self.__class__.__name__)
     self._blog_manager = BlogManager()
 
