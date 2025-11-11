@@ -1,5 +1,6 @@
 import uvicorn
 
+from infrastructure.config.config_manager import ConfigManager
 from infrastructure.config.enums.environment import Environment
 from infrastructure.config.exceptions.environment_exception import EnvironmentException
 from infrastructure.config.mapping.app_environment_mapper import AppEnvironmentMapper
@@ -8,6 +9,11 @@ from services.abc_service import Service
 
 
 class ServerRunner(Service):
+  def __init__(self, env_str: str):
+    EnvironmentManager.set_env_var("PROJECTNAME_ENVIRONMENT", env_str)
+    ConfigManager.refresh()
+    super().__init__()
+
   def run(self, host: str, port: int):
     env_str = EnvironmentManager.get_env_var("PROJECTNAME_ENVIRONMENT")
     env_enum = AppEnvironmentMapper.str_to_enum(env_str)
