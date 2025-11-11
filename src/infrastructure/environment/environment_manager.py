@@ -1,10 +1,10 @@
 import os
 
 from dotenv import load_dotenv
+
 from infrastructure.abc_infrastructure import Infrastructure
-from infrastructure.environment.exceptions.unknown_environment_variable_exception import (
+from infrastructure.environment.exceptions.unknown_environment_variable_exception import \
   UnknownEnvironmentVariableException
-)
 
 
 class EnvironmentManager(Infrastructure):

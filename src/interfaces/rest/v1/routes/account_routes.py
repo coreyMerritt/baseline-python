@@ -17,7 +17,7 @@ async def get_account(req: Request, uuid: str) -> GetAccountRes:
   return await controller.get_account(uuid)
 
 @router.post(
-  path="/",
+  path="",
   response_model=CreateAccountRes,
   status_code=201
 )
