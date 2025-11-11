@@ -24,7 +24,6 @@ from infrastructure.logging.log_manager import LogManager
 
 class DatabaseManager(Infrastructure):
   _logger: Logger
-  _first_instantiation: bool = True
   _engine: Engine
   _session_factory: sessionmaker
 
@@ -49,24 +48,23 @@ class DatabaseManager(Infrastructure):
         engine, name, username, host, port
       )
     except SQLAlchemyError as e:
-      raise DatabaseEngineCreationException() from e
+      raise DatabaseEngineCreationException(str(e)) from e
     self._session_factory = sessionmaker(bind=self._engine, future=True, expire_on_commit=False)
-    if DatabaseManager._first_instantiation:
+    if not getattr(self._engine, "_schema_initialized", False):
       self.create_schema()
-      DatabaseManager._first_instantiation = False
+      setattr(self._engine, "_schema_initialized", True)
+
 
   def get_health_report(self) -> DatabaseHealthReport:
     can_perform_basic_select = self.can_perform_basic_select()
-    is_not_first_instantiation = not self._first_instantiation
     is_engine = self._engine is not None
     is_logger = self._logger is not None
     is_session_factory = self._session_factory is not None
-    healthy = can_perform_basic_select and is_not_first_instantiation and is_engine and is_logger and is_session_factory
+    healthy = can_perform_basic_select and is_engine and is_logger and is_session_factory
     return DatabaseHealthReport(
       can_perform_basic_select=can_perform_basic_select,
       is_engine=is_engine,
       is_logger=is_logger,
-      is_not_first_instantiation=is_not_first_instantiation,
       is_session_factory=is_session_factory,
       healthy=healthy
     )
@@ -85,7 +83,7 @@ class DatabaseManager(Infrastructure):
       Base.metadata.create_all(self._engine)
       self._logger.debug("Created database schema.")
     except SQLAlchemyError as e:
-      raise DatabaseSchemaCreationException() from e
+      raise DatabaseSchemaCreationException(str(e)) from e
 
   def get_session(self) -> Session:
     return self._session_factory()
@@ -108,7 +106,7 @@ class DatabaseManager(Infrastructure):
           query = query.filter(AccountORM.uuid == account.get_uid())
         results = query.all()
     except SQLAlchemyError as e:
-      raise DatabaseSelectException() from e
+      raise DatabaseSelectException(str(e)) from e
     # Handling this inside the session is important because of lazy loading? Hmmm
     if not results:
       return None
@@ -132,14 +130,14 @@ class DatabaseManager(Infrastructure):
         )
       self._logger.debug("Retrieved account for uuid: %s", uuid)
     except SQLAlchemyError as e:
-      raise DatabaseSelectException() from e
+      raise DatabaseSelectException(str(e)) from e
     # Handling this inside the session is important because of lazy loading? Hmmm
     if first_account_orm_match is None:
       return None
     try:
       account_match = AccountMapper.orm_to_domain(first_account_orm_match)
     except DatabaseEnumMappingException as e:
-      raise DatabaseSelectException() from e
+      raise DatabaseSelectException(str(e)) from e
     return account_match
 
   def create_account(
@@ -149,7 +147,7 @@ class DatabaseManager(Infrastructure):
     try:
       account_orm = AccountMapper.domain_to_orm(account)
     except DatabaseEnumMappingException as e:
-      raise DatabaseInsertException() from e
+      raise DatabaseInsertException(str(e)) from e
     with self.get_session() as session:
       try:
         session.add(account_orm)   # "local load", nothing is executed in the DBMS yet
@@ -159,6 +157,6 @@ class DatabaseManager(Infrastructure):
       # We always use try/except when writing to databases for safety
       except SQLAlchemyError as e:
         session.rollback()
-        raise DatabaseInsertException() from e
+        raise DatabaseInsertException(str(e)) from e
       account = AccountMapper.orm_to_domain(account_orm)
       return account

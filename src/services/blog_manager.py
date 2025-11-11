@@ -18,6 +18,6 @@ class BlogManager(Service):
     try:
       return self._typicode_manager.get_blog_post(user_id, post_number)
     except RequestsParseException as e:
-      raise BlogRetrievalException() from e
+      raise BlogRetrievalException(str(e)) from e
     except RequestsStatusException as e:
-      raise BlogRetrievalException() from e
+      raise BlogRetrievalException(str(e)) from e

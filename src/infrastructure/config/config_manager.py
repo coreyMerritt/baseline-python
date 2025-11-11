@@ -74,14 +74,14 @@ class ConfigManager(Infrastructure):
       with open(database_config_path, "r", encoding='utf-8') as database_config_file:
         raw_database_config = yaml.safe_load(database_config_file)
     except Exception as e:
-      raise ConfigLoadException() from e
+      raise ConfigLoadException(str(e)) from e
     try:
       ConfigManager._database_config = from_dict(
         data_class=DatabaseConfig,
         data=raw_database_config
       )
     except Exception as e:
-      raise ConfigParseException() from e
+      raise ConfigParseException(str(e)) from e
 
   @staticmethod
   def refresh_external_config() -> None:
@@ -90,14 +90,14 @@ class ConfigManager(Infrastructure):
       with open(external_config_path, "r", encoding='utf-8') as external_config_file:
         raw_external_config = yaml.safe_load(external_config_file)
     except Exception as e:
-      raise ConfigLoadException() from e
+      raise ConfigLoadException(str(e)) from e
     try:
       ConfigManager._external_config = from_dict(
         data_class=ExternalConfig,
         data=raw_external_config
       )
     except Exception as e:
-      raise ConfigParseException() from e
+      raise ConfigParseException(str(e)) from e
 
   @staticmethod
   def refresh_health_check_config() -> None:
@@ -106,14 +106,14 @@ class ConfigManager(Infrastructure):
       with open(health_check_config_path, "r", encoding='utf-8') as health_check_config_file:
         raw_health_check_config = yaml.safe_load(health_check_config_file)
     except Exception as e:
-      raise ConfigLoadException() from e
+      raise ConfigLoadException(str(e)) from e
     try:
       ConfigManager._health_check_config = from_dict(
         data_class=HealthCheckConfig,
         data=raw_health_check_config
       )
     except Exception as e:
-      raise ConfigParseException() from e
+      raise ConfigParseException(str(e)) from e
 
   @staticmethod
   def refresh_logging_config() -> None:
@@ -123,7 +123,7 @@ class ConfigManager(Infrastructure):
       with open(logging_config_path, "r", encoding='utf-8') as logging_config_file:
         raw_logging_config = yaml.safe_load(logging_config_file)
     except Exception as e:
-      raise ConfigLoadException() from e
+      raise ConfigLoadException(str(e)) from e
     try:
       ConfigManager._logging_config = from_dict(
         data_class=LoggingConfig,
@@ -131,7 +131,7 @@ class ConfigManager(Infrastructure):
         config=dacite_config
       )
     except Exception as e:
-      raise ConfigParseException() from e
+      raise ConfigParseException(str(e)) from e
 
   @staticmethod
   def get_environment() -> Environment:

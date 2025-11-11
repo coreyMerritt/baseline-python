@@ -11,4 +11,4 @@ class GetHardwareUtilHealthReportAdapter:
         healthy=model.healthy
       )
     except Exception as e:
-      raise HealthAdapterException() from e
+      raise HealthAdapterException(str(e)) from e

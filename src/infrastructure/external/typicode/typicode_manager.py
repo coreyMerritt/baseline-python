@@ -27,5 +27,5 @@ class TypicodeManager():
       response_json = response.json()
       blog_post = BlogPost.model_validate(response_json)
     except (ValueError, ValidationError, KeyError) as e:
-      raise RequestsParseException() from e
+      raise RequestsParseException(str(e)) from e
     return blog_post

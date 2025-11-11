@@ -67,7 +67,7 @@ class LogManager(Infrastructure):
         level=logging_level_const
       )
     except Exception as e:
-      raise LoggerConfigurationException() from e
+      raise LoggerConfigurationException(str(e)) from e
 
   @staticmethod
   def _inject_custom_formatter() -> None:

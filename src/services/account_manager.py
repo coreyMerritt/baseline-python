@@ -12,7 +12,7 @@ class AccountManager(Service):
     try:
       account = self._database_manager.get_account_from_id(uuid)
     except DatabaseSelectException as e:
-      raise DataException() from e
+      raise DataException(str(e)) from e
     return account
 
   def create_account(self, uuid: str, name: str,age: int, account_type: AccountType) -> Account | None:
@@ -24,9 +24,9 @@ class AccountManager(Service):
         account_type=account_type
       )
     except DomainValidationException as e:
-      raise DataValidationException() from e
+      raise DataValidationException(str(e)) from e
     try:
       created_account = self._database_manager.create_account(account)
     except DatabaseSelectException as e:
-      raise DataException() from e
+      raise DataException(str(e)) from e
     return created_account
