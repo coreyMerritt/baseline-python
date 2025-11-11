@@ -1,14 +1,13 @@
 import asyncio
-from logging import Logger
 
 from fastapi import HTTPException, Request
 
-from infrastructure.logging.log_manager import LogManager
 from interfaces.rest.v1.adapters.get_blog_adapter import GetBlogAdapter
 from interfaces.rest.v1.dto.res.get_blog_post_res import GetBlogPostRes
 from interfaces.rest.v1.exceptions.rest_adapter_exception import RestAdapterException
 from services.blog_manager import BlogManager
 from services.exceptions.blog_retrieval_exception import BlogRetrievalException
+from services.log_manager import Logger, LogManager
 
 
 class BlogController:
