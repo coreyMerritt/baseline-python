@@ -1,11 +1,9 @@
 from abc import ABC
-from logging import Logger
-
-from infrastructure.logging.log_manager import LogManager
+from infrastructure.logging.projectname_logger import Logger, ProjectnameLogger
 
 
 class Service(ABC):
   _logger: Logger
 
   def __init__(self):
-    self._logger = LogManager.get_logger(self.__class__.__name__)
+    self._logger = ProjectnameLogger.get_logger(self.__class__.__name__)

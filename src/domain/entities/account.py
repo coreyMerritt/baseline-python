@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from domain.enums.account_type import AccountType
 from domain.exceptions.domain_validation_exception import DomainValidationException
-from infrastructure.logging.log_manager import LogManager
+from infrastructure.logging.projectname_logger import ProjectnameLogger
 
 
 class Account:
@@ -14,7 +14,7 @@ class Account:
   _account_type: AccountType
 
   def __init__(self, name: str, age: int, account_type: AccountType, uuid: str | None = None):
-    self._logger = LogManager.get_logger(self.__class__.__name__)
+    self._logger = ProjectnameLogger.get_logger(self.__class__.__name__)
     if uuid:
       self._uid = uuid
     else:

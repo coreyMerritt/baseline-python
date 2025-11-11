@@ -19,7 +19,7 @@ from infrastructure.database.exceptions.database_select_exception import Databas
 from infrastructure.database.mappers.account_orm_mapper import AccountMapper
 from infrastructure.database.models.database_health_report import DatabaseHealthReport
 from infrastructure.database.orm.account_orm import AccountORM
-from infrastructure.logging.log_manager import LogManager
+from infrastructure.logging.projectname_logger import ProjectnameLogger
 
 
 class DatabaseManager(Infrastructure):
@@ -28,7 +28,7 @@ class DatabaseManager(Infrastructure):
   _session_factory: sessionmaker
 
   def __init__(self, database_config: DatabaseConfig):
-    self._logger = LogManager.get_logger(self.__class__.__name__)
+    self._logger = ProjectnameLogger.get_logger(self.__class__.__name__)
     engine = database_config.engine
     if engine == "postgresql":
       engine = f"{engine}+psycopg"
