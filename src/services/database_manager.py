@@ -2,7 +2,9 @@ from logging import Logger
 
 from domain.entities.account import Account
 from infrastructure.database.database import Database, Session
+from infrastructure.database.exceptions.database_schema_creation_exception import DatabaseSchemaCreationException
 from services.abc_service import Service
+from services.exceptions.database_creation_exception import DatabaseCreationException
 from services.models.database_config import DatabaseConfig
 from shared.models.health_reports.database_health_report import DatabaseHealthReport
 
@@ -18,7 +20,10 @@ class DatabaseManager(Service):
       "Initializing %s engine for database %s: %s@%s:%s...",
       c.engine, c.name, c.username, c.host, c.port
     )
-    self._database = Database(database_config)
+    try:
+      self._database = Database(database_config)
+    except DatabaseSchemaCreationException as e:
+      raise DatabaseCreationException() from e
 
   def get_health_report(self) -> DatabaseHealthReport:
     can_perform_basic_select = self._database.can_perform_basic_select()
