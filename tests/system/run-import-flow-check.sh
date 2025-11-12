@@ -9,13 +9,13 @@ function importCheck() {
   import="$2"   # ex) domain
   exception="${3-}"   # ex) adapter|mapper
   if [[ -n "$exception" ]]; then
-    echo -e "\n\t========== $layer may not import from $import, UNLESS they are ${exception}s =========="
+    echo -e "\n\n\n\t========== $layer may not import from $import, UNLESS they are ${exception}s ==========\n"
     grep --color -rn "${import}\." src/${layer}/ --exclude-dir="__pycache__" \
       | awk "!(/\/${exception}s\// && /${exception}\.py/)" \
       | grep --color=always -E "src/${layer}|${import}\." \
       && exit 1
   else
-    echo -e "\n\t========== $layer may not import from $import =========="
+    echo -e "\n\n\n\t========== $layer may not import from $import ==========\n"
     grep --color -rn "${import}\." src/${layer}/ --exclude-dir="__pycache__" \
       | grep --color=always -E "src/${layer}|${import}\." \
       && exit 1
