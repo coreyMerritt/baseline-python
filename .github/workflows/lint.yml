@@ -2,11 +2,19 @@ name: Run all linters
 on:
   workflow_call:
 jobs:
-  lint:
+  custom-import-check:
     runs-on: ubuntu-latest
     environment: test
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/lint
+      - uses: ./.github/actions/custom-import-check
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+  pythonic-linters:
+    runs-on: ubuntu-latest
+    environment: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pythonic-linters
         with:
           python-version: ${{ vars.PYTHON_VERSION }}

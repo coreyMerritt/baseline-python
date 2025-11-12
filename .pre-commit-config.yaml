@@ -9,6 +9,14 @@ repos:
         pass_filenames: false
         stages:
           - pre-push
+      - name: Run Custom Import Flow Check
+        id: run-linters
+        entry: ./tests/system/run-import-flow-check.sh
+        language: script
+        always_run: true
+        pass_filenames: false
+        stages:
+          - pre-push
       - name: Run Linters
         id: run-linters
         entry: ./tests/system/run-linters.sh
