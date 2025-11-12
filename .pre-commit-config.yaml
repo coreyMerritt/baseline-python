@@ -9,31 +9,31 @@ repos:
         pass_filenames: false
         stages:
           - pre-push
-      - name: Run Custom Import Flow Check
-        id: run-linters
+      - name: Custom Import Flow Check
+        id: custom-import-flow-check
         entry: ./tests/system/import-flow-check.sh
         language: script
         always_run: true
         pass_filenames: false
         stages:
           - pre-push
-      - name: Run Linters
-        id: run-linters
+      - name: Linters
+        id: linters
         entry: ./tests/system/linters.sh
         language: script
         always_run: true
         pass_filenames: false
         stages:
           - pre-push
-      - name: Run Unit Tests
-        id: run-unit-tests
+      - name: Unit Tests
+        id: unit-tests
         entry: ./tests/system/unit-tests.sh
         language: script
         always_run: true
         pass_filenames: false
         stages:
           - pre-push
-      - name: Health Check Passes
+      - name: Health Check
         id: health-check
         entry: ./tests/system/api/health-check.sh
         language: script
