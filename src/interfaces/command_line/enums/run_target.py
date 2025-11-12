@@ -1,5 +1,5 @@
 from enum import Enum
 
 
-class RunTarget(Enum):
+class RunTarget(str, Enum):
   SERVER = "server"

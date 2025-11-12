@@ -1,17 +1,17 @@
 import uvicorn
 
 from services.config_manager import ConfigManager
-from services.enums.environment_type import EnvironmentType
+from services.enums.deployment_env import DeploymentEnv
 from services.exceptions.environment_exception import EnvironmentException
-from services.mapping.app_environment_mapper import AppEnvironmentMapper
+from services.mapping.deployment_env_mapper import DeploymentEnvMapper
 
 
 def run_server(env_str: str, host: str, port: int):
-  ConfigManager.set_env(env_str)
+  env_enum = DeploymentEnvMapper.str_to_enum(env_str)
+  ConfigManager.set_env(env_enum)
   ConfigManager.refresh()
   env_str = ConfigManager.get_env()
-  env_enum = AppEnvironmentMapper.str_to_enum(env_str)
-  if env_enum == EnvironmentType.DEV:
+  if env_enum == DeploymentEnv.DEV:
     uvicorn.run(
       "interfaces.rest.webserver_entrypoint:create_app",
       host=host,
@@ -19,14 +19,14 @@ def run_server(env_str: str, host: str, port: int):
       reload=True,
       reload_excludes=[".venv/*", "*/__pycache__/*", "*.pyc", ".git"]
     )
-  elif env_enum == EnvironmentType.PROD:
+  elif env_enum == DeploymentEnv.PROD:
     uvicorn.run(
       "interfaces.rest.webserver_entrypoint:create_app",
       host=host,
       port=port,
       reload=False
     )
-  elif env_enum == EnvironmentType.TEST:
+  elif env_enum == DeploymentEnv.TEST:
     uvicorn.run(
       "interfaces.rest.webserver_entrypoint:create_app",
       host=host,

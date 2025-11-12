@@ -1,5 +1,5 @@
 from enum import Enum
 
 
-class Command(Enum):
+class Command(str, Enum):
   RUN = "run"

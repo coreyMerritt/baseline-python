@@ -4,10 +4,11 @@ from infrastructure.config.parser import ConfigParser
 from infrastructure.disk.disk import Disk
 from infrastructure.environment.environment import Environment
 from services.abc_service import Service
-from services.enums.environment_type import EnvironmentType
+from services.enums.deployment_env import DeploymentEnv
+from services.enums.env_var import EnvVar
 from services.exceptions.config_load_exception import ConfigLoadException
 from services.exceptions.unset_environment_variable_exception import UnsetEnvironmentVariableException
-from services.mapping.app_environment_mapper import AppEnvironmentMapper
+from services.mapping.deployment_env_mapper import DeploymentEnvMapper
 from shared.models.configs.database_config import DatabaseConfig
 from shared.models.configs.external_services.external_services_config import ExternalServicesConfig
 from shared.models.configs.health_check_config import HealthCheckConfig
@@ -129,19 +130,19 @@ class ConfigManager(Service):
     return ConfigManager._logger_config
 
   @staticmethod
-  def get_env() -> EnvironmentType:
+  def get_env() -> DeploymentEnv:
     if ConfigManager._is_stale_env():
       Environment.load_env()
       ConfigManager._last_env_load = datetime.now(timezone.utc)
-    env_str = Environment.get_env_var("PROJECTNAME_ENVIRONMENT")
+    env_str = Environment.get_env_var(EnvVar.DEPLOYMENT_ENVIRONMENT.value)
     if not env_str:
       raise UnsetEnvironmentVariableException()
-    env_enum = AppEnvironmentMapper.str_to_enum(env_str)
+    env_enum = DeploymentEnvMapper.str_to_enum(env_str)
     return env_enum
 
   @staticmethod
-  def set_env(env_str: str) -> None:
-    Environment.set_env_var("PROJECTNAME_ENVIRONMENT", env_str)
+  def set_env(deployment_env_enum: DeploymentEnv) -> None:
+    Environment.set_env_var(EnvVar.DEPLOYMENT_ENVIRONMENT.value, deployment_env_enum.value)
 
   @staticmethod
   def _is_stale_env() -> bool:

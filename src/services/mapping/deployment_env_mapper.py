@@ -1,11 +1,11 @@
-from services.enums.environment_type import EnvironmentType
+from services.enums.deployment_env import DeploymentEnv
 from services.exceptions.environment_exception import EnvironmentException
 
 
-class AppEnvironmentMapper:
+class DeploymentEnvMapper:
   @staticmethod
-  def str_to_enum(string: str) -> EnvironmentType:
-    for enum in EnvironmentType:
+  def str_to_enum(string: str) -> DeploymentEnv:
+    for enum in DeploymentEnv:
       if string.lower() == enum.value.lower():
         return enum
     raise EnvironmentException(string)
