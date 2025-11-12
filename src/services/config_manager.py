@@ -4,7 +4,7 @@ from infrastructure.config.parser import ConfigParser
 from infrastructure.disk.disk import Disk
 from infrastructure.environment.environment import Environment
 from services.abc_service import Service
-from services.enums.deployment_env import DeploymentEnv
+from services.enums.deployment_environment import DeploymentEnvironment
 from services.enums.env_var import EnvVar
 from services.exceptions.config_load_exception import ConfigLoadException
 from services.exceptions.unset_environment_variable_exception import UnsetEnvironmentVariableException
@@ -130,7 +130,7 @@ class ConfigManager(Service):
     return ConfigManager._logger_config
 
   @staticmethod
-  def get_env() -> DeploymentEnv:
+  def get_env() -> DeploymentEnvironment:
     if ConfigManager._is_stale_env():
       Environment.load_env()
       ConfigManager._last_env_load = datetime.now(timezone.utc)
@@ -141,7 +141,7 @@ class ConfigManager(Service):
     return env_enum
 
   @staticmethod
-  def set_env(deployment_env_enum: DeploymentEnv) -> None:
+  def set_env(deployment_env_enum: DeploymentEnvironment) -> None:
     Environment.set_env_var(EnvVar.DEPLOYMENT_ENVIRONMENT.value, deployment_env_enum.value)
 
   @staticmethod

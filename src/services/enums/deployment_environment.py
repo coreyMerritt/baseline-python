@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class DeploymentEnv(str, Enum):
+class DeploymentEnvironment(str, Enum):
   DEV = "dev"
   PROD = "prod"
   TEST = "test"
