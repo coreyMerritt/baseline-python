@@ -7,5 +7,4 @@ from infrastructure.models.abc_health_report import HealthReport
 class DatabaseHealthReport(HealthReport):
   can_perform_basic_select: bool
   is_engine: bool
-  is_logger: bool
   is_session_factory: bool

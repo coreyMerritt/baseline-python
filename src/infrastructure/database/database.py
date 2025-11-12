@@ -1,4 +1,3 @@
-from logging import Logger
 from urllib.parse import quote_plus
 
 from sqlalchemy import create_engine, text
@@ -16,37 +15,25 @@ from infrastructure.database.exceptions.database_multiple_matches_exception impo
 from infrastructure.database.exceptions.database_schema_creation_exception import DatabaseSchemaCreationException
 from infrastructure.database.exceptions.database_select_exception import DatabaseSelectException
 from infrastructure.database.mappers.account_orm_mapper import AccountMapper
-from infrastructure.database.models.database_health_report import DatabaseHealthReport
 from infrastructure.database.orm.account_orm import AccountORM
-from infrastructure.logging.projectname_logger import ProjectnameLogger
 from services.models.database_config import DatabaseConfig
 
 
-class DatabaseManager(Infrastructure):
-  _logger: Logger
+class Database(Infrastructure):
   _engine: Engine
   _session_factory: sessionmaker
 
   def __init__(self, database_config: DatabaseConfig):
-    self._logger = ProjectnameLogger.get_logger(self.__class__.__name__)
-    engine = database_config.engine
-    if engine == "postgresql":
-      engine = f"{engine}+psycopg"
+    engine_str = database_config.engine
+    if engine_str == "postgresql":
+      engine_str = f"{engine_str}+psycopg"
     username = database_config.username
     password = quote_plus(database_config.password)
     host = database_config.host
     port = database_config.port
     name = database_config.name
-    self._logger.debug(
-      "Initializing %s engine for database %s: %s@%s:%s...",
-      engine, name, username, host, port
-    )
     try:
-      self._engine = create_engine(f"{engine}://{username}:{password}@{host}:{port}/{name}")
-      self._logger.debug(
-        "Initialized %s engine for database %s: %s@%s:%s",
-        engine, name, username, host, port
-      )
+      self._engine = create_engine(f"{engine_str}://{username}:{password}@{host}:{port}/{name}")
     except SQLAlchemyError as e:
       raise DatabaseEngineCreationException(str(e)) from e
     self._session_factory = sessionmaker(bind=self._engine, future=True, expire_on_commit=False)
@@ -55,19 +42,14 @@ class DatabaseManager(Infrastructure):
       setattr(self._engine, "_schema_initialized", True)
     self._engine.connect().close()
 
-  def get_health_report(self) -> DatabaseHealthReport:
-    can_perform_basic_select = self.can_perform_basic_select()
-    is_engine = self._engine is not None
-    is_logger = self._logger is not None
-    is_session_factory = self._session_factory is not None
-    healthy = can_perform_basic_select and is_engine and is_logger and is_session_factory
-    return DatabaseHealthReport(
-      can_perform_basic_select=can_perform_basic_select,
-      is_engine=is_engine,
-      is_logger=is_logger,
-      is_session_factory=is_session_factory,
-      healthy=healthy
-    )
+  def get_session(self) -> Session:
+    return self._session_factory()
+
+  def get_session_factory(self) -> sessionmaker:
+    return self._session_factory
+
+  def get_engine(self) -> Engine:
+    return self._engine
 
   def can_perform_basic_select(self) -> bool:
     try:
@@ -77,21 +59,17 @@ class DatabaseManager(Infrastructure):
     except SQLAlchemyError:
       return False
 
-  def get_session(self) -> Session:
-    return self._session_factory()
 
   def create_schema(self) -> None:
-    self._logger.debug("Attempting to create database schema...")
     try:
       Base.metadata.create_all(self._engine)
-      self._logger.debug("Created database schema.")
     except SQLAlchemyError as e:
       raise DatabaseSchemaCreationException(str(e)) from e
 
   def dispose(self):
     self._engine.dispose()
 
-  def get_id_from_account(
+  def get_uuid_from_account(
     self,
     account: Account
   ) -> str | None:
@@ -118,11 +96,10 @@ class DatabaseManager(Infrastructure):
     uuid = results[0].uuid
     return uuid
 
-  def get_account_from_id(
+  def get_account_from_uuid(
     self,
     uuid: str
   ) -> Account | None:
-    self._logger.debug("Attempting to retrieve account for uuid: %s", uuid)
     try:
       with self.get_session() as session:
         first_account_orm_match = (
@@ -131,7 +108,6 @@ class DatabaseManager(Infrastructure):
           .filter(AccountORM.uuid == uuid)
           .first()
         )
-      self._logger.debug("Retrieved account for uuid: %s", uuid)
     except SQLAlchemyError as e:
       raise DatabaseSelectException(str(e)) from e
     # Handling this inside the session is important because of lazy loading? Hmmm
@@ -143,7 +119,7 @@ class DatabaseManager(Infrastructure):
       raise DatabaseSelectException(str(e)) from e
     return account_match
 
-  def create_account(
+  def insert_account(
     self,
     account: Account
   ) -> Account:

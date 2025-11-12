@@ -10,7 +10,7 @@ from services.exceptions.data_validation_exception import DataValidationExceptio
 class AccountManager(DatabaseAwareService):
   def get_account(self, uuid: str) -> Account | None:
     try:
-      account = self._database_manager.get_account_from_id(uuid)
+      account = self._database_manager.get_account(uuid)
     except DatabaseSelectException as e:
       raise DataException(str(e)) from e
     return account

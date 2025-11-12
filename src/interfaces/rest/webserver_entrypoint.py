@@ -2,13 +2,13 @@
 from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 
-from infrastructure.database.database_manager import DatabaseManager
 from infrastructure.database.exceptions.database_schema_creation_exception import DatabaseSchemaCreationException
 from interfaces.rest.exceptions.app_initialization_exception import AppInitializationException
 from interfaces.rest.health.routes import health_routes
 from interfaces.rest.v1.exceptions.handlers.exception import register_unhandled_exception_handler
 from interfaces.rest.v1.routes import account_routes, blog_routes
 from services.config_manager import ConfigManager
+from services.database_manager import DatabaseManager
 
 
 def create_app() -> FastAPI:
