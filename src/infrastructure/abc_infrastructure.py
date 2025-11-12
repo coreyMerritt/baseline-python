@@ -1,5 +1,5 @@
-from asyncio import Protocol
+from abc import ABC
 
 
-class Infrastructure(Protocol):
+class Infrastructure(ABC):
   ...

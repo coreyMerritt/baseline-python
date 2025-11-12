@@ -10,13 +10,13 @@ function importCheck() {
   exception="${3-}"   # ex) adapter   OR   mapper
   if [[ -n "$exception" ]]; then
     echo -e "\n\n\n\t========== $layer may not import from $import, UNLESS they are ${exception}s ==========\n"
-    grep --color -rn "${import}\." src/${layer}/ --exclude-dir="__pycache__" \
+    grep --color -rn " ${import}\." "src/${layer}/" --exclude-dir="__pycache__" \
       | awk "!(/\/${exception}s\// && /${exception}\.py/)" \
       | grep --color=always -E "src/${layer}|${import}\." \
       && exit 1
   else
     echo -e "\n\n\n\t========== $layer may not import from $import ==========\n"
-    grep --color -rn "${import}\." src/${layer}/ --exclude-dir="__pycache__" \
+    grep --color -rn " ${import}\." "src/${layer}/" --exclude-dir="__pycache__" \
       | grep --color=always -E "src/${layer}|${import}\." \
       && exit 1
   fi
@@ -30,3 +30,5 @@ importCheck "infrastructure" "interfaces"
 importCheck "domain" "infrastructure"
 importCheck "domain" "services"
 importCheck "domain" "interfaces"
+
+exit 0

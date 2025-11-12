@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from services.enums.logging_level import LoggingLevel
+from shared.enums.logging_level import LoggingLevel
 
 
 @dataclass(frozen=True)
