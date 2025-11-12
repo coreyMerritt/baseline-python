@@ -1,6 +1,7 @@
 from abc import ABC
+from logging import Logger
 
-from infrastructure.logging.projectname_logger import Logger, ProjectnameLogger
+from infrastructure.logger.projectname_logger import ProjectnameLogger
 
 
 class Service(ABC):

@@ -11,11 +11,11 @@ from services.mapping.app_environment_mapper import AppEnvironmentMapper
 from shared.models.configs.database_config import DatabaseConfig
 from shared.models.configs.external_services.external_services_config import ExternalServicesConfig
 from shared.models.configs.health_check_config import HealthCheckConfig
-from shared.models.configs.logging_config import LoggingConfig
+from shared.models.configs.logger_config import LoggerConfig
 from shared.models.health_reports.config_health_report import ConfigHealthReport
 
 
-# NOTE: Because LogManager reaches to ConfigManager, ConfigManager shouldn't handle any logging
+# NOTE: Because LogManager needs configs from ConfigManager, ConfigManager shouldn't handle any logging
 class ConfigManager(Service):
   _is_configured: bool = False
   _last_env_load: datetime | None = None
@@ -23,7 +23,7 @@ class ConfigManager(Service):
   _database_config: DatabaseConfig
   _external_services_config: ExternalServicesConfig
   _health_check_config: HealthCheckConfig
-  _logging_config: LoggingConfig
+  _logger_config: LoggerConfig
 
   @staticmethod
   def get_health_report() -> ConfigHealthReport:
@@ -32,14 +32,14 @@ class ConfigManager(Service):
     is_database_config = ConfigManager._database_config is not None
     is_external_services_config = ConfigManager._external_services_config is not None
     is_health_check_config = ConfigManager._health_check_config is not None
-    is_logging_config = ConfigManager._logging_config is not None
+    is_logger_config = ConfigManager._logger_config is not None
     healthy = (
       is_config_dir
       and is_configured
       and is_database_config
       and is_external_services_config
       and is_health_check_config
-      and is_logging_config
+      and is_logger_config
     )
     return ConfigHealthReport(
       is_config_dir=is_config_dir,
@@ -47,7 +47,7 @@ class ConfigManager(Service):
       is_database_config=is_database_config,
       is_external_services_config=is_external_services_config,
       is_health_check_config=is_health_check_config,
-      is_logging_config=is_logging_config,
+      is_logger_config=is_logger_config,
       healthy=healthy
     )
 
@@ -59,7 +59,7 @@ class ConfigManager(Service):
     ConfigManager.refresh_database_config()
     ConfigManager.refresh_external_services_config()
     ConfigManager.refresh_health_check_config()
-    ConfigManager.refresh_logging_config()
+    ConfigManager.refresh_logger_config()
     ConfigManager._is_configured = True
 
   @staticmethod
@@ -92,13 +92,13 @@ class ConfigManager(Service):
     ConfigManager._health_check_config = ConfigParser().parse_health_check_config(raw_health_check_config)
 
   @staticmethod
-  def refresh_logging_config() -> None:
-    logging_config_path = f"{ConfigManager._config_dir}/logging.yml"
+  def refresh_logger_config() -> None:
+    logger_config_path = f"{ConfigManager._config_dir}/logger.yml"
     try:
-      raw_logging_config = Disk().read_yaml(logging_config_path)
+      raw_logger_config = Disk().read_yaml(logger_config_path)
     except Exception as e:
       raise ConfigLoadException(str(e)) from e
-    ConfigManager._logging_config = ConfigParser().parse_logging_config(raw_logging_config)
+    ConfigManager._logger_config = ConfigParser().parse_logger_config(raw_logger_config)
 
   @staticmethod
   def get_config_dir() -> str:
@@ -123,10 +123,10 @@ class ConfigManager(Service):
     return ConfigManager._health_check_config
 
   @staticmethod
-  def get_logging_config() -> LoggingConfig:
+  def get_logger_config() -> LoggerConfig:
     if not ConfigManager._is_configured:
       ConfigManager.refresh()
-    return ConfigManager._logging_config
+    return ConfigManager._logger_config
 
   @staticmethod
   def get_env() -> EnvironmentType:

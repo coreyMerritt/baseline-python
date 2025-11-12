@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class LoggingLevel(str, Enum):
+class LoggerLevel(str, Enum):
   DEBUG = "debug"
   INFO = "info"
   WARNING = "warning"

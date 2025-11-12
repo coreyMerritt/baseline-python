@@ -73,7 +73,6 @@ class Database(Infrastructure):
     self,
     account: Account
   ) -> str | None:
-    # NOTE: We don't do a logging/debug here because we can't give good info on the account without breaking privacy
     try:
       with self.get_session() as session:
         query = (

@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from typing import List
 
-from shared.enums.logging_level import LoggingLevel
+from shared.enums.logger_level import LoggerLevel
 
 
 @dataclass(frozen=True)
-class LoggingConfig:
-  level: LoggingLevel
+class LoggerConfig:
+  level: LoggerLevel
   noisy_loggers: List[str]

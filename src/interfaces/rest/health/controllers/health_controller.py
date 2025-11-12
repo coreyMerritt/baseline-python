@@ -1,4 +1,5 @@
 import asyncio
+from logging import Logger
 
 from fastapi import HTTPException, Request
 
@@ -6,7 +7,7 @@ from interfaces.rest.health.adapters.get_full_health_report_adapter import GetFu
 from interfaces.rest.health.dto.res.get_full_health_report_res import GetFullHealthReportRes
 from interfaces.rest.health.exceptions.health_adapter_exception import HealthAdapterException
 from services.health_manager import HealthManager
-from services.log_manager import Logger, LogManager
+from services.log_manager import LogManager
 
 
 class HealthController:

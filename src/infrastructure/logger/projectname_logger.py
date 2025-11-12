@@ -3,9 +3,9 @@ from logging import WARNING, Formatter, Logger, LogRecord, basicConfig, error, g
 from typing import List
 
 from infrastructure.abc_infrastructure import Infrastructure
-from infrastructure.logging.exceptions.logger_configuration_exception import LoggerConfigurationException
-from infrastructure.logging.mapping.logging_level_mapper import LoggingLevelMapper
-from shared.enums.logging_level import LoggingLevel
+from infrastructure.logger.exceptions.logger_configuration_exception import LoggerConfigurationException
+from infrastructure.logger.mapping.logger_level_mapper import LoggerLevelMapper
+from shared.enums.logger_level import LoggerLevel
 
 
 class CustomFormatter(Formatter):
@@ -21,8 +21,8 @@ class ProjectnameLogger(Infrastructure):
     return logger
 
   @staticmethod
-  def configure_base_logging(logging_level_enum: LoggingLevel) -> None:
-    logging_level_const = LoggingLevelMapper.local_enum_to_logging_const(logging_level_enum)
+  def configure_base_logging(logger_level_enum: LoggerLevel) -> None:
+    logging_level_const = LoggerLevelMapper.local_enum_to_logging_const(logger_level_enum)
     try:
       basicConfig(
         level=logging_level_const

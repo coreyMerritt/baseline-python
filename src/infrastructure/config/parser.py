@@ -4,11 +4,11 @@ from dacite import Config, from_dict
 
 from infrastructure.abc_infrastructure import Infrastructure
 from infrastructure.config.exceptions.config_parser_exception import ConfigParserException
-from shared.enums.logging_level import LoggingLevel
+from shared.enums.logger_level import LoggerLevel
 from shared.models.configs.database_config import DatabaseConfig
 from shared.models.configs.external_services.external_services_config import ExternalServicesConfig
 from shared.models.configs.health_check_config import HealthCheckConfig
-from shared.models.configs.logging_config import LoggingConfig
+from shared.models.configs.logger_config import LoggerConfig
 
 
 class ConfigParser(Infrastructure):
@@ -39,12 +39,12 @@ class ConfigParser(Infrastructure):
     except Exception as e:
       raise ConfigParserException(str(e)) from e
 
-  def parse_logging_config(self, some_data: Any) -> LoggingConfig:
+  def parse_logger_config(self, some_data: Any) -> LoggerConfig:
     try:
       return from_dict(
-        data_class=LoggingConfig,
+        data_class=LoggerConfig,
         data=some_data,
-        config=Config(type_hooks={LoggingLevel: LoggingLevel})
+        config=Config(type_hooks={LoggerLevel: LoggerLevel})
       )
     except Exception as e:
       raise ConfigParserException(str(e)) from e

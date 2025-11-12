@@ -1,4 +1,5 @@
 import asyncio
+from logging import Logger
 
 from fastapi import HTTPException, Request
 
@@ -11,7 +12,7 @@ from interfaces.rest.v1.exceptions.rest_adapter_exception import RestAdapterExce
 from services.account_manager import AccountManager
 from services.exceptions.data_exception import DataException
 from services.exceptions.data_validation_exception import DataValidationException
-from services.log_manager import Logger, LogManager
+from services.log_manager import LogManager
 
 
 class AccountController:

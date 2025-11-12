@@ -10,4 +10,4 @@ class ConfigHealthReport(HealthReport):
   is_database_config: bool
   is_external_services_config: bool
   is_health_check_config: bool
-  is_logging_config: bool
+  is_logger_config: bool
