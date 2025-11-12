@@ -15,6 +15,6 @@ runs:
     - name: Install Dependencies
       shell: bash
       run: ./install.sh "dev"
-    - name: Run Linters
+    - name: Run Custom Import Flow Check
       shell: bash
-      run: ./tests/system/run-import-check.sh
+      run: ./tests/system/import-flow-check.sh
