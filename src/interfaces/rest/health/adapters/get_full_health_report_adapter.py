@@ -4,7 +4,7 @@ from interfaces.rest.health.adapters.get_hardware_util_health_report_adapter imp
 from interfaces.rest.health.adapters.get_logger_health_report_adapter import GetLoggerHealthReportAdapter
 from interfaces.rest.health.dto.res.get_full_health_report_res import GetFullHealthReportRes
 from interfaces.rest.health.exceptions.health_adapter_exception import HealthAdapterException
-from services.models.full_health_report import FullHealthReport
+from shared.models.health_reports.full_health_report import FullHealthReport
 
 
 class GetFullHealthReportAdapter:

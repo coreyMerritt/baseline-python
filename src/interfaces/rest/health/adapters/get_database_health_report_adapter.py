@@ -1,6 +1,6 @@
-from infrastructure.database.models.database_health_report import DatabaseHealthReport
 from interfaces.rest.health.dto.res.get_full_health_report_res import GetDatabaseHealthReportRes
 from interfaces.rest.health.exceptions.health_adapter_exception import HealthAdapterException
+from shared.models.health_reports.database_health_report import DatabaseHealthReport
 
 
 class GetDatabaseHealthReportAdapter:

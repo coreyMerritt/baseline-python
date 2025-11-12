@@ -2,9 +2,9 @@ from logging import Logger
 
 from domain.entities.account import Account
 from infrastructure.database.database import Database, Session
-from infrastructure.database.models.database_health_report import DatabaseHealthReport
 from services.abc_service import Service
 from services.models.database_config import DatabaseConfig
+from shared.models.health_reports.database_health_report import DatabaseHealthReport
 
 
 class DatabaseManager(Service):

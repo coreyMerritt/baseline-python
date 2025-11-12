@@ -1,6 +1,6 @@
 from infrastructure.abc_infrastructure import Infrastructure
-from infrastructure.external_services.models.external_services_health_report import ExternalServicesHealthReport
 from services.models.external_services_config import ExternalServicesConfig
+from shared.models.health_reports.external_services_health_report import ExternalServicesHealthReport
 
 
 class ExternalServiceManager(Infrastructure):

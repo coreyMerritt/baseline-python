@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from infrastructure.models.abc_health_report import HealthReport
+from shared.models.health_reports.abc_health_report import HealthReport
 
 
 @dataclass

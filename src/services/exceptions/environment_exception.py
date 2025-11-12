@@ -1,2 +1,3 @@
+# TODO: This is in reference to the deployment env, not env vars -- already a work item to address the naming
 class EnvironmentException(Exception):
   ...

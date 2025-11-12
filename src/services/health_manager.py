@@ -1,16 +1,16 @@
 import json
 from dataclasses import asdict
 
-from infrastructure.database.models.database_health_report import DatabaseHealthReport
-from infrastructure.logging.models.logger_health_report import LoggerHealthReport
-from infrastructure.system_monitoring.models.hardware_util_health_report import HardwareUtilHealthReport
 from infrastructure.system_monitoring.system_monitor import SystemMonitor
 from services.abc_database_aware_service import DatabaseAwareService
 from services.config_manager import ConfigManager
 from services.log_manager import LogManager
-from services.models.config_health_report import ConfigHealthReport
-from services.models.full_health_report import FullHealthReport
 from services.models.hardware_util_config import HardwareUtilConfig
+from shared.models.health_reports.config_health_report import ConfigHealthReport
+from shared.models.health_reports.database_health_report import DatabaseHealthReport
+from shared.models.health_reports.full_health_report import FullHealthReport
+from shared.models.health_reports.hardware_util_health_report import HardwareUtilHealthReport
+from shared.models.health_reports.logger_health_report import LoggerHealthReport
 
 
 class HealthManager(DatabaseAwareService):

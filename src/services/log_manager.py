@@ -1,8 +1,8 @@
-from infrastructure.logging.models.logger_health_report import LoggerHealthReport
 from infrastructure.logging.projectname_logger import Logger, ProjectnameLogger
 from services.abc_service import Service
 from services.config_manager import ConfigManager
 from services.models.logging_config import LoggingConfig
+from shared.models.health_reports.logger_health_report import LoggerHealthReport
 
 
 class LogManager(Service):
