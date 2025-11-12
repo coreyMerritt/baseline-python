@@ -1,20 +1,16 @@
-from logging import Logger
 from uuid import uuid4
 
 from domain.enums.account_type import AccountType
 from domain.exceptions.domain_validation_exception import DomainValidationException
-from infrastructure.logging.projectname_logger import ProjectnameLogger
 
 
 class Account:
-  _logger: Logger
   _uid: str
   _name: str
   _age: int
   _account_type: AccountType
 
   def __init__(self, name: str, age: int, account_type: AccountType, uuid: str | None = None):
-    self._logger = ProjectnameLogger.get_logger(self.__class__.__name__)
     if uuid:
       self._uid = uuid
     else:
@@ -65,7 +61,6 @@ class Account:
     self._uid = uuid
 
   def _validate_properties(self) -> None:
-    self._logger.debug("Validating %s: %s", self.__class__.__name__, self._uid)
     try:
       assert isinstance(self._name, str), "Name is not String"
       assert len(self._name) > 0, "Name is too short"
