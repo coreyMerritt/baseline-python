@@ -7,7 +7,7 @@ set -x
 function importCheck() {
   layer="$1"    # ex) infrastructure
   import="$2"   # ex) domain
-  exception="${3-}"   # ex) adapter|mapper
+  exception="${3-}"   # ex) adapter   OR   mapper
   if [[ -n "$exception" ]]; then
     echo -e "\n\n\n\t========== $layer may not import from $import, UNLESS they are ${exception}s ==========\n"
     grep --color -rn "${import}\." src/${layer}/ --exclude-dir="__pycache__" \
