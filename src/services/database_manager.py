@@ -5,7 +5,7 @@ from infrastructure.database.database import Database, Session
 from infrastructure.database.exceptions.database_schema_creation_exception import DatabaseSchemaCreationException
 from services.abc_service import Service
 from services.exceptions.database_creation_exception import DatabaseCreationException
-from services.models.database_config import DatabaseConfig
+from shared.models.configs.database_config import DatabaseConfig
 from shared.models.health_reports.database_health_report import DatabaseHealthReport
 
 

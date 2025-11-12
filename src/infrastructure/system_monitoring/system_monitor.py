@@ -1,7 +1,7 @@
 import psutil
 
 from infrastructure.abc_infrastructure import Infrastructure
-from services.models.hardware_util_config import HardwareUtilConfig
+from shared.models.configs.hardware_util_config import HardwareUtilConfig
 from shared.models.health_reports.hardware_util_health_report import HardwareUtilHealthReport
 
 

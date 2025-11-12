@@ -8,10 +8,10 @@ from services.enums.environment_type import EnvironmentType
 from services.exceptions.config_load_exception import ConfigLoadException
 from services.exceptions.unset_environment_variable_exception import UnsetEnvironmentVariableException
 from services.mapping.app_environment_mapper import AppEnvironmentMapper
-from services.models.database_config import DatabaseConfig
-from services.models.external_services_config import ExternalServicesConfig
-from services.models.health_check_config import HealthCheckConfig
-from services.models.logging_config import LoggingConfig
+from shared.models.configs.database_config import DatabaseConfig
+from shared.models.configs.external_services.external_services_config import ExternalServicesConfig
+from shared.models.configs.health_check_config import HealthCheckConfig
+from shared.models.configs.logging_config import LoggingConfig
 from shared.models.health_reports.config_health_report import ConfigHealthReport
 
 

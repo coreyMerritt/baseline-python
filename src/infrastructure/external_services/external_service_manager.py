@@ -1,5 +1,5 @@
 from infrastructure.abc_infrastructure import Infrastructure
-from services.models.external_services_config import ExternalServicesConfig
+from shared.models.configs.external_services.external_services_config import ExternalServicesConfig
 from shared.models.health_reports.external_services_health_report import ExternalServicesHealthReport
 
 

@@ -16,7 +16,7 @@ from infrastructure.database.exceptions.database_schema_creation_exception impor
 from infrastructure.database.exceptions.database_select_exception import DatabaseSelectException
 from infrastructure.database.mappers.account_orm_mapper import AccountMapper
 from infrastructure.database.orm.account_orm import AccountORM
-from services.models.database_config import DatabaseConfig
+from shared.models.configs.database_config import DatabaseConfig
 
 
 class Database(Infrastructure):

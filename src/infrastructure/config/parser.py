@@ -5,10 +5,10 @@ from dacite import Config, from_dict
 from infrastructure.abc_infrastructure import Infrastructure
 from infrastructure.config.exceptions.config_parser_exception import ConfigParserException
 from services.enums.logging_level import LoggingLevel
-from services.models.database_config import DatabaseConfig
-from services.models.external_services_config import ExternalServicesConfig
-from services.models.health_check_config import HealthCheckConfig
-from services.models.logging_config import LoggingConfig
+from shared.models.configs.database_config import DatabaseConfig
+from shared.models.configs.external_services.external_services_config import ExternalServicesConfig
+from shared.models.configs.health_check_config import HealthCheckConfig
+from shared.models.configs.logging_config import LoggingConfig
 
 
 class ConfigParser(Infrastructure):

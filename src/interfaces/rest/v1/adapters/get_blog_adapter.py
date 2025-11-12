@@ -1,5 +1,5 @@
 from interfaces.rest.v1.dto.res.get_blog_post_res import GetBlogPostRes
-from shared.models.blog_post import BlogPost
+from shared.blog_post import BlogPost
 
 
 class GetBlogAdapter:

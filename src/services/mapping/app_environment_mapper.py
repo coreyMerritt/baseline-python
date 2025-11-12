@@ -9,7 +9,3 @@ class AppEnvironmentMapper:
       if string.lower() == enum.value.lower():
         return enum
     raise EnvironmentException(string)
-
-  @staticmethod
-  def enum_to_str(enum: EnvironmentType) -> str:
-    return enum.value

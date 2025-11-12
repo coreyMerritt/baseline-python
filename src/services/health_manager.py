@@ -5,7 +5,7 @@ from infrastructure.system_monitoring.system_monitor import SystemMonitor
 from services.abc_database_aware_service import DatabaseAwareService
 from services.config_manager import ConfigManager
 from services.log_manager import LogManager
-from services.models.hardware_util_config import HardwareUtilConfig
+from shared.models.configs.hardware_util_config import HardwareUtilConfig
 from shared.models.health_reports.config_health_report import ConfigHealthReport
 from shared.models.health_reports.database_health_report import DatabaseHealthReport
 from shared.models.health_reports.full_health_report import FullHealthReport
