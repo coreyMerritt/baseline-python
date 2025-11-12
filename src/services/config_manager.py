@@ -1,14 +1,11 @@
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
-import yaml
-from dacite import Config, from_dict
-
+from infrastructure.config.parser import ConfigParser
+from infrastructure.disk.disk import Disk
 from infrastructure.environment.environment import Environment
 from services.abc_service import Service
 from services.enums.environment_type import EnvironmentType
-from services.enums.logging_level import LoggingLevel
 from services.exceptions.config_load_exception import ConfigLoadException
-from services.exceptions.config_parse_exception import ConfigParseException
 from services.exceptions.unset_environment_variable_exception import UnsetEnvironmentVariableException
 from services.mapping.app_environment_mapper import AppEnvironmentMapper
 from services.models.database_config import DatabaseConfig
@@ -60,7 +57,7 @@ class ConfigManager(Service):
     Environment.load_env()
     ConfigManager._config_dir = f"./config/{env_enum.value}"
     ConfigManager.refresh_database_config()
-    ConfigManager.refresh_external_config()
+    ConfigManager.refresh_external_services_config()
     ConfigManager.refresh_health_check_config()
     ConfigManager.refresh_logging_config()
     ConfigManager._is_configured = True
@@ -69,67 +66,39 @@ class ConfigManager(Service):
   def refresh_database_config() -> None:
     database_config_path = f"{ConfigManager._config_dir}/database.yml"
     try:
-      with open(database_config_path, "r", encoding='utf-8') as database_config_file:
-        raw_database_config = yaml.safe_load(database_config_file)
+      raw_database_config = Disk().read_yaml(database_config_path)
     except Exception as e:
       raise ConfigLoadException(str(e)) from e
-    try:
-      ConfigManager._database_config = from_dict(
-        data_class=DatabaseConfig,
-        data=raw_database_config
-      )
-    except Exception as e:
-      raise ConfigParseException(str(e)) from e
+    ConfigManager._database_config = ConfigParser().parse_database_config(raw_database_config)
 
   @staticmethod
-  def refresh_external_config() -> None:
-    external_config_path = f"{ConfigManager._config_dir}/external_services.yml"
+  def refresh_external_services_config() -> None:
+    external_services_config_path = f"{ConfigManager._config_dir}/external_services.yml"
     try:
-      with open(external_config_path, "r", encoding='utf-8') as external_config_file:
-        raw_external_config = yaml.safe_load(external_config_file)
+      raw_external_services_config = Disk().read_yaml(external_services_config_path)
     except Exception as e:
       raise ConfigLoadException(str(e)) from e
-    try:
-      ConfigManager._external_services_config = from_dict(
-        data_class=ExternalServicesConfig,
-        data=raw_external_config
-      )
-    except Exception as e:
-      raise ConfigParseException(str(e)) from e
+    ConfigManager._external_services_config = ConfigParser().parse_external_services_config(
+      raw_external_services_config
+    )
 
   @staticmethod
   def refresh_health_check_config() -> None:
     health_check_config_path = f"{ConfigManager._config_dir}/health_check.yml"
     try:
-      with open(health_check_config_path, "r", encoding='utf-8') as health_check_config_file:
-        raw_health_check_config = yaml.safe_load(health_check_config_file)
+      raw_health_check_config = Disk().read_yaml(health_check_config_path)
     except Exception as e:
       raise ConfigLoadException(str(e)) from e
-    try:
-      ConfigManager._health_check_config = from_dict(
-        data_class=HealthCheckConfig,
-        data=raw_health_check_config
-      )
-    except Exception as e:
-      raise ConfigParseException(str(e)) from e
+    ConfigManager._health_check_config = ConfigParser().parse_health_check_config(raw_health_check_config)
 
   @staticmethod
   def refresh_logging_config() -> None:
     logging_config_path = f"{ConfigManager._config_dir}/logging.yml"
-    dacite_config = Config(type_hooks={LoggingLevel: LoggingLevel})
     try:
-      with open(logging_config_path, "r", encoding='utf-8') as logging_config_file:
-        raw_logging_config = yaml.safe_load(logging_config_file)
+      raw_logging_config = Disk().read_yaml(logging_config_path)
     except Exception as e:
       raise ConfigLoadException(str(e)) from e
-    try:
-      ConfigManager._logging_config = from_dict(
-        data_class=LoggingConfig,
-        data=raw_logging_config,
-        config=dacite_config
-      )
-    except Exception as e:
-      raise ConfigParseException(str(e)) from e
+    ConfigManager._logging_config = ConfigParser().parse_logging_config(raw_logging_config)
 
   @staticmethod
   def get_config_dir() -> str:
@@ -163,7 +132,7 @@ class ConfigManager(Service):
   def get_env() -> EnvironmentType:
     if ConfigManager._is_stale_env():
       Environment.load_env()
-      ConfigManager._last_env_load = datetime.now(tz=UTC)
+      ConfigManager._last_env_load = datetime.now(timezone.utc)
     env_str = Environment.get_env_var("PROJECTNAME_ENVIRONMENT")
     if not env_str:
       raise UnsetEnvironmentVariableException()
@@ -178,4 +147,4 @@ class ConfigManager(Service):
   def _is_stale_env() -> bool:
     if not ConfigManager._last_env_load:
       return True
-    return datetime.now() - ConfigManager._last_env_load > timedelta(seconds=3600)
+    return datetime.now(timezone.utc) - ConfigManager._last_env_load > timedelta(seconds=3600)
