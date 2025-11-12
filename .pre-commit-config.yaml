@@ -2,7 +2,7 @@ repos:
   - repo: local
     hooks:
       - name: Early Sudo Prompt
-        id: early-sudo-prompt   # This exists to invoke sudo immediately, to stop mid-pipeline permissions timeouts
+        id: early-sudo-prompt   # This exists to invoke sudo immediately, to stop mid-run permissions timeouts
         entry: bash -c "sudo -k; sudo true"
         language: system
         always_run: true
