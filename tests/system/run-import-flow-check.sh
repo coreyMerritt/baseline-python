@@ -1,32 +1,33 @@
 #!/usr/bin/env bash
 
-set -e
 set -o pipefail
+set -u
 set -x
 
-echo "Interfaces may not import from infrastructure"
-grep --color -rn "infrastructure\." src/interfaces/ --exclude-dir="__pycache__" && exit 1
+function importCheck() {
+  layer="$1"    # ex) infrastructure
+  import="$2"   # ex) domain
+  exception="${3-}"   # ex) adapter|mapper
+  if [[ -n "$exception" ]]; then
+    echo -e "\n\t========== $layer may not import from $import, UNLESS they are ${exception}s =========="
+    grep --color -rn "${import}\." src/${layer}/ --exclude-dir="__pycache__" \
+      | awk "!(/\/${exception}s\// && /${exception}\.py/)" \
+      | grep --color=always -E "src/${layer}|${import}\." \
+      && exit 1
+  else
+    echo -e "\n\t========== $layer may not import from $import =========="
+    grep --color -rn "${import}\." src/${layer}/ --exclude-dir="__pycache__" \
+      | grep --color=always -E "src/${layer}|${import}\." \
+      && exit 1
+  fi
+}
 
-echo "Interfaces may not import from domain, UNLESS they are adapters"
-grep --color -rn "domain\." src/interfaces/ --exclude-dir="__pycache__" | awk '!(/\/adapters\// && /adapter\.py/)' | grep . && exit 1
-
-echo "Services may not import from interfaces"
-grep --color -rn "interfaces\." src/services/ --exclude-dir="__pycache__" && exit 1
-
-echo "Domain may not import from infrastructure"
-grep --color -rn "infrastructure\." src/domain/ --exclude-dir="__pycache__" && exit 1
-
-echo "Domain may not import from services"
-grep --color -rn "services\." src/domain/ --exclude-dir="__pycache__" && exit 1
-
-echo "Domain may not import from interfaces"
-grep --color -rn "interfaces\." src/domain/ --exclude-dir="__pycache__" && exit 1
-
-echo "Infrastructure may not import from Domain"
-grep --color -rn "domain\." src/infrastructure/ --exclude-dir="__pycache__" && exit 1
-
-echo "Infrastructure may not import from Services"
-grep --color -rn "services\." src/infrastructure/ --exclude-dir="__pycache__" && exit 1
-
-echo "Infrastructure may not import from Interfaces"
-grep --color -rn "interfaces\." src/infrastructure/ --exclude-dir="__pycache__" && exit 1
+importCheck "interfaces" "infrastructure"
+importCheck "interfaces" "infrastructure" "adapter"
+importCheck "services" "interfaces"
+importCheck "domain" "infrastructure"
+importCheck "domain" "services"
+importCheck "domain" "interfaces"
+importCheck "infrastructure" "domain" "mapper"
+importCheck "infrastructure" "services"
+importCheck "infrastructure" "interfaces"
