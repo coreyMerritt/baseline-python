@@ -18,5 +18,5 @@ while true; do
   fi
 done
 
-./src/main.py $@
+.venv/bin/python ./src/main.py $@
 exit 0

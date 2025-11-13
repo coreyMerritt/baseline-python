@@ -36,7 +36,7 @@ if [[ "$project_environment" == "dev" ]]; then
   pip install -e .[infra,dev]
   pre-commit install
 elif [[ "$project_environment" == "test" ]]; then
-  pip install -e .[infra]
+  pip install -e .[infra,dev]
 elif [[ "$project_environment" == "prod" ]]; then
   pip install .[infra]
 fi

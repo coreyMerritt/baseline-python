@@ -1,20 +1,38 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import DateTime, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
-
-from infrastructure.database.base import Base
+from sqlmodel import Field, SQLModel
 
 
-class AccountORM(Base):
-  __tablename__ = 'accounts'
-  id: Mapped[int] = mapped_column(Integer, primary_key=True)
-  uuid: Mapped[str] = mapped_column(String, nullable=False, unique=True, default=None)
-  name: Mapped[str] = mapped_column(String, nullable=False)
-  age: Mapped[int] = mapped_column(Integer)
-  account_type: Mapped[str] = mapped_column(String)
-  timestamp: Mapped[datetime] = mapped_column(
-    DateTime(timezone=True),
+class AccountORM(SQLModel, table=True):
+  id: int = Field(
     nullable=False,
-    default=lambda: datetime.now(timezone.utc)
+    unique=True,
+    primary_key=True,
+    default=None
+  )
+  uuid: str = Field(
+    nullable=False,
+    unique=True,
+    primary_key=False
+  )
+  name: str = Field(
+    nullable=False,
+    unique=False,
+    primary_key=False
+  )
+  age: int = Field(
+    nullable=False,
+    unique=False,
+    primary_key=False
+  )
+  account_type: str = Field(
+    nullable=False,
+    unique=False,
+    primary_key=False
+  )
+  timestamp: datetime = Field(
+    nullable=False,
+    unique=False,
+    primary_key=False,
+    default_factory=lambda: datetime.now(timezone.utc)
   )

@@ -22,6 +22,6 @@ class CreateAccountAdapter:
   @staticmethod
   def domain_to_res(account: Account, status: str) -> CreateAccountRes:
     return CreateAccountRes(
-      uuid=account.get_uid(),
+      uuid=account.get_uuid(),
       status=status
     )

@@ -8,3 +8,4 @@ from shared.enums.logger_level import LoggerLevel
 class LoggerConfig:
   level: LoggerLevel
   noisy_loggers: List[str]
+  timezone: str

@@ -14,7 +14,7 @@ class AccountMapper:
     except DomainMapperException as e:
       raise DatabaseMapperException(str(e)) from e
     return AccountORM(
-      uuid=account.get_uid(),
+      uuid=account.get_uuid(),
       name=account.get_name(),
       age=account.get_age(),
       account_type=account_type

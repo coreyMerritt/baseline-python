@@ -1,13 +1,12 @@
 from urllib.parse import quote_plus
 
-from sqlalchemy import create_engine, text
-from sqlalchemy.engine import Engine
+from sqlalchemy import Engine
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import sessionmaker
+from sqlmodel import Session, SQLModel, create_engine, select, text
 
 from domain.entities.account import Account
 from infrastructure.abc_infrastructure import Infrastructure
-from infrastructure.database.base import Base
 from infrastructure.database.exceptions.database_engine_creation_exception import DatabaseEngineCreationException
 from infrastructure.database.exceptions.database_enum_mapping_exception import DatabaseEnumMappingException
 from infrastructure.database.exceptions.database_insert_exception import DatabaseInsertException
@@ -43,7 +42,7 @@ class Database(Infrastructure):
     self._engine.connect().close()
 
   def get_session(self) -> Session:
-    return self._session_factory()
+    return Session(self._engine)
 
   def get_session_factory(self) -> sessionmaker:
     return self._session_factory
@@ -62,7 +61,7 @@ class Database(Infrastructure):
 
   def create_schema(self) -> None:
     try:
-      Base.metadata.create_all(self._engine)
+      SQLModel.metadata.create_all(self._engine)
     except SQLAlchemyError as e:
       raise DatabaseSchemaCreationException(str(e)) from e
 
@@ -75,16 +74,13 @@ class Database(Infrastructure):
   ) -> str | None:
     try:
       with self.get_session() as session:
-        query = (
-          # NOTE: We use filter_by(...) with slightly different formatting for multiple filter situations
-          session.query(AccountORM).filter_by(
-            name=account.get_name(),
-            age=account.get_age()
-          )
+        stmt = select(AccountORM).where(
+          AccountORM.name == account.get_name(),
+          AccountORM.age == account.get_age(),
         )
-        if account.get_uid():
-          query = query.filter(AccountORM.uuid == account.get_uid())
-        results = query.all()
+        if account.get_uuid():
+          stmt = stmt.where(AccountORM.uuid == account.get_uuid())
+        results = session.exec(stmt).all()
     except SQLAlchemyError as e:
       raise DatabaseSelectException(str(e)) from e
     # Handling this inside the session is important because of lazy loading? Hmmm
@@ -101,12 +97,10 @@ class Database(Infrastructure):
   ) -> Account | None:
     try:
       with self.get_session() as session:
-        first_account_orm_match = (
-          session.query(AccountORM)
-          # NOTE: we use filter(...) for single filter situations
-          .filter(AccountORM.uuid == uuid)
-          .first()
+        stmt = select(AccountORM).where(
+          AccountORM.uuid == uuid
         )
+        first_account_orm_match = session.exec(stmt).first()
     except SQLAlchemyError as e:
       raise DatabaseSelectException(str(e)) from e
     # Handling this inside the session is important because of lazy loading? Hmmm
@@ -123,6 +117,7 @@ class Database(Infrastructure):
     account: Account
   ) -> Account:
     try:
+      print(AccountORM.model_fields['timestamp'])
       account_orm = AccountMapper.domain_to_orm(account)
     except DatabaseEnumMappingException as e:
       raise DatabaseInsertException(str(e)) from e

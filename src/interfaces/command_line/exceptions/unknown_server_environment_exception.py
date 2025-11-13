@@ -1,2 +1,2 @@
-class UnknownServerEnvironmentException(Exception):
+class UnknownServerDeploymentEnvironmentException(Exception):
   ...

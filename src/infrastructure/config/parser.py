@@ -5,6 +5,7 @@ from dacite import Config, from_dict
 from infrastructure.abc_infrastructure import Infrastructure
 from infrastructure.config.exceptions.config_parser_exception import ConfigParserException
 from shared.enums.logger_level import LoggerLevel
+from shared.enums.timezone import Timezone
 from shared.models.configs.database_config import DatabaseConfig
 from shared.models.configs.external_services.external_services_config import ExternalServicesConfig
 from shared.models.configs.health_check_config import HealthCheckConfig
@@ -44,7 +45,10 @@ class ConfigParser(Infrastructure):
       return from_dict(
         data_class=LoggerConfig,
         data=some_data,
-        config=Config(type_hooks={LoggerLevel: LoggerLevel})
+        config=Config(type_hooks={
+          LoggerLevel: LoggerLevel,
+          Timezone: Timezone
+        })
       )
     except Exception as e:
       raise ConfigParserException(str(e)) from e

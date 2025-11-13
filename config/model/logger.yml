@@ -1,2 +1,3 @@
 level: "debug"
 noisy_loggers: []
+timezone: "America/Detroit"

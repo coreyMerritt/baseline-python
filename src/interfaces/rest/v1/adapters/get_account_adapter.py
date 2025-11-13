@@ -13,7 +13,7 @@ class GetAccountAdapter:
     except DomainMapperException as e:
       raise RestAdapterException(str(e)) from e
     return GetAccountRes(
-      uuid=account.get_uid(),
+      uuid=account.get_uuid(),
       name=account.get_name(),
       age=account.get_age(),
       account_type=account_type

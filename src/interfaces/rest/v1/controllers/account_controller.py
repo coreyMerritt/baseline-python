@@ -46,12 +46,12 @@ class AccountController:
     try:
       account = CreateAccountAdapter.req_to_domain(req)
       self._account_manager.create_account(
-        uuid=account.get_uid(),
+        uuid=account.get_uuid(),
         name=account.get_name(),
         age=account.get_age(),
         account_type=account.get_account_type()
       )
-      self._logger.info("Successfully created account for uuid: %s", account.get_uid())
+      self._logger.info("Successfully created account for uuid: %s", account.get_uuid())
       return CreateAccountAdapter.domain_to_res(account, "Success")
     except DataValidationException as e:
       # We drop exec_info=e for low-concern exceptions
