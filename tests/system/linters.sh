@@ -27,15 +27,14 @@ which .venv/bin/pip
 which .venv/bin/python
 
 # Validate some packages
-.venv/bin/pip show isort
-.venv/bin/pip show mypy
-.venv/bin/pip show pylint
-.venv/bin/pip show ruff
+.venv/bin/pip show isort 1>/dev/null
+.venv/bin/pip show mypy 1>/dev/null
+.venv/bin/pip show pylint 1>/dev/null
+.venv/bin/pip show ruff 1>/dev/null
 
 # Test
-echo -e "\n\tStarting linting/formating tests...\n"
 .venv/bin/python -m isort --check-only .
-.venv/bin/python -m mypy .
-.venv/bin/python -m pylint --rcfile=./.pylintrc ./src/ ./scripts/ ./utilities/ ./tests/
+.venv/bin/python -m mypy --explicit-package-bases ./src/ ./scripts/ ./tests/
+.venv/bin/python -m pylint --rcfile=./.pylintrc ./src/ ./scripts/ ./tests/
 .venv/bin/python -m ruff check .
 exit 0

@@ -1,0 +1,5 @@
+from shared.exceptions.projectname_exception import ProjectnameException
+
+
+class DomainException(ProjectnameException):
+  ...

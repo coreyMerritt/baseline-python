@@ -3,18 +3,18 @@ This is a foundation project designed to be cloned and used as a starting point 
 Everything in `src` is fully functional, but should be treated as an example, as it is an actual implementation of a simple hypothetical domain.
 
 To adjust this project to your needs:
-1. Find every instance of `PROJECTNAME` and replace it with your project name. Use your judgement for the context regarding casing/spacing/etc.
+1. Run `./scripts/get-projectname-locations.sh` and replace all findings with your project's name. Use your judgement for the context regarding casing/spacing/etc. This script should be removed after this has been addressed.
 2. Hack off any limbs you don't like/need.
-   - Don't need a rest api for your tool? Remove `interfaces/rest` and add your own, adjust `src/main.py` as needed.
+   - Don't need a rest api for your tool? Remove `interfaces/rest` and add your own.
    - Don't need a database? Remove `infrastructure/database` and any database references in `src/services`
-   - Don't like the pre-push hooks? Remove `.pre-commit-config.yaml` & `pre-commit` from `pyproject.toml`
+   - Don't like the pre-commit/pre-push hooks? Remove `.pre-commit-config.yaml` & `pre-commit` from `pyproject.toml`
    - etc...
 3. Remove any broken tests (Tests that are broken due to ***removed content*** are likely ***contextually invalid***)
 4. Use the ***outline*** but replace the ***content*** of everything in:
    - `src/domain`
    - `src/interfaces`
    - `src/services`
-   - `src/infrastructure/database`
+   - `src/infrastructure`
 5. Fix any broken tests (Tests broken due to ***editing content*** are likely still ***contextually valid***, but just require slight adjustments)
 6. Adjust `docs` and `README.md` as needed.
 7. Start building your project!

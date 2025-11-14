@@ -6,7 +6,7 @@ from services.exceptions.deployment_environment_exception import DeploymentEnvir
 from services.mapping.deployment_env_mapper import DeploymentEnvMapper
 
 
-def run_server(env_str: str, host: str, port: int):
+def run_webserver(env_str: str, host: str, port: int):
   env_enum = DeploymentEnvMapper.str_to_enum(env_str)
   ConfigManager.set_env(env_enum)
   ConfigManager.refresh()
