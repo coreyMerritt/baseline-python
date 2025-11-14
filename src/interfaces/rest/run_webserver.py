@@ -13,7 +13,7 @@ def run_webserver(env_str: str, host: str, port: int):
   env_str = ConfigManager.get_env()
   if env_enum == DeploymentEnvironment.DEV:
     uvicorn.run(
-      "interfaces.rest.webserver_entrypoint:create_app",
+      "interfaces.rest.webserver_hook:create_app",
       host=host,
       port=port,
       reload=True,
@@ -21,14 +21,14 @@ def run_webserver(env_str: str, host: str, port: int):
     )
   elif env_enum == DeploymentEnvironment.PROD:
     uvicorn.run(
-      "interfaces.rest.webserver_entrypoint:create_app",
+      "interfaces.rest.webserver_hook:create_app",
       host=host,
       port=port,
       reload=False
     )
   elif env_enum == DeploymentEnvironment.TEST:
     uvicorn.run(
-      "interfaces.rest.webserver_entrypoint:create_app",
+      "interfaces.rest.webserver_hook:create_app",
       host=host,
       port=port,
       reload=False
