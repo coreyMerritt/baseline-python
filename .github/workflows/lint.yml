@@ -7,7 +7,15 @@ jobs:
     environment: test
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/custom-import-check
+      - uses: ./.github/actions/import-flow-check
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+  unused-classes-check:
+    runs-on: ubuntu-latest
+    environment: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/unused-classes-check
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
   pythonic-linters:

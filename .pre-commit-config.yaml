@@ -9,8 +9,16 @@ repos:
         pass_filenames: false
         stages:
           - pre-push
-      - name: Custom Import Flow Check
-        id: custom-import-flow-check
+      - name: Unused Classes Check
+        id: unused-classes-check
+        entry: ./tests/system/unused-classes-check.py
+        language: script
+        always_run: true
+        pass_filenames: false
+        stages:
+          - pre-push
+      - name: Import Flow Check
+        id: import-flow-check
         entry: ./tests/system/import-flow-check.sh
         language: script
         always_run: true
