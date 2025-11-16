@@ -1,5 +1,5 @@
 from interfaces.rest.health.dto.res.get_full_health_report_res import GetConfigHealthReportRes
-from interfaces.rest.health.exceptions.health_adapter_exception import HealthAdapterException
+from interfaces.rest.exceptions.health_adapter_exception import HealthAdapterException
 from shared.models.health_reports.config_health_report import ConfigHealthReport
 
 

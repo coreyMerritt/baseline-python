@@ -1,4 +1,4 @@
-from interfaces.rest.health.dto.res.abc_get_health_report_res import GetHealthReportRes
+from interfaces.rest.health.dto.res.base_get_health_report_res import GetHealthReportRes
 from interfaces.rest.health.dto.res.get_config_health_report_res import GetConfigHealthReportRes
 from interfaces.rest.health.dto.res.get_database_health_report_res import GetDatabaseHealthReportRes
 from interfaces.rest.health.dto.res.get_hardware_util_health_report_res import GetHardwareUtilHealthReportRes

@@ -1,11 +1,12 @@
 import asyncio
 from logging import Logger
 
-from fastapi import HTTPException, Request
+from fastapi import Request
 
+from interfaces.rest.exceptions.health_adapter_exception import HealthAdapterException
+from interfaces.rest.exceptions.projectname_http_exception import ProjectnameHTTPException
 from interfaces.rest.health.adapters.get_full_health_report_adapter import GetFullHealthReportAdapter
-from interfaces.rest.health.dto.res.get_full_health_report_res import GetFullHealthReportRes
-from interfaces.rest.health.exceptions.health_adapter_exception import HealthAdapterException
+from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
 from services.health_manager import HealthManager
 from services.log_manager import LogManager
 
@@ -21,13 +22,19 @@ class HealthController:
     self._health_manager = HealthManager(req.app.state.db)
 
   # NOTE: Most GETs will not use a Req, just one or more query params /health?uuid=123
-  async def get_full_health_report(self) -> GetFullHealthReportRes:
+  async def get_full_health_report(self) -> ProjectnameHTTPResponse:
     try:
       health_report = await asyncio.to_thread(self._health_manager.get_full_health_report)
       self._logger.info("Successfully retrieved full health report")
-      return GetFullHealthReportAdapter.model_to_res(health_report)
+      get_full_health_report_res = GetFullHealthReportAdapter.model_to_res(health_report)
+      return ProjectnameHTTPResponse(
+        data=get_full_health_report_res
+      )
     except HealthAdapterException as e:
       # We drop exec_info=e for low-concern exceptions
       self._logger.warning("Bad request")
       # We give proper error codes when possible with "detail" matching the error code summary
-      raise HTTPException(status_code=400, detail="Bad request") from e
+      raise ProjectnameHTTPException(
+        status_code=400,
+        message="Bad request"
+      ) from e

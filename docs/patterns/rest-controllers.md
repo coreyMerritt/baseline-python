@@ -2,7 +2,7 @@
 | Exceptions | When | Details |
 |----------|----------|----------|
 | Handling | Rarely | There should rarely be a meaningful way to perform fallbacks at the controller level. Exceptions may be made. |
-| Translation | Always | If an exception is not handled, it should always be translated into an HTTPException for Routes. |
+| Translation | Always | If an exception is not handled, it should always be translated into a ProjectnameHTTPException for handlers. |
 
 | Logging Level | When | Details |
 |----------|----------|----------|

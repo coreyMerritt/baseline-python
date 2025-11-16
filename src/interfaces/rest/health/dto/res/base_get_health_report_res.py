@@ -1,6 +1,5 @@
 from interfaces.rest.models.projectname_http_data import ProjectnameHTTPData
 
 
-class CreateAccountRes(ProjectnameHTTPData):
-  uuid: str
-  status: str
+class GetHealthReportRes(ProjectnameHTTPData):
+  healthy: bool

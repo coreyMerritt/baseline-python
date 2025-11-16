@@ -2,7 +2,7 @@ from domain.entities.account import Account
 from domain.exceptions.domain_mapper_exception import DomainMapperException
 from domain.mappers.account_type_mapper import AccountTypeMapper
 from interfaces.rest.v1.dto.res.get_account_res import GetAccountRes
-from interfaces.rest.v1.exceptions.rest_adapter_exception import RestAdapterException
+from interfaces.rest.exceptions.rest_adapter_exception import RestAdapterException
 
 
 class GetAccountAdapter:

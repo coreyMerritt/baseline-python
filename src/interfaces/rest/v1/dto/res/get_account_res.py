@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from interfaces.rest.models.projectname_http_data import ProjectnameHTTPData
 
 
-class GetAccountRes(BaseModel):
+class GetAccountRes(ProjectnameHTTPData):
   uuid: str
   name: str
   age: int
