@@ -1,5 +1,5 @@
 from domain.entities.account import Account
-from domain.exceptions.domain_mapper_exception import DomainMapperException
+from domain.exceptions.mapper_err import MapperErr
 from domain.mappers.account_type_mapper import AccountTypeMapper
 from interfaces.rest.exceptions.rest_adapter_exception import RestAdapterException
 from interfaces.rest.v1.dto.req.create_account_req import CreateAccountReq
@@ -11,7 +11,7 @@ class CreateAccountAdapter:
   def req_to_domain(req: CreateAccountReq) -> Account:
     try:
       account_type = AccountTypeMapper.str_to_enum(req.account_type)
-    except DomainMapperException as e:
+    except MapperErr as e:
       raise RestAdapterException(str(e)) from e
     return Account(
       name=req.name,

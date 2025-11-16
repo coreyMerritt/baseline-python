@@ -1,6 +1,6 @@
 from domain.entities.account import Account
 from domain.enums.account_type import AccountType
-from domain.exceptions.domain_validation_exception import DomainValidationException
+from domain.exceptions.validation_exception import ValidationErr
 from infrastructure.database.exceptions.database_select_exception import DatabaseSelectException
 from services.abc_database_aware_service import DatabaseAwareService
 from services.exceptions.data_exception import DataException
@@ -23,7 +23,7 @@ class AccountManager(DatabaseAwareService):
         age=age,
         account_type=account_type
       )
-    except DomainValidationException as e:
+    except ValidationErr as e:
       raise DataValidationException(str(e)) from e
     try:
       created_account = self._database_manager.create_account(account)

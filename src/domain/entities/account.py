@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from domain.enums.account_type import AccountType
-from domain.exceptions.domain_validation_exception import DomainValidationException
+from domain.exceptions.validation_exception import ValidationErr
 
 
 class Account:
@@ -71,4 +71,4 @@ class Account:
       assert isinstance(self._account_type, AccountType), "Account Type doesn't conform to enum standards"
       assert isinstance(self._uuid, str), "UUID is not String"
     except AssertionError as e:
-      raise DomainValidationException(str(e)) from e
+      raise ValidationErr(str(e)) from e
