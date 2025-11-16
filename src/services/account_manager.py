@@ -1,7 +1,7 @@
 from domain.entities.account import Account
 from domain.enums.account_type import AccountType
-from domain.exceptions.validation_exception import ValidationErr
-from infrastructure.database.exceptions.database_select_exception import DatabaseSelectException
+from domain.exceptions.validation_err import ValidationErr
+from infrastructure.database.exceptions.database_select_err import DatabaseSelectErr
 from services.abc_database_aware_service import DatabaseAwareService
 from services.exceptions.data_exception import DataException
 from services.exceptions.data_validation_exception import DataValidationException
@@ -11,7 +11,7 @@ class AccountManager(DatabaseAwareService):
   def get_account(self, uuid: str) -> Account | None:
     try:
       account = self._database_manager.get_account(uuid)
-    except DatabaseSelectException as e:
+    except DatabaseSelectErr as e:
       raise DataException(str(e)) from e
     return account
 
@@ -27,6 +27,6 @@ class AccountManager(DatabaseAwareService):
       raise DataValidationException(str(e)) from e
     try:
       created_account = self._database_manager.create_account(account)
-    except DatabaseSelectException as e:
+    except DatabaseSelectErr as e:
       raise DataException(str(e)) from e
     return created_account

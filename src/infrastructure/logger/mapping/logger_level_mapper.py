@@ -1,6 +1,6 @@
 import logging
 
-from infrastructure.logger.exceptions.logger_level_exception import LoggerLevelException
+from infrastructure.logger.exceptions.logger_level_err import LoggerLevelErr
 from shared.enums.logger_level import LoggerLevel
 
 
@@ -17,4 +17,4 @@ class LoggerLevelMapper:
       return logging.ERROR
     if enum == LoggerLevel.CRITICAL:
       return logging.CRITICAL
-    raise LoggerLevelException(f"Bad log level: {enum}")
+    raise LoggerLevelErr(f"Bad log level: {enum}")

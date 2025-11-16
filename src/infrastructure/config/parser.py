@@ -3,7 +3,7 @@ from typing import Any
 from dacite import Config, from_dict
 
 from infrastructure.abc_infrastructure import Infrastructure
-from infrastructure.config.exceptions.config_parser_exception import ConfigParserException
+from infrastructure.config.exceptions.config_parser_err import ConfigParserErr
 from shared.enums.logger_level import LoggerLevel
 from shared.enums.timezone import Timezone
 from shared.models.configs.database_config import DatabaseConfig
@@ -20,7 +20,7 @@ class ConfigParser(Infrastructure):
         data=some_data
       )
     except Exception as e:
-      raise ConfigParserException(str(e)) from e
+      raise ConfigParserErr(str(e)) from e
 
   def parse_external_services_config(self, some_data: Any) -> ExternalServicesConfig:
     try:
@@ -29,7 +29,7 @@ class ConfigParser(Infrastructure):
         data=some_data
       )
     except Exception as e:
-      raise ConfigParserException(str(e)) from e
+      raise ConfigParserErr(str(e)) from e
 
   def parse_health_check_config(self, some_data: Any) -> HealthCheckConfig:
     try:
@@ -38,7 +38,7 @@ class ConfigParser(Infrastructure):
         data=some_data
       )
     except Exception as e:
-      raise ConfigParserException(str(e)) from e
+      raise ConfigParserErr(str(e)) from e
 
   def parse_logger_config(self, some_data: Any) -> LoggerConfig:
     try:
@@ -51,4 +51,4 @@ class ConfigParser(Infrastructure):
         })
       )
     except Exception as e:
-      raise ConfigParserException(str(e)) from e
+      raise ConfigParserErr(str(e)) from e

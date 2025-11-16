@@ -2,8 +2,8 @@ import requests
 from pydantic import ValidationError
 
 from infrastructure.abc_infrastructure import Infrastructure
-from infrastructure.external_services.exceptions.requests_parse_exception import RequestsParseException
-from infrastructure.external_services.exceptions.requests_status_exception import RequestsStatusException
+from infrastructure.external_services.exceptions.requests_parse_err import RequestsParseErr
+from infrastructure.external_services.exceptions.requests_status_err import RequestsStatusErr
 from shared.blog_post import BlogPost
 from shared.models.configs.external_services.external_services_global_config import ExternalServicesGlobalConfig
 from shared.models.configs.external_services.typicode_config import TypicodeConfig
@@ -37,10 +37,10 @@ class TypicodeManager(Infrastructure):
     try:
       response.raise_for_status()
     except requests.exceptions.HTTPError as e:
-      raise RequestsStatusException(response.status_code, response.reason) from e
+      raise RequestsStatusErr(response.status_code, response.reason) from e
     try:
       response_json = response.json()
       blog_post = BlogPost.model_validate(response_json)
     except (ValueError, ValidationError, KeyError) as e:
-      raise RequestsParseException(str(e)) from e
+      raise RequestsParseErr(str(e)) from e
     return blog_post

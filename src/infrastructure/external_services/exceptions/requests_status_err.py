@@ -1,4 +1,7 @@
-class RequestsStatusException(Exception):
+from infrastructure.exceptions.infrastructure_exception import InfrastructureException
+
+
+class RequestsStatusErr(InfrastructureException):
   _status_code: int
   _reason: str
 

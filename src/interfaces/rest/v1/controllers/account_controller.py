@@ -4,7 +4,7 @@ from logging import Logger
 from fastapi import Request
 
 from interfaces.rest.exceptions.projectname_http_exception import ProjectnameHTTPException
-from interfaces.rest.exceptions.rest_adapter_exception import RestAdapterException
+from interfaces.rest.exceptions.rest_adapter_err import RestAdapterErr
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
 from interfaces.rest.v1.adapters.create_account_adapter import CreateAccountAdapter
 from interfaces.rest.v1.adapters.get_account_adapter import GetAccountAdapter
@@ -45,7 +45,7 @@ class AccountController:
         status_code=500,
         message="Internal server error"
       ) from e
-    except RestAdapterException as e:
+    except RestAdapterErr as e:
       # We drop exec_info=e for low-concern exceptions
       self._logger.warning("Bad request")
       raise ProjectnameHTTPException(
@@ -80,7 +80,7 @@ class AccountController:
         status_code=500,
         message="Internal server error"
       ) from e
-    except RestAdapterException as e:
+    except RestAdapterErr as e:
       # We drop exec_info=e for low-concern exceptions
       self._logger.warning("Bad request")
       raise ProjectnameHTTPException(

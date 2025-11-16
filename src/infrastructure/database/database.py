@@ -7,12 +7,12 @@ from sqlmodel import Session, SQLModel, create_engine, select, text
 
 from domain.entities.account import Account
 from infrastructure.abc_infrastructure import Infrastructure
-from infrastructure.database.exceptions.database_engine_creation_exception import DatabaseEngineCreationException
-from infrastructure.database.exceptions.database_enum_mapping_exception import DatabaseEnumMappingException
-from infrastructure.database.exceptions.database_insert_exception import DatabaseInsertException
-from infrastructure.database.exceptions.database_multiple_matches_exception import DatabaseMultipleMatchesException
-from infrastructure.database.exceptions.database_schema_creation_exception import DatabaseSchemaCreationException
-from infrastructure.database.exceptions.database_select_exception import DatabaseSelectException
+from infrastructure.database.exceptions.database_engine_creation_err import DatabaseEngineCreationErr
+from infrastructure.database.exceptions.database_mapper_err import DatabaseMapperErr
+from infrastructure.database.exceptions.database_insert_err import DatabaseInsertErr
+from infrastructure.database.exceptions.database_multiple_matches_err import DatabaseMultipleMatchesErr
+from infrastructure.database.exceptions.database_schema_creation_err import DatabaseSchemaCreationErr
+from infrastructure.database.exceptions.database_select_err import DatabaseSelectErr
 from infrastructure.database.mappers.account_orm_mapper import AccountMapper
 from infrastructure.database.orm.account_orm import AccountORM
 from shared.models.configs.database_config import DatabaseConfig
@@ -34,7 +34,7 @@ class Database(Infrastructure):
     try:
       self._engine = create_engine(f"{engine_str}://{username}:{password}@{host}:{port}/{name}")
     except SQLAlchemyError as e:
-      raise DatabaseEngineCreationException(str(e)) from e
+      raise DatabaseEngineCreationErr(str(e)) from e
     self._session_factory = sessionmaker(bind=self._engine, future=True, expire_on_commit=False)
     if not getattr(self._engine, "_schema_initialized", False):
       self.create_schema()
@@ -63,7 +63,7 @@ class Database(Infrastructure):
     try:
       SQLModel.metadata.create_all(self._engine)
     except SQLAlchemyError as e:
-      raise DatabaseSchemaCreationException(str(e)) from e
+      raise DatabaseSchemaCreationErr(str(e)) from e
 
   def dispose(self):
     self._engine.dispose()
@@ -82,12 +82,12 @@ class Database(Infrastructure):
           stmt = stmt.where(AccountORM.uuid == account.get_uuid())
         results = session.exec(stmt).all()
     except SQLAlchemyError as e:
-      raise DatabaseSelectException(str(e)) from e
+      raise DatabaseSelectErr(str(e)) from e
     # Handling this inside the session is important because of lazy loading? Hmmm
     if not results:
       return None
     if len(results) > 1:
-      raise DatabaseMultipleMatchesException()
+      raise DatabaseMultipleMatchesErr()
     uuid = results[0].uuid
     return uuid
 
@@ -102,14 +102,14 @@ class Database(Infrastructure):
         )
         first_account_orm_match = session.exec(stmt).first()
     except SQLAlchemyError as e:
-      raise DatabaseSelectException(str(e)) from e
+      raise DatabaseSelectErr(str(e)) from e
     # Handling this inside the session is important because of lazy loading? Hmmm
     if first_account_orm_match is None:
       return None
     try:
       account_match = AccountMapper.orm_to_domain(first_account_orm_match)
-    except DatabaseEnumMappingException as e:
-      raise DatabaseSelectException(str(e)) from e
+    except DatabaseMapperErr as e:
+      raise DatabaseSelectErr(str(e)) from e
     return account_match
 
   def insert_account(
@@ -119,8 +119,8 @@ class Database(Infrastructure):
     try:
       print(AccountORM.model_fields['timestamp'])
       account_orm = AccountMapper.domain_to_orm(account)
-    except DatabaseEnumMappingException as e:
-      raise DatabaseInsertException(str(e)) from e
+    except DatabaseMapperErr as e:
+      raise DatabaseInsertErr(str(e)) from e
     with self.get_session() as session:
       try:
         session.add(account_orm)   # "local load", nothing is executed in the DBMS yet
@@ -130,6 +130,6 @@ class Database(Infrastructure):
       # We always use try/except when writing to databases for safety
       except SQLAlchemyError as e:
         session.rollback()
-        raise DatabaseInsertException(str(e)) from e
+        raise DatabaseInsertErr(str(e)) from e
       account = AccountMapper.orm_to_domain(account_orm)
       return account

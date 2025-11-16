@@ -4,7 +4,7 @@ from logging import Logger
 from fastapi import Request
 
 from interfaces.rest.exceptions.projectname_http_exception import ProjectnameHTTPException
-from interfaces.rest.exceptions.rest_adapter_exception import RestAdapterException
+from interfaces.rest.exceptions.rest_adapter_err import RestAdapterErr
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
 from interfaces.rest.v1.adapters.get_blog_adapter import GetBlogAdapter
 from services.blog_manager import BlogManager
@@ -51,7 +51,7 @@ class BlogController:
         status_code=404,
         message="Blog not found"
       ) from e
-    except RestAdapterException as e:
+    except RestAdapterErr as e:
       # We drop exec_info=e for low-concern exceptions
       self._logger.warning("Bad request")
       # We give proper error codes when possible with "detail" matching the error code summary

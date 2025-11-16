@@ -1,5 +1,5 @@
-from infrastructure.external_services.exceptions.requests_parse_exception import RequestsParseException
-from infrastructure.external_services.exceptions.requests_status_exception import RequestsStatusException
+from infrastructure.external_services.exceptions.requests_parse_err import RequestsParseErr
+from infrastructure.external_services.exceptions.requests_status_err import RequestsStatusErr
 from infrastructure.external_services.typicode.typicode_manager import TypicodeManager
 from services.abc_service import Service
 from services.config_manager import ConfigManager
@@ -17,7 +17,7 @@ class BlogManager(Service):
   def get_blog_post(self, user_id: int, post_number: int):
     try:
       return self._typicode_manager.get_blog_post(user_id, post_number)
-    except RequestsParseException as e:
+    except RequestsParseErr as e:
       raise BlogRetrievalException(str(e)) from e
-    except RequestsStatusException as e:
+    except RequestsStatusErr as e:
       raise BlogRetrievalException(str(e)) from e

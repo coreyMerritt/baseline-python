@@ -1,5 +1,5 @@
 from domain.exceptions.domain_exception import DomainException
 
 
-class MapperErr(DomainException):
+class DomainMapperErr(DomainException):
   ...

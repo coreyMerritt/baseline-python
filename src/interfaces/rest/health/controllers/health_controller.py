@@ -3,7 +3,7 @@ from logging import Logger
 
 from fastapi import Request
 
-from interfaces.rest.exceptions.health_adapter_exception import HealthAdapterException
+from interfaces.rest.exceptions.rest_adapter_err import RestAdapterErr
 from interfaces.rest.exceptions.projectname_http_exception import ProjectnameHTTPException
 from interfaces.rest.health.adapters.get_full_health_report_adapter import GetFullHealthReportAdapter
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
@@ -30,7 +30,7 @@ class HealthController:
       return ProjectnameHTTPResponse(
         data=get_full_health_report_res
       )
-    except HealthAdapterException as e:
+    except RestAdapterErr as e:
       # We drop exec_info=e for low-concern exceptions
       self._logger.warning("Bad request")
       # We give proper error codes when possible with "detail" matching the error code summary

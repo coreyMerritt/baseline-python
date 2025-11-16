@@ -1,4 +1,4 @@
-from interfaces.rest.exceptions.health_adapter_exception import HealthAdapterException
+from interfaces.rest.exceptions.rest_adapter_err import RestAdapterErr
 from interfaces.rest.health.adapters.get_config_health_report_adapter import GetConfigHealthReportAdapter
 from interfaces.rest.health.adapters.get_database_health_report_adapter import GetDatabaseHealthReportAdapter
 from interfaces.rest.health.adapters.get_hardware_util_health_report_adapter import GetHardwareUtilHealthReportAdapter
@@ -37,4 +37,4 @@ class GetFullHealthReportAdapter:
         healthy=healthy
       )
     except Exception as e:
-      raise HealthAdapterException(str(e)) from e
+      raise RestAdapterErr(str(e)) from e

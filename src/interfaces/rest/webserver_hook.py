@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 
-from interfaces.rest.exceptions.app_initialization_exception import AppInitializationException
+from interfaces.rest.exceptions.app_initialization_err import AppInitializationErr
 from interfaces.rest.exceptions.handlers.exception import register_unhandled_exception_handler
 from interfaces.rest.exceptions.handlers.projectname_http_exception import register_projectname_httpexception_handler
 from interfaces.rest.health.routes import health_routes
@@ -23,7 +23,7 @@ def create_app() -> FastAPI:
     try:
       app.state.db = DatabaseManager(database_config)
     except DatabaseCreationException as e:
-      raise AppInitializationException(
+      raise AppInitializationErr(
         "Database creation failed.",
         {"config_dir": ConfigManager.get_config_dir()}
       ) from e

@@ -2,7 +2,7 @@ from logging import Logger
 
 from domain.entities.account import Account
 from infrastructure.database.database import Database, Session
-from infrastructure.database.exceptions.database_schema_creation_exception import DatabaseSchemaCreationException
+from infrastructure.database.exceptions.database_schema_creation_err import DatabaseSchemaCreationErr
 from services.abc_service import Service
 from services.exceptions.database_creation_exception import DatabaseCreationException
 from shared.models.configs.database_config import DatabaseConfig
@@ -22,7 +22,7 @@ class DatabaseManager(Service):
     )
     try:
       self._database = Database(database_config)
-    except DatabaseSchemaCreationException as e:
+    except DatabaseSchemaCreationErr as e:
       raise DatabaseCreationException() from e
 
   def get_health_report(self) -> DatabaseHealthReport:

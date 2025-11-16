@@ -3,11 +3,12 @@ from datetime import datetime, timedelta, timezone
 from infrastructure.config.parser import ConfigParser
 from infrastructure.disk.disk import Disk
 from infrastructure.environment.environment import Environment
+from infrastructure.environment.exceptions.unset_environment_variable_err import UnsetEnvironmentVariableErr
 from services.abc_service import Service
 from services.enums.deployment_environment import DeploymentEnvironment
 from services.enums.env_var import EnvVar
 from services.exceptions.config_load_exception import ConfigLoadException
-from services.exceptions.unset_environment_variable_exception import UnsetEnvironmentVariableException
+from services.exceptions.environment_variable_not_found_err import EnvironmentVariableNotFoundErr
 from services.mapping.deployment_env_mapper import DeploymentEnvMapper
 from shared.models.configs.database_config import DatabaseConfig
 from shared.models.configs.external_services.external_services_config import ExternalServicesConfig
@@ -134,9 +135,10 @@ class ConfigManager(Service):
     if ConfigManager._is_stale_env():
       Environment.load_env()
       ConfigManager._last_env_load = datetime.now(timezone.utc)
-    env_str = Environment.get_env_var(EnvVar.DEPLOYMENT_ENVIRONMENT.value)
-    if not env_str:
-      raise UnsetEnvironmentVariableException()
+    try:
+      env_str = Environment.get_env_var(EnvVar.DEPLOYMENT_ENVIRONMENT.value)
+    except UnsetEnvironmentVariableErr as e:
+      raise EnvironmentVariableNotFoundErr() from e
     env_enum = DeploymentEnvMapper.str_to_enum(env_str)
     return env_enum
 

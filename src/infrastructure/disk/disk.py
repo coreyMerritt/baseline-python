@@ -3,7 +3,7 @@ from typing import Any
 import yaml
 
 from infrastructure.abc_infrastructure import Infrastructure
-from infrastructure.disk.exceptions.disk_read_exception import DiskReadException
+from infrastructure.disk.exceptions.disk_read_err import DiskReadErr
 
 
 class Disk(Infrastructure):
@@ -13,4 +13,4 @@ class Disk(Infrastructure):
         some_dict = yaml.safe_load(yaml_file)
         return some_dict
     except Exception as e:
-      raise DiskReadException(str(e)) from e
+      raise DiskReadErr(str(e)) from e

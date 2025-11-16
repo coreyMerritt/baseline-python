@@ -1,4 +1,4 @@
-from interfaces.rest.exceptions.health_adapter_exception import HealthAdapterException
+from interfaces.rest.exceptions.rest_adapter_err import RestAdapterErr
 from interfaces.rest.health.dto.res.get_full_health_report_res import GetConfigHealthReportRes
 from shared.models.health_reports.config_health_report import ConfigHealthReport
 
@@ -11,4 +11,4 @@ class GetConfigHealthReportAdapter:
         healthy=model.healthy
       )
     except Exception as e:
-      raise HealthAdapterException(str(e)) from e
+      raise RestAdapterErr(str(e)) from e

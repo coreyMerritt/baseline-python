@@ -1,5 +1,5 @@
 from domain.enums.account_type import AccountType
-from domain.exceptions.mapper_err import MapperErr
+from domain.exceptions.domain_mapper_err import DomainMapperErr
 
 
 class AccountTypeMapper:
@@ -8,7 +8,7 @@ class AccountTypeMapper:
     for enum in AccountType:
       if string.lower() == enum.value.lower():
         return enum
-    raise MapperErr()
+    raise DomainMapperErr()
 
   @staticmethod
   def enum_to_str(enum: AccountType) -> str:

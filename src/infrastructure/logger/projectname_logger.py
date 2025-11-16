@@ -3,7 +3,7 @@ from logging import WARNING, Formatter, Logger, LogRecord, basicConfig, error, g
 from typing import List
 
 from infrastructure.abc_infrastructure import Infrastructure
-from infrastructure.logger.exceptions.logger_configuration_exception import LoggerConfigurationException
+from infrastructure.logger.exceptions.logger_configuration_err import LoggerConfigurationErr
 from infrastructure.logger.mapping.logger_level_mapper import LoggerLevelMapper
 from shared.enums.logger_level import LoggerLevel
 
@@ -28,7 +28,7 @@ class ProjectnameLogger(Infrastructure):
         level=logging_level_const
       )
     except Exception as e:
-      raise LoggerConfigurationException(str(e)) from e
+      raise LoggerConfigurationErr(str(e)) from e
 
   @staticmethod
   def inject_custom_formatter() -> None:
