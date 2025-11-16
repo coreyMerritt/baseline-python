@@ -3,7 +3,7 @@ from infrastructure.external_services.exceptions.requests_status_err import Requ
 from infrastructure.external_services.typicode.typicode_manager import TypicodeManager
 from services.abc_service import Service
 from services.config_manager import ConfigManager
-from services.exceptions.blog_retrieval_exception import BlogRetrievalException
+from services.exceptions.item_not_found_err import ItemNotFoundErr
 
 
 class BlogManager(Service):
@@ -18,6 +18,6 @@ class BlogManager(Service):
     try:
       return self._typicode_manager.get_blog_post(user_id, post_number)
     except RequestsParseErr as e:
-      raise BlogRetrievalException(str(e)) from e
+      raise ItemNotFoundErr(str(e)) from e
     except RequestsStatusErr as e:
-      raise BlogRetrievalException(str(e)) from e
+      raise ItemNotFoundErr(str(e)) from e

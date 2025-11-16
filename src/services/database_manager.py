@@ -4,7 +4,7 @@ from domain.entities.account import Account
 from infrastructure.database.database import Database, Session
 from infrastructure.database.exceptions.database_schema_creation_err import DatabaseSchemaCreationErr
 from services.abc_service import Service
-from services.exceptions.database_creation_exception import DatabaseCreationException
+from services.exceptions.database_creation_err import DatabaseCreationErr
 from shared.models.configs.database_config import DatabaseConfig
 from shared.models.health_reports.database_health_report import DatabaseHealthReport
 
@@ -23,7 +23,7 @@ class DatabaseManager(Service):
     try:
       self._database = Database(database_config)
     except DatabaseSchemaCreationErr as e:
-      raise DatabaseCreationException() from e
+      raise DatabaseCreationErr() from e
 
   def get_health_report(self) -> DatabaseHealthReport:
     can_perform_basic_select = self._database.can_perform_basic_select()

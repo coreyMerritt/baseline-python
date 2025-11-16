@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from domain.enums.account_type import AccountType
-from domain.exceptions.validation_exception import ValidationErr
+from domain.exceptions.validation_err import ValidationErr
 
 
 class Account:

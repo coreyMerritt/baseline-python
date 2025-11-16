@@ -1,5 +1,5 @@
 from services.exceptions.service_exception import ServiceException
 
 
-class ConfigLoadErr(ServiceException):
+class InvalidInputErr(ServiceException):
   ...

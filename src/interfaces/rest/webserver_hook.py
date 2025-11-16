@@ -9,7 +9,7 @@ from interfaces.rest.health.routes import health_routes
 from interfaces.rest.v1.routes import account_routes, blog_routes
 from services.config_manager import ConfigManager
 from services.database_manager import DatabaseManager
-from services.exceptions.database_creation_exception import DatabaseCreationException
+from services.exceptions.database_creation_err import DatabaseCreationErr
 
 
 def create_app() -> FastAPI:
@@ -22,7 +22,7 @@ def create_app() -> FastAPI:
     database_config = ConfigManager.get_database_config()
     try:
       app.state.db = DatabaseManager(database_config)
-    except DatabaseCreationException as e:
+    except DatabaseCreationErr as e:
       raise AppInitializationErr(
         "Database creation failed.",
         {"config_dir": ConfigManager.get_config_dir()}

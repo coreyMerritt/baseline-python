@@ -2,7 +2,7 @@ import uvicorn
 
 from services.config_manager import ConfigManager
 from services.enums.deployment_environment import DeploymentEnvironment
-from services.exceptions.deployment_environment_exception import DeploymentEnvironmentException
+from services.exceptions.service_mapper_err import ServiceMapperErr
 from services.mapping.deployment_env_mapper import DeploymentEnvMapper
 
 
@@ -34,4 +34,4 @@ def run_webserver(env_str: str, host: str, port: int):
       reload=False
     )
   else:
-    raise DeploymentEnvironmentException()
+    raise ServiceMapperErr()

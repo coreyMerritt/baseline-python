@@ -8,7 +8,7 @@ from interfaces.rest.exceptions.rest_adapter_err import RestAdapterErr
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
 from interfaces.rest.v1.adapters.get_blog_adapter import GetBlogAdapter
 from services.blog_manager import BlogManager
-from services.exceptions.blog_retrieval_exception import BlogRetrievalException
+from services.exceptions.item_not_found_err import ItemNotFoundErr
 from services.log_manager import LogManager
 
 
@@ -40,7 +40,7 @@ class BlogController:
       return ProjectnameHTTPResponse(
         data=get_blog_res
       )
-    except BlogRetrievalException as e:
+    except ItemNotFoundErr as e:
       self._logger.error(
         "Failed to get blog for user_id-post_number: %s-%s",
         user_id,
