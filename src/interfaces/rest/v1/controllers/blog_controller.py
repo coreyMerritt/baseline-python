@@ -4,9 +4,9 @@ from logging import Logger
 from fastapi import Request
 
 from interfaces.rest.exceptions.projectname_http_exception import ProjectnameHTTPException
+from interfaces.rest.exceptions.rest_adapter_exception import RestAdapterException
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
 from interfaces.rest.v1.adapters.get_blog_adapter import GetBlogAdapter
-from interfaces.rest.exceptions.rest_adapter_exception import RestAdapterException
 from services.blog_manager import BlogManager
 from services.exceptions.blog_retrieval_exception import BlogRetrievalException
 from services.log_manager import LogManager

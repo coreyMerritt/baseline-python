@@ -1,5 +1,5 @@
-from interfaces.rest.health.dto.res.get_full_health_report_res import GetLoggerHealthReportRes
 from interfaces.rest.exceptions.health_adapter_exception import HealthAdapterException
+from interfaces.rest.health.dto.res.get_full_health_report_res import GetLoggerHealthReportRes
 from shared.models.health_reports.logger_health_report import LoggerHealthReport
 
 

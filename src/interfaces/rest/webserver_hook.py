@@ -3,10 +3,9 @@ from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 
 from interfaces.rest.exceptions.app_initialization_exception import AppInitializationException
+from interfaces.rest.exceptions.handlers.exception import (register_projectname_exception_handler,
+                                                           register_unhandled_exception_handler)
 from interfaces.rest.health.routes import health_routes
-from interfaces.rest.exceptions.handlers.exception import \
-  register_projectname_exception_handler, \
-  register_unhandled_exception_handler
 from interfaces.rest.v1.routes import account_routes, blog_routes
 from services.config_manager import ConfigManager
 from services.database_manager import DatabaseManager
