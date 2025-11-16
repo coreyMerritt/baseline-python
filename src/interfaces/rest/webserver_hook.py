@@ -3,8 +3,8 @@ from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 
 from interfaces.rest.exceptions.app_initialization_exception import AppInitializationException
-from interfaces.rest.exceptions.handlers.exception import (register_projectname_exception_handler,
-                                                           register_unhandled_exception_handler)
+from interfaces.rest.exceptions.handlers.exception import register_unhandled_exception_handler
+from interfaces.rest.exceptions.handlers.projectname_http_exception import register_projectname_httpexception_handler
 from interfaces.rest.health.routes import health_routes
 from interfaces.rest.v1.routes import account_routes, blog_routes
 from services.config_manager import ConfigManager
@@ -40,7 +40,7 @@ def create_app() -> FastAPI:
 
 def __register_exception_handlers(app: FastAPI) -> FastAPI:
   register_unhandled_exception_handler(app)
-  register_projectname_exception_handler(app)
+  register_projectname_httpexception_handler(app)
   return app
 
 def __register_routes(app: FastAPI) -> FastAPI:

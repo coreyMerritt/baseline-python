@@ -1,9 +1,6 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
 
 from interfaces.rest.exceptions.projectname_http_exception import ProjectnameHTTPException
-from interfaces.rest.models.projectname_http_error import ProjectnameHTTPError
-from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
 from services.log_manager import LogManager
 
 
@@ -17,18 +14,3 @@ def register_unhandled_exception_handler(app: FastAPI) -> None:
       status_code=500,
       message="Internal server error"
     ) from e
-
-def register_projectname_exception_handler(app: FastAPI) -> None:
-  @app.exception_handler(ProjectnameHTTPException)
-  async def project_http_exception_handler(r: Request, e: ProjectnameHTTPException):
-    _ = r
-    payload = ProjectnameHTTPResponse(
-      data=None,
-      error = ProjectnameHTTPError(
-        message=e.message
-      )
-    )
-    return JSONResponse(
-      status_code=e.status_code,
-      content=payload.model_dump()
-    )
