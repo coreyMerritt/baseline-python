@@ -8,7 +8,7 @@ from interfaces.rest.exceptions.projectname_http_exception import ProjectnameHTT
 from interfaces.rest.health.adapters.get_full_health_report_adapter import GetFullHealthReportAdapter
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
 from services.health_manager import HealthManager
-from services.log_manager import LogManager
+from services.logger_passer import LoggerPasser
 
 
 class HealthController:
@@ -18,7 +18,7 @@ class HealthController:
 
   def __init__(self, req: Request):
     self._req = req
-    self._logger = LogManager.get_logger(self.__class__.__name__)
+    self._logger = LoggerPasser().get_logger()
     self._health_manager = HealthManager(req.app.state.db)
 
   # NOTE: Most GETs will not use a Req, just one or more query params /health?uuid=123

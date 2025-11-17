@@ -12,7 +12,7 @@ class CreateAccountAdapter:
     try:
       account_type = AccountTypeMapper.str_to_enum(req.account_type)
     except DomainMapperErr as e:
-      raise RestAdapterErr(str(e)) from e
+      raise RestAdapterErr() from e
     return Account(
       name=req.name,
       age=req.age,

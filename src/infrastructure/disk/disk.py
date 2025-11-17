@@ -13,4 +13,4 @@ class Disk(Infrastructure):
         some_dict = yaml.safe_load(yaml_file)
         return some_dict
     except Exception as e:
-      raise DiskReadErr(str(e)) from e
+      raise DiskReadErr() from e

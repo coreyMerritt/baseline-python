@@ -9,7 +9,7 @@ from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResp
 from interfaces.rest.v1.adapters.get_blog_adapter import GetBlogAdapter
 from services.blog_manager import BlogManager
 from services.exceptions.item_not_found_err import ItemNotFoundErr
-from services.log_manager import LogManager
+from services.logger_passer import LoggerPasser
 
 
 class BlogController:
@@ -19,7 +19,7 @@ class BlogController:
 
   def __init__(self, req: Request):
     self._req = req
-    self._logger = LogManager.get_logger(self.__class__.__name__)
+    self._logger = LoggerPasser().get_logger()
     self._blog_manager = BlogManager()
 
   async def get_blog_post(self, user_id: int, post_number: int) -> ProjectnameHTTPResponse:

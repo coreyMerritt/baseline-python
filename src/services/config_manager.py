@@ -70,7 +70,7 @@ class ConfigManager(Service):
     try:
       raw_database_config = Disk().read_yaml(database_config_path)
     except Exception as e:
-      raise ConfigLoadErr(str(e)) from e
+      raise ConfigLoadErr() from e
     ConfigManager._database_config = ConfigParser().parse_database_config(raw_database_config)
 
   @staticmethod
@@ -79,7 +79,7 @@ class ConfigManager(Service):
     try:
       raw_external_services_config = Disk().read_yaml(external_services_config_path)
     except Exception as e:
-      raise ConfigLoadErr(str(e)) from e
+      raise ConfigLoadErr() from e
     ConfigManager._external_services_config = ConfigParser().parse_external_services_config(
       raw_external_services_config
     )
@@ -90,7 +90,7 @@ class ConfigManager(Service):
     try:
       raw_health_check_config = Disk().read_yaml(health_check_config_path)
     except Exception as e:
-      raise ConfigLoadErr(str(e)) from e
+      raise ConfigLoadErr() from e
     ConfigManager._health_check_config = ConfigParser().parse_health_check_config(raw_health_check_config)
 
   @staticmethod
@@ -99,7 +99,7 @@ class ConfigManager(Service):
     try:
       raw_logger_config = Disk().read_yaml(logger_config_path)
     except Exception as e:
-      raise ConfigLoadErr(str(e)) from e
+      raise ConfigLoadErr() from e
     ConfigManager._logger_config = ConfigParser().parse_logger_config(raw_logger_config)
 
   @staticmethod

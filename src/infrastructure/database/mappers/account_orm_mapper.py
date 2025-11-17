@@ -11,7 +11,7 @@ class AccountMapper:
     try:
       account_type = AccountTypeMapper.enum_to_str(account.get_account_type())
     except DomainMapperErr as e:
-      raise DomainMapperErr(str(e)) from e
+      raise DomainMapperErr() from e
     return AccountORM(
       uuid=account.get_uuid(),
       name=account.get_name(),
@@ -27,7 +27,7 @@ class AccountMapper:
     try:
       account_type = AccountTypeMapper.str_to_enum(account_orm.account_type)
     except DomainMapperErr as e:
-      raise DatabaseMapperErr(str(e)) from e
+      raise DatabaseMapperErr() from e
     return Account(
       uuid=account_orm.uuid,
       name=account_orm.name,

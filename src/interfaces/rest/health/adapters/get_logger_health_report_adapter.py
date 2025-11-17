@@ -11,4 +11,4 @@ class GetLoggerHealthReportAdapter:
         healthy=model.healthy
       )
     except Exception as e:
-      raise RestAdapterErr(str(e)) from e
+      raise RestAdapterErr() from e

@@ -71,4 +71,4 @@ class Account:
       assert isinstance(self._account_type, AccountType), "Account Type doesn't conform to enum standards"
       assert isinstance(self._uuid, str), "UUID is not String"
     except AssertionError as e:
-      raise ValidationErr(str(e)) from e
+      raise ValidationErr() from e

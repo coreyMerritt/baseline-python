@@ -12,7 +12,7 @@ from interfaces.rest.v1.dto.req.create_account_req import CreateAccountReq
 from services.account_manager import AccountManager
 from services.exceptions.database_err import DatabaseErr
 from services.exceptions.invalid_input_err import InvalidInputErr
-from services.log_manager import LogManager
+from services.logger_passer import LoggerPasser
 
 
 class AccountController:
@@ -22,7 +22,7 @@ class AccountController:
 
   def __init__(self, req: Request):
     self._req = req
-    self._logger = LogManager.get_logger(self.__class__.__name__)
+    self._logger = LoggerPasser().get_logger()
     self._account_manager = AccountManager(req.app.state.db)
 
   async def get_account(self, uuid: str) -> ProjectnameHTTPResponse:

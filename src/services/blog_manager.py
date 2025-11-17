@@ -18,6 +18,6 @@ class BlogManager(Service):
     try:
       return self._typicode_manager.get_blog_post(user_id, post_number)
     except RequestsParseErr as e:
-      raise ItemNotFoundErr(str(e)) from e
+      raise ItemNotFoundErr() from e
     except RequestsStatusErr as e:
-      raise ItemNotFoundErr(str(e)) from e
+      raise ItemNotFoundErr() from e

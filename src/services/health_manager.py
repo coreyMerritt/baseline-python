@@ -4,7 +4,6 @@ from dataclasses import asdict
 from infrastructure.system_monitoring.system_monitor import SystemMonitor
 from services.abc_database_aware_service import DatabaseAwareService
 from services.config_manager import ConfigManager
-from services.log_manager import LogManager
 from shared.models.configs.hardware_util_config import HardwareUtilConfig
 from shared.models.health_reports.config_health_report import ConfigHealthReport
 from shared.models.health_reports.database_health_report import DatabaseHealthReport
@@ -47,4 +46,4 @@ class HealthManager(DatabaseAwareService):
     return SystemMonitor.get_health_report(hardware_util_config)
 
   def get_logger_health_report(self) -> LoggerHealthReport:
-    return LogManager.get_health_report()
+    return self._logger.get_health_report()

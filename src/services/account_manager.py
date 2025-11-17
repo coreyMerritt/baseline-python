@@ -12,7 +12,7 @@ class AccountManager(DatabaseAwareService):
     try:
       account = self._database_manager.get_account(uuid)
     except DatabaseSelectErr as e:
-      raise DatabaseErr(str(e)) from e
+      raise DatabaseErr() from e
     return account
 
   def create_account(self, uuid: str, name: str,age: int, account_type: AccountType) -> Account | None:
@@ -24,9 +24,9 @@ class AccountManager(DatabaseAwareService):
         account_type=account_type
       )
     except ValidationErr as e:
-      raise InvalidInputErr(str(e)) from e
+      raise InvalidInputErr() from e
     try:
       created_account = self._database_manager.create_account(account)
     except DatabaseSelectErr as e:
-      raise DatabaseErr(str(e)) from e
+      raise DatabaseErr() from e
     return created_account

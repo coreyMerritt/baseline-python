@@ -7,7 +7,7 @@ from sqlmodel import Session, SQLModel, create_engine, select, text
 
 from domain.entities.account import Account
 from infrastructure.abc_infrastructure import Infrastructure
-from infrastructure.database.exceptions.database_engine_creation_err import DatabaseEngineCreationErr
+from infrastructure.database.exceptions.database_initialization_err import DatabaseInitializationErr
 from infrastructure.database.exceptions.database_mapper_err import DatabaseMapperErr
 from infrastructure.database.exceptions.database_insert_err import DatabaseInsertErr
 from infrastructure.database.exceptions.database_multiple_matches_err import DatabaseMultipleMatchesErr
@@ -23,23 +23,23 @@ class Database(Infrastructure):
   _session_factory: sessionmaker
 
   def __init__(self, database_config: DatabaseConfig):
-    engine_str = database_config.engine
-    if engine_str == "postgresql":
-      engine_str = f"{engine_str}+psycopg"
-    username = database_config.username
-    password = quote_plus(database_config.password)
-    host = database_config.host
-    port = database_config.port
-    name = database_config.name
     try:
+      engine_str = database_config.engine
+      if engine_str == "postgresql":
+        engine_str = f"{engine_str}+psycopg"
+      username = database_config.username
+      password = quote_plus(database_config.password)
+      host = database_config.host
+      port = database_config.port
+      name = database_config.name
       self._engine = create_engine(f"{engine_str}://{username}:{password}@{host}:{port}/{name}")
-    except SQLAlchemyError as e:
-      raise DatabaseEngineCreationErr(str(e)) from e
-    self._session_factory = sessionmaker(bind=self._engine, future=True, expire_on_commit=False)
-    if not getattr(self._engine, "_schema_initialized", False):
-      self.create_schema()
-      setattr(self._engine, "_schema_initialized", True)
-    self._engine.connect().close()
+      self._session_factory = sessionmaker(bind=self._engine, future=True, expire_on_commit=False)
+      if not getattr(self._engine, "_schema_initialized", False):
+        self.create_schema()
+        setattr(self._engine, "_schema_initialized", True)
+      self._engine.connect().close()
+    except Exception as e:
+      raise DatabaseInitializationErr() from e
 
   def get_session(self) -> Session:
     return Session(self._engine)
@@ -63,7 +63,7 @@ class Database(Infrastructure):
     try:
       SQLModel.metadata.create_all(self._engine)
     except SQLAlchemyError as e:
-      raise DatabaseSchemaCreationErr(str(e)) from e
+      raise DatabaseSchemaCreationErr() from e
 
   def dispose(self):
     self._engine.dispose()
@@ -82,7 +82,7 @@ class Database(Infrastructure):
           stmt = stmt.where(AccountORM.uuid == account.get_uuid())
         results = session.exec(stmt).all()
     except SQLAlchemyError as e:
-      raise DatabaseSelectErr(str(e)) from e
+      raise DatabaseSelectErr() from e
     # Handling this inside the session is important because of lazy loading? Hmmm
     if not results:
       return None
@@ -102,14 +102,14 @@ class Database(Infrastructure):
         )
         first_account_orm_match = session.exec(stmt).first()
     except SQLAlchemyError as e:
-      raise DatabaseSelectErr(str(e)) from e
+      raise DatabaseSelectErr() from e
     # Handling this inside the session is important because of lazy loading? Hmmm
     if first_account_orm_match is None:
       return None
     try:
       account_match = AccountMapper.orm_to_domain(first_account_orm_match)
     except DatabaseMapperErr as e:
-      raise DatabaseSelectErr(str(e)) from e
+      raise DatabaseSelectErr() from e
     return account_match
 
   def insert_account(
@@ -120,7 +120,7 @@ class Database(Infrastructure):
       print(AccountORM.model_fields['timestamp'])
       account_orm = AccountMapper.domain_to_orm(account)
     except DatabaseMapperErr as e:
-      raise DatabaseInsertErr(str(e)) from e
+      raise DatabaseInsertErr() from e
     with self.get_session() as session:
       try:
         session.add(account_orm)   # "local load", nothing is executed in the DBMS yet
@@ -130,6 +130,6 @@ class Database(Infrastructure):
       # We always use try/except when writing to databases for safety
       except SQLAlchemyError as e:
         session.rollback()
-        raise DatabaseInsertErr(str(e)) from e
+        raise DatabaseInsertErr() from e
       account = AccountMapper.orm_to_domain(account_orm)
       return account

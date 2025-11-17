@@ -11,7 +11,7 @@ class GetAccountAdapter:
     try:
       account_type = AccountTypeMapper.enum_to_str(account.get_account_type())
     except DomainMapperErr as e:
-      raise RestAdapterErr(str(e)) from e
+      raise RestAdapterErr() from e
     return GetAccountRes(
       uuid=account.get_uuid(),
       name=account.get_name(),

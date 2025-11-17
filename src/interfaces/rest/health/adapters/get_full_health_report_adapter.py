@@ -37,4 +37,4 @@ class GetFullHealthReportAdapter:
         healthy=healthy
       )
     except Exception as e:
-      raise RestAdapterErr(str(e)) from e
+      raise RestAdapterErr() from e
