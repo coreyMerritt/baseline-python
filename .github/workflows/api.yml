@@ -11,6 +11,7 @@ jobs:
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
   post-and-get-entity:
+    needs: [health-check]
     runs-on: ubuntu-latest
     environment: test
     steps:
@@ -19,6 +20,7 @@ jobs:
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
   get-blog-post:
+    needs: [health-check]
     runs-on: ubuntu-latest
     environment: test
     steps:
