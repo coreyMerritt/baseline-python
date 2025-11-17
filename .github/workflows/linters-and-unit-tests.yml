@@ -1,8 +1,8 @@
-name: Run all linters
+name: Linters and unit tests
 on:
   workflow_call:
 jobs:
-  custom-import-check:
+  linters-and-unit-tests:
     runs-on: ubuntu-latest
     environment: test
     steps:
@@ -10,19 +10,12 @@ jobs:
       - uses: ./.github/actions/import-flow-check
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
-  unused-classes-check:
-    runs-on: ubuntu-latest
-    environment: test
-    steps:
-      - uses: actions/checkout@v4
       - uses: ./.github/actions/unused-classes-check
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
-  pythonic-linters:
-    runs-on: ubuntu-latest
-    environment: test
-    steps:
-      - uses: actions/checkout@v4
       - uses: ./.github/actions/pythonic-linters
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+      - uses: ./.github/actions/unit-tests
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
