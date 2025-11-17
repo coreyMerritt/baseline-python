@@ -6,6 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: test
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/env-setup-test
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
@@ -15,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: test
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/env-setup-test
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
@@ -24,6 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: test
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/env-setup-test
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
