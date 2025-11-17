@@ -20,3 +20,4 @@ config/prod/*
 
 # Misc
 .venv
+report

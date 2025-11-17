@@ -333,19 +333,14 @@ notes=FIXME,
 
 
 [SIMILARITIES]
-
 # Comments are removed from the similarity computation
 ignore-comments=yes
-
 # Docstrings are removed from the similarity computation
 ignore-docstrings=yes
-
 # Imports are removed from the similarity computation
-ignore-imports=no
-
+ignore-imports=yes
 # Signatures are removed from the similarity computation
 ignore-signatures=no
-
 # Minimum lines number of a similarity.
 min-similarity-lines=4
 

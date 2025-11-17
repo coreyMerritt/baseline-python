@@ -8,8 +8,8 @@ from sqlmodel import Session, SQLModel, create_engine, select, text
 from domain.entities.account import Account
 from infrastructure.abc_infrastructure import Infrastructure
 from infrastructure.database.exceptions.database_initialization_err import DatabaseInitializationErr
-from infrastructure.database.exceptions.database_mapper_err import DatabaseMapperErr
 from infrastructure.database.exceptions.database_insert_err import DatabaseInsertErr
+from infrastructure.database.exceptions.database_mapper_err import DatabaseMapperErr
 from infrastructure.database.exceptions.database_multiple_matches_err import DatabaseMultipleMatchesErr
 from infrastructure.database.exceptions.database_schema_creation_err import DatabaseSchemaCreationErr
 from infrastructure.database.exceptions.database_select_err import DatabaseSelectErr

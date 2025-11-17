@@ -9,8 +9,7 @@ import docker
 import psycopg
 import yaml
 
-from utilities.get_project_name import get_project_name
-from utilities.get_project_root import get_project_root
+from _helpers import get_project_name, get_project_root
 
 
 def deploy_db() -> None:

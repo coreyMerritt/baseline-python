@@ -1,19 +1,13 @@
-import time
-from logging import WARNING, Formatter, LogRecord, Logger, basicConfig, error, getLogger
+from logging import WARNING, Logger, basicConfig, error, getLogger
 from typing import List
 
 from infrastructure.abc_infrastructure import Infrastructure
 from infrastructure.logger.exceptions.logger_configuration_err import LoggerConfigurationErr
+from infrastructure.logger.formatters.projectname_logger_formatter import CustomFormatter
 from infrastructure.logger.mapping.logger_level_mapper import LoggerLevelMapper
 from shared.enums.logger_level import LoggerLevel
 from shared.models.configs.logger_config import LoggerConfig
 from shared.models.health_reports.logger_health_report import LoggerHealthReport
-
-
-class CustomFormatter(Formatter):
-  def formatTime(self, record: LogRecord, datefmt: str | None = None) -> str:
-    t = time.localtime(record.created)
-    return time.strftime("%Y-%m-%d %H:%M:%S", t) + f".{int(record.msecs):03d}"
 
 
 class ProjectnameLogger(Infrastructure, Logger):

@@ -4,7 +4,6 @@ from logging import Logger
 from fastapi import Request
 
 from interfaces.rest.exceptions.projectname_http_exception import ProjectnameHTTPException
-from interfaces.rest.exceptions.rest_adapter_err import RestAdapterErr
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
 from interfaces.rest.v1.adapters.create_account_adapter import CreateAccountAdapter
 from interfaces.rest.v1.adapters.get_account_adapter import GetAccountAdapter
@@ -12,7 +11,6 @@ from interfaces.rest.v1.dto.req.create_account_req import CreateAccountReq
 from services.account_manager import AccountManager
 from services.exceptions.database_err import DatabaseErr
 from services.exceptions.invalid_input_err import InvalidInputErr
-from services.logger_passer import LoggerPasser
 
 
 class AccountController:
@@ -22,8 +20,8 @@ class AccountController:
 
   def __init__(self, req: Request):
     self._req = req
-    self._logger = LoggerPasser().get_logger()
-    self._account_manager = AccountManager(req.app.state.db)
+    self._logger = req.app.state.logger
+    self._account_manager = AccountManager(req.app.state.database)
 
   async def get_account(self, uuid: str) -> ProjectnameHTTPResponse:
     try:
@@ -44,13 +42,6 @@ class AccountController:
       raise ProjectnameHTTPException(
         status_code=500,
         message="Internal server error"
-      ) from e
-    except RestAdapterErr as e:
-      # We drop exec_info=e for low-concern exceptions
-      self._logger.warning("Bad request")
-      raise ProjectnameHTTPException(
-        status_code=400,
-        message="Bad request"
       ) from e
 
   async def create_account(self, req: CreateAccountReq) -> ProjectnameHTTPResponse:
@@ -79,11 +70,4 @@ class AccountController:
       raise ProjectnameHTTPException(
         status_code=500,
         message="Internal server error"
-      ) from e
-    except RestAdapterErr as e:
-      # We drop exec_info=e for low-concern exceptions
-      self._logger.warning("Bad request")
-      raise ProjectnameHTTPException(
-        status_code=400,
-        message="Bad request"
       ) from e

@@ -2,16 +2,15 @@ from infrastructure.external_services.exceptions.requests_parse_err import Reque
 from infrastructure.external_services.exceptions.requests_status_err import RequestsStatusErr
 from infrastructure.external_services.typicode.typicode_manager import TypicodeManager
 from services.abc_service import Service
-from services.config_manager import ConfigManager
 from services.exceptions.item_not_found_err import ItemNotFoundErr
+from shared.models.configs.external_services.external_services_config import ExternalServicesConfig
 
 
 class BlogManager(Service):
   _typicode_manager: TypicodeManager
 
-  def __init__(self):
-    external_config = ConfigManager.get_external_config()
-    self._typicode_manager = TypicodeManager(external_config.global_, external_config.typicode)
+  def __init__(self, external_services_config: ExternalServicesConfig):
+    self._typicode_manager = TypicodeManager(external_services_config.global_, external_services_config.typicode)
     super().__init__()
 
   def get_blog_post(self, user_id: int, post_number: int):

@@ -4,12 +4,10 @@ from logging import Logger
 from fastapi import Request
 
 from interfaces.rest.exceptions.projectname_http_exception import ProjectnameHTTPException
-from interfaces.rest.exceptions.rest_adapter_err import RestAdapterErr
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
 from interfaces.rest.v1.adapters.get_blog_adapter import GetBlogAdapter
 from services.blog_manager import BlogManager
 from services.exceptions.item_not_found_err import ItemNotFoundErr
-from services.logger_passer import LoggerPasser
 
 
 class BlogController:
@@ -19,8 +17,8 @@ class BlogController:
 
   def __init__(self, req: Request):
     self._req = req
-    self._logger = LoggerPasser().get_logger()
-    self._blog_manager = BlogManager()
+    self._logger = req.app.state.logger
+    self._blog_manager = BlogManager(req.app.state.config.external_services)
 
   async def get_blog_post(self, user_id: int, post_number: int) -> ProjectnameHTTPResponse:
     try:
@@ -50,12 +48,4 @@ class BlogController:
       raise ProjectnameHTTPException(
         status_code=404,
         message="Blog not found"
-      ) from e
-    except RestAdapterErr as e:
-      # We drop exec_info=e for low-concern exceptions
-      self._logger.warning("Bad request")
-      # We give proper error codes when possible with "detail" matching the error code summary
-      raise ProjectnameHTTPException(
-        status_code=400,
-        message="Bad request"
       ) from e

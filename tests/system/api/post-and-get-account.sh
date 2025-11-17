@@ -60,16 +60,16 @@ result="$(
       | jq  
 )"
 post_time=$(date +%s%3N)
-status="$(echo "$result" | jq -r .status)"
-uuid="$(echo "$result" | jq -r .uuid)"
-[[ "$status" == "Success" ]]
+error="$(echo "$result" | jq -r .error)"
+uuid="$(echo "$result" | jq -r .data.uuid)"
+[[ "$error" == "null" ]]
 
 # Get the Account
 account="$(curl --silent --location "http://127.0.0.1:8000/api/v1/account?uuid=$uuid" | jq)"
 get_time=$(date +%s%3N)
-name="$(echo "$account" | jq -r .name)"
-age=$(echo "$account" | jq -r .age)
-account_type="$(echo "$account" | jq -r .account_type)"
+name="$(echo "$account" | jq -r .data.name)"
+age=$(echo "$account" | jq -r .data.age)
+account_type="$(echo "$account" | jq -r .data.account_type)"
 [[ "$name" == "Test Name" ]]
 [[ $age -eq 23 ]]
 [[ "$account_type" == "business" ]]

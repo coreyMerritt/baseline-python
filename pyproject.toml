@@ -47,18 +47,17 @@ src_paths = [
   "scripts",
   "src",
   "tests",
-  "utilities"
 ]
 
 [tool.mypy]
 explicit_package_bases = true
-mypy_path = ["scripts", "src", "tests", "utilities"]
+mypy_path = ["scripts", "src", "tests"]
+exclude = "(^|/)get_project_root\\.py$"
 
 [tool.pytest.ini_options]
 pythonpath = [
   "scripts",
   "src",
-  "utilities"
 ]
 testpaths = [
   "tests"
@@ -69,8 +68,7 @@ include = [
   "pyproject.toml",
   "scripts/**/*.py",
   "src/**/*.py",
-  "tests/**/*.py",
-  "utilities/**/*.py"
+  "tests/**/*.py"
 ]
 
 [tool.ruff.lint]

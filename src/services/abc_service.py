@@ -20,7 +20,7 @@ class Service(ABC):
   def _get_logger_config(self) -> LoggerConfig:
     environment = Environment()
     config_dir = environment.get_env_var(EnvVar.DEPLOYMENT_ENVIRONMENT)
-    logger_config_path = f"config/{config_dir}/logger.yml"
+    logger_config_path = f"./config/{config_dir}/logger.yml"
     try:
       raw_logger_config = Disk().read_yaml(logger_config_path)
     except DiskReadErr as e:

@@ -1,16 +1,16 @@
+import os
+
 import uvicorn
 
-from services.config_manager import ConfigManager
 from services.enums.deployment_environment import DeploymentEnvironment
+from services.enums.env_var import EnvVar
 from services.exceptions.service_mapper_err import ServiceMapperErr
 from services.mapping.deployment_env_mapper import DeploymentEnvMapper
 
 
 def run_webserver(env_str: str, host: str, port: int):
   env_enum = DeploymentEnvMapper.str_to_enum(env_str)
-  ConfigManager.set_env(env_enum)
-  ConfigManager.refresh()
-  env_str = ConfigManager.get_env()
+  os.environ[EnvVar.DEPLOYMENT_ENVIRONMENT.value] = env_str
   if env_enum == DeploymentEnvironment.DEV:
     uvicorn.run(
       "interfaces.rest.webserver_hook:create_app",

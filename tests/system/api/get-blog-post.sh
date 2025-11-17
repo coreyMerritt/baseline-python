@@ -48,10 +48,10 @@ done
 
 # Get the Account
 blog_post="$(curl --silent --location "http://127.0.0.1:8000/api/v1/blog?user_id=1&post_number=1" | jq)"
-user_id="$(echo "$blog_post" | jq -r .user_id)"
-id="$(echo "$blog_post" | jq -r .id)"
-title="$(echo "$blog_post" | jq -r .title)"
-body="$(echo "$blog_post" | jq -r .body)"
+user_id="$(echo "$blog_post" | jq -r .data.user_id)"
+id="$(echo "$blog_post" | jq -r .data.id)"
+title="$(echo "$blog_post" | jq -r .data.title)"
+body="$(echo "$blog_post" | jq -r .data.body)"
 [[ $user_id -eq 1 ]]
 [[ $id -eq 1 ]]
 expected=$'sunt aut facere repellat provident occaecati excepturi optio reprehenderit'

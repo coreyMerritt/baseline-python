@@ -1,12 +1,10 @@
 from interfaces.rest.health.dto.res.base_get_health_report_res import GetHealthReportRes
-from interfaces.rest.health.dto.res.get_config_health_report_res import GetConfigHealthReportRes
 from interfaces.rest.health.dto.res.get_database_health_report_res import GetDatabaseHealthReportRes
 from interfaces.rest.health.dto.res.get_hardware_util_health_report_res import GetHardwareUtilHealthReportRes
 from interfaces.rest.health.dto.res.get_logger_health_report_res import GetLoggerHealthReportRes
 
 
 class GetFullHealthReportRes(GetHealthReportRes):
-  config_health_report: GetConfigHealthReportRes
   database_health_report: GetDatabaseHealthReportRes
   hardware_util_health_report: GetHardwareUtilHealthReportRes
   logger_health_report: GetLoggerHealthReportRes
