@@ -6,25 +6,25 @@ jobs:
     runs-on: ubuntu-latest
     environment: test
     steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/api/health-check
+      - uses: ./.github/actions/env-setup-test
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
+      - uses: ./.github/actions/api/health-check
   post-and-get-entity:
     needs: [health-check]
     runs-on: ubuntu-latest
     environment: test
     steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/api/post-and-get-account
+      - uses: ./.github/actions/env-setup-test
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
+      - uses: ./.github/actions/api/post-and-get-account
   get-blog-post:
     needs: [health-check]
     runs-on: ubuntu-latest
     environment: test
     steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/api/get-blog-post
+      - uses: ./.github/actions/env-setup-test
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
+      - uses: ./.github/actions/api/get-blog-post

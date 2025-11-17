@@ -6,16 +6,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: test
     steps:
-      - uses: actions/checkout@v4
+      - uses: ./.github/actions/env-setup-dev
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
       - uses: ./.github/actions/import-flow-check
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
       - uses: ./.github/actions/unused-classes-check
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
       - uses: ./.github/actions/pythonic-linters
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
       - uses: ./.github/actions/unit-tests
-        with:
-          python-version: ${{ vars.PYTHON_VERSION }}
