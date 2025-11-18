@@ -34,9 +34,7 @@ which .venv/bin/python
 
 # Test
 .venv/bin/python -m isort --check-only .
-.venv/bin/python -m mypy --explicit-package-bases ./scripts/
-.venv/bin/python -m mypy --explicit-package-bases ./src/
-.venv/bin/python -m mypy --explicit-package-bases ./tests/
+.venv/bin/python -m mypy .
 .venv/bin/python -m pylint --rcfile=./.pylintrc ./scripts/
 .venv/bin/python -m pylint --rcfile=./.pylintrc ./src/
 .venv/bin/python -m pylint --rcfile=./.pylintrc ./tests/

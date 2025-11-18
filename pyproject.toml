@@ -53,7 +53,6 @@ src_paths = [
 [tool.mypy]
 explicit_package_bases = true
 mypy_path = ["scripts", "src", "tests"]
-exclude = "(^|/)get_project_root\\.py$"
 
 [tool.pytest.ini_options]
 pythonpath = [
