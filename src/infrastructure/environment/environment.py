@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 from infrastructure.base_infrastructure import Infrastructure
 from infrastructure.environment.exceptions.unset_environment_variable_err import UnsetEnvironmentVariableErr
-from services.enums.env_var import EnvVar
+from shared.enums.env_var import EnvVar
 from shared.models.health_reports.environment_health_report import EnvironmentHealthReport
 
 

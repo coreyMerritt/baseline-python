@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import List
 
-from shared.models.configs.base_config import Config
 from shared.enums.logger_level import LoggerLevel
+from shared.models.configs.base_config import Config
 
 
 @dataclass(frozen=True)

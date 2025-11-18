@@ -46,10 +46,13 @@ if [[ ! -f ".env" ]]; then
   cp -r .env.model .env
 fi
 config_file_names=(
+  "cpu.yml"
   "database.yml"
+  "disk.yml"
   "external_services.yml"
-  "health_check.yml"
   "logger.yml"
+  "memory.yml"
+  "typicode.yml"
 )
 for file_name in "${config_file_names[@]}"; do
   if [[ ! -f "./config/${project_environment}/${file_name}" ]]; then

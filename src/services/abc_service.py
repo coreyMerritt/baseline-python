@@ -2,6 +2,7 @@ from abc import ABC
 
 from infrastructure.logger.projectname_logger import ProjectnameLogger
 
+
 class Service(ABC):
   _logger: ProjectnameLogger
 

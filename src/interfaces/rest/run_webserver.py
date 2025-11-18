@@ -3,9 +3,9 @@ import os
 import uvicorn
 
 from services.enums.deployment_environment import DeploymentEnvironment
-from services.enums.env_var import EnvVar
 from services.exceptions.service_mapper_err import ServiceMapperErr
 from services.mapping.deployment_env_mapper import DeploymentEnvMapper
+from shared.enums.env_var import EnvVar
 
 
 def run_webserver(env_str: str, host: str, port: int):

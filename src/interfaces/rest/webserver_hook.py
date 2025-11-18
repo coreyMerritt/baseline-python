@@ -9,8 +9,8 @@ from interfaces.rest.exceptions.handlers.projectname_http_exception import regis
 from interfaces.rest.exceptions.handlers.rest_adapter_err import register_rest_adapter_exception_handler
 from interfaces.rest.health.routes import health_routes
 from interfaces.rest.v1.routes import account_routes, blog_routes
-from shared.shared_infrastructure import (DATABASE_CONFIG, EXTERNAL_SERVICES_CONFIG, HEALTH_CHECK_CONFIG, LOGGER_CONFIG,
-                                          database, logger)
+from shared.shared_infrastructure import (CPU_CONFIG, DATABASE_CONFIG, DISK_CONFIG, EXTERNAL_SERVICES_CONFIG,
+                                          LOGGER_CONFIG, MEMORY_CONFIG, TYPICODE_CONFIG, database, logger)
 
 
 def create_app() -> FastAPI:
@@ -19,9 +19,12 @@ def create_app() -> FastAPI:
     # --- Startup ---
     try:
       config = SimpleNamespace()
+      config.cpu = CPU_CONFIG
       config.database = DATABASE_CONFIG
+      config.disk = DISK_CONFIG
       config.external_services = EXTERNAL_SERVICES_CONFIG
-      config.health_check = HEALTH_CHECK_CONFIG
+      config.memory = MEMORY_CONFIG
+      config.typicode = TYPICODE_CONFIG
       config.logger = LOGGER_CONFIG
       app.state.config = config
       app.state.database = database

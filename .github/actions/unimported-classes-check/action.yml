@@ -4,4 +4,4 @@ runs:
   steps:
     - name: Run unimported class check
       shell: bash
-      run: .venv/bin/python ./tests/system/unimported-classes-check.py
+      run: PYTHONPATH=./tests/ .venv/bin/python ./tests/system/unimported-classes-check.py

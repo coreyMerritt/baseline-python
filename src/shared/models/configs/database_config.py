@@ -6,8 +6,8 @@ from shared.models.configs.base_config import Config
 @dataclass(frozen=True)
 class DatabaseConfig(Config):
   engine: str
-  username: str
-  password: str
   host: str
-  port: int
   name: str
+  password: str
+  port: int
+  username: str
