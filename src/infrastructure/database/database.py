@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlmodel import Session, SQLModel, create_engine, select, text
 
 from domain.entities.account import Account
-from infrastructure.abc_infrastructure import Infrastructure
+from infrastructure.base_infrastructure import Infrastructure
 from infrastructure.database.exceptions.database_initialization_err import DatabaseInitializationErr
 from infrastructure.database.exceptions.database_insert_err import DatabaseInsertErr
 from infrastructure.database.exceptions.database_mapper_err import DatabaseMapperErr

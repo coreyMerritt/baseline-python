@@ -21,7 +21,10 @@ class AccountController:
   def __init__(self, req: Request):
     self._req = req
     self._logger = req.app.state.logger
-    self._account_manager = AccountManager(req.app.state.database)
+    self._account_manager = AccountManager(
+      req.app.state.config.disk,
+      req.app.state.database
+    )
 
   async def get_account(self, uuid: str) -> ProjectnameHTTPResponse:
     try:

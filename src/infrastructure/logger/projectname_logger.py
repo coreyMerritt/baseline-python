@@ -1,7 +1,7 @@
 from logging import WARNING, Logger, basicConfig, error, getLogger
 from typing import List
 
-from infrastructure.abc_infrastructure import Infrastructure
+from infrastructure.base_infrastructure import Infrastructure
 from infrastructure.logger.exceptions.logger_configuration_err import LoggerConfigurationErr
 from infrastructure.logger.exceptions.logger_initialization_err import LoggerInitializationErr
 from infrastructure.logger.formatters.projectname_logger_formatter import CustomFormatter

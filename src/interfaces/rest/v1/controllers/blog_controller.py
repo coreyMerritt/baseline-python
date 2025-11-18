@@ -18,7 +18,11 @@ class BlogController:
   def __init__(self, req: Request):
     self._req = req
     self._logger = req.app.state.logger
-    self._blog_manager = BlogManager(req.app.state.config.external_services)
+    self._blog_manager = BlogManager(
+      req.app.state.logger,
+      req.app.state.config.external_services,
+      req.app.state.config.typicode
+    )
 
   async def get_blog_post(self, user_id: int, post_number: int) -> ProjectnameHTTPResponse:
     try:

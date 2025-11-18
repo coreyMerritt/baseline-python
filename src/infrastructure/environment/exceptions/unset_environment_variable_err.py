@@ -1,4 +1,4 @@
-# TOsDO: Doesnt inherit from infra err, leaving this as a test for a new linting script
+# TODO: Doesnt inherit from infra err, leaving this as a test for a new linting script
 class UnsetEnvironmentVariableErr(Exception):
   message: str
 

@@ -2,15 +2,27 @@ import os
 
 from dotenv import load_dotenv
 
-from infrastructure.abc_infrastructure import Infrastructure
+from infrastructure.base_infrastructure import Infrastructure
 from infrastructure.environment.exceptions.unset_environment_variable_err import UnsetEnvironmentVariableErr
+from services.enums.env_var import EnvVar
+from shared.models.health_reports.environment_health_report import EnvironmentHealthReport
 
 
 class Environment(Infrastructure):
   _first_call: bool = True
 
-  @staticmethod
-  def get_env_var(env_var_name: str) -> str:
+  def get_health_report(self) -> EnvironmentHealthReport:
+    healthy = True
+    for _, env_var in enumerate(EnvVar):
+      try:
+        self.get_env_var(env_var.value)
+      except Exception:
+        healthy = False
+    return EnvironmentHealthReport(
+      healthy=healthy
+    )
+
+  def get_env_var(self, env_var_name: str) -> str:
     try:
       env_var = os.getenv(env_var_name)
       if env_var is None:
@@ -21,10 +33,8 @@ class Environment(Infrastructure):
         env_var_name=env_var_name
       ) from e
 
-  @staticmethod
-  def set_env_var(env_var_name: str, var_value: str) -> None:
+  def set_env_var(self, env_var_name: str, var_value: str) -> None:
     os.environ[env_var_name] = var_value
 
-  @staticmethod
-  def load_env() -> None:
+  def load_env(self) -> None:
     load_dotenv()

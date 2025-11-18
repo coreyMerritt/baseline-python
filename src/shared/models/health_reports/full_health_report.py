@@ -1,15 +1,23 @@
 from dataclasses import dataclass
 
 from shared.models.health_reports.abc_health_report import HealthReport
+from shared.models.health_reports.config_parser_health_report import ConfigParserHealthReport
+from shared.models.health_reports.cpu_health_report import CpuHealthReport
 from shared.models.health_reports.database_health_report import DatabaseHealthReport
-from shared.models.health_reports.external_services_health_report import ExternalServicesHealthReport
-from shared.models.health_reports.hardware_util_health_report import HardwareUtilHealthReport
+from shared.models.health_reports.disk_health_report import DiskHealthReport
+from shared.models.health_reports.environment_health_report import EnvironmentHealthReport
 from shared.models.health_reports.logger_health_report import LoggerHealthReport
+from shared.models.health_reports.memory_health_report import MemoryHealthReport
+from shared.models.health_reports.typicode_health_report import TypicodeHealthReport
 
 
 @dataclass
 class FullHealthReport(HealthReport):
+  config_parser_health_report: ConfigParserHealthReport
+  cpu_health_report: CpuHealthReport
   database_health_report: DatabaseHealthReport
-  external_services_health_report: ExternalServicesHealthReport
-  hardware_util_health_report: HardwareUtilHealthReport
+  disk_health_report: DiskHealthReport
+  environment_health_report: EnvironmentHealthReport
   logger_health_report: LoggerHealthReport
+  memory_health_report: MemoryHealthReport
+  typicode_health_report: TypicodeHealthReport

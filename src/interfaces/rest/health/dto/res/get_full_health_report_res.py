@@ -1,10 +1,20 @@
 from interfaces.rest.health.dto.res.base_get_health_report_res import GetHealthReportRes
+from interfaces.rest.health.dto.res.get_config_parser_health_report_res import GetConfigParserHealthReportRes
+from interfaces.rest.health.dto.res.get_cpu_health_report_res import GetCpuHealthReportRes
 from interfaces.rest.health.dto.res.get_database_health_report_res import GetDatabaseHealthReportRes
-from interfaces.rest.health.dto.res.get_hardware_util_health_report_res import GetHardwareUtilHealthReportRes
+from interfaces.rest.health.dto.res.get_disk_health_report_res import GetDiskHealthReportRes
+from interfaces.rest.health.dto.res.get_environment_health_report_res import GetEnvironmentHealthReportRes
 from interfaces.rest.health.dto.res.get_logger_health_report_res import GetLoggerHealthReportRes
+from interfaces.rest.health.dto.res.get_memory_health_report_res import GetMemoryHealthReportRes
+from interfaces.rest.health.dto.res.get_typicode_health_report_res import GetTypicodeHealthReportRes
 
 
 class GetFullHealthReportRes(GetHealthReportRes):
+  config_parser_health_report: GetConfigParserHealthReportRes
+  cpu_health_report: GetCpuHealthReportRes
   database_health_report: GetDatabaseHealthReportRes
-  hardware_util_health_report: GetHardwareUtilHealthReportRes
+  disk_health_report: GetDiskHealthReportRes
+  environment_health_report: GetEnvironmentHealthReportRes
   logger_health_report: GetLoggerHealthReportRes
+  memory_health_report: GetMemoryHealthReportRes
+  typicode_health_report: GetTypicodeHealthReportRes
