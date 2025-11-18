@@ -2,7 +2,7 @@
 import re
 from typing import List
 
-from system._helpers import Class, ensure_in_project_root, get_classes, get_source_paths
+from linters._helpers import Class, ensure_in_project_root, get_classes, get_source_paths
 
 
 def main():

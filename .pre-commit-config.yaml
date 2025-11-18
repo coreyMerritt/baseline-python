@@ -9,25 +9,9 @@ repos:
         pass_filenames: false
         stages:
           - pre-push
-      - name: Unimported Classes Check
-        id: unimported-classes-check
-        entry: bash -c "PYTHONPATH=./tests ./tests/system/unimported-classes-check.py"
-        language: system
-        always_run: true
-        pass_filenames: false
-        stages:
-          - pre-push
-      - name: Import Flow Check
-        id: import-flow-check
-        entry: ./tests/system/import-flow-check.sh
-        language: script
-        always_run: true
-        pass_filenames: false
-        stages:
-          - pre-push
       - name: Linters
         id: linters
-        entry: ./tests/system/linters.sh
+        entry: ./tests/system/run-linters.sh
         language: script
         always_run: true
         pass_filenames: false
@@ -35,7 +19,7 @@ repos:
           - pre-push
       - name: Unit Tests
         id: unit-tests
-        entry: ./tests/system/unit-tests.sh
+        entry: ./tests/system/run-unit-tests.sh
         language: script
         always_run: true
         pass_filenames: false
