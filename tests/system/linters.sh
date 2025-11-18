@@ -35,8 +35,8 @@ which .venv/bin/python
 # Test
 .venv/bin/python -m isort --check-only .
 .venv/bin/python -m mypy .
-.venv/bin/python -m pylint --rcfile=./.pylintrc ./scripts/
-.venv/bin/python -m pylint --rcfile=./.pylintrc ./src/
-.venv/bin/python -m pylint --rcfile=./.pylintrc ./tests/
+.venv/bin/python -m pylint ./scripts/
+.venv/bin/python -m pylint ./src/
+.venv/bin/python -m pylint ./tests/
 .venv/bin/python -m ruff check .
 exit 0
