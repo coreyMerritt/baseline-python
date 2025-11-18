@@ -38,6 +38,7 @@ class Database(Infrastructure):
         self.create_schema()
         setattr(self._engine, "_schema_initialized", True)
       self._engine.connect().close()
+      self.can_perform_basic_select()
     except Exception as e:
       raise DatabaseInitializationErr() from e
 
@@ -57,7 +58,6 @@ class Database(Infrastructure):
       return True
     except SQLAlchemyError:
       return False
-
 
   def create_schema(self) -> None:
     try:
@@ -83,7 +83,6 @@ class Database(Infrastructure):
         results = session.exec(stmt).all()
     except SQLAlchemyError as e:
       raise DatabaseSelectErr() from e
-    # Handling this inside the session is important because of lazy loading? Hmmm
     if not results:
       return None
     if len(results) > 1:
@@ -103,13 +102,9 @@ class Database(Infrastructure):
         first_account_orm_match = session.exec(stmt).first()
     except SQLAlchemyError as e:
       raise DatabaseSelectErr() from e
-    # Handling this inside the session is important because of lazy loading? Hmmm
     if first_account_orm_match is None:
       return None
-    try:
-      account_match = AccountMapper.orm_to_domain(first_account_orm_match)
-    except DatabaseMapperErr as e:
-      raise DatabaseSelectErr() from e
+    account_match = AccountMapper.orm_to_domain(first_account_orm_match)
     return account_match
 
   def insert_account(
@@ -127,7 +122,6 @@ class Database(Infrastructure):
         session.flush()      # Create a transaction in the DBMS -- "load the DBMS"
         session.refresh(account_orm)  # Fetch the ORM from transaction -- give "account_orm" id/timestamp/etc
         session.commit()
-      # We always use try/except when writing to databases for safety
       except SQLAlchemyError as e:
         session.rollback()
         raise DatabaseInsertErr() from e

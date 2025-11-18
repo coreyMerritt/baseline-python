@@ -1,8 +1,9 @@
-## Services
+# Services
+
 | Exceptions | When | Details |
 |----------|----------|----------|
-| Handling | Sometimes | If a meaningful fallback can occur, do it, otherwise translate the exception. |
-| Translation | Often | If an exception is not handled, it should always be translated into a service-level exception. |
+| Handling | Sometimes | If a meaningful fallback can occur, do it. |
+| Translation | Sometimes | If controllers may want to deal with the issue in a meaningful way, 404 NOT FOUND etc, then transform the exception. |
 
 | Logging Level | When | Details |
 |----------|----------|----------|

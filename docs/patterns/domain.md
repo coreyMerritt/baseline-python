@@ -1,8 +1,9 @@
-## Domain
+# Domain
+
 | Exceptions | When | Details |
 |----------|----------|----------|
 | Handling | Rarely | Typically domain-level code shouldn't have a meaningful way to do exception handling. Exceptions may be made. |
-| Translation | Often | If an exception is not handled, it should always be translated into a domain-level exception. |
+| Translation | Sometimes | If an exception could potentially be handled at the service/interface-levels, it should be translated into a domain-level exception. |
 
 | Logging Level | When | Details |
 |----------|----------|----------|
