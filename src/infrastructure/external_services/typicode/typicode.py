@@ -10,7 +10,7 @@ from shared.models.configs.external_services.typicode_config import TypicodeConf
 from shared.models.health_reports.typicode_health_report import TypicodeHealthReport
 
 
-class TypicodeManager(Infrastructure):
+class Typicode(Infrastructure):
   _external_global_config: ExternalServicesGlobalConfig
   _typicode_config: TypicodeConfig
 
@@ -19,12 +19,12 @@ class TypicodeManager(Infrastructure):
     self._typicode_config = typicode_config
 
   def get_health_report(self) -> TypicodeHealthReport:
-    is_external_global_config = self._external_global_config is not None
-    is_typicode_config = self._typicode_config is not None
-    healthy = is_external_global_config and is_typicode_config
+    try:
+      self.get_blog_post(1, 1)
+      healthy = True
+    except Exception:
+      healthy = False
     return TypicodeHealthReport(
-      is_external_global_config=is_external_global_config,
-      is_typicode_config=is_typicode_config,
       healthy=healthy
     )
 

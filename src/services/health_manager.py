@@ -1,7 +1,7 @@
 import json
 from dataclasses import asdict
 
-from infrastructure.external_services.external_service_manager import ExternalServiceManager
+from infrastructure.external_services.typicode.typicode import Typicode
 from infrastructure.system_monitoring.system_monitor import SystemMonitor
 from services.abc_database_aware_service import DatabaseAwareService
 from shared.models.configs.external_services.external_services_config import ExternalServicesConfig
@@ -42,23 +42,22 @@ class HealthManager(DatabaseAwareService):
     return full_health_report
 
   def get_database_health_report(self) -> DatabaseHealthReport:
-    can_perform_basic_select = self._database.can_perform_basic_select()
-    is_engine = self._database.get_engine() is not None
-    is_session_factory = self._database.get_session_factory() is not None
-    healthy = can_perform_basic_select and is_engine and is_session_factory
-    return DatabaseHealthReport(
-      can_perform_basic_select=can_perform_basic_select,
-      is_engine=is_engine,
-      is_session_factory=is_session_factory,
-      healthy=healthy
-    )
+    return self._database.get_health_report()
 
   def get_external_services_health_report(
     self,
     external_services_config: ExternalServicesConfig
   ) -> ExternalServicesHealthReport:
-    external_services_manager = ExternalServiceManager(external_services_config)
-    return external_services_manager.get_health_report()
+    typicode = Typicode(
+      external_services_config.global_,
+      external_services_config.typicode
+    )
+    typicode_health_report = typicode.get_health_report()
+    healthy = typicode_health_report.healthy
+    return ExternalServicesHealthReport(
+      typicode_health_report=typicode_health_report,
+      healthy=healthy
+    )
 
   def get_hardware_util_health_report(self, hardware_util_config: HardwareUtilConfig) -> HardwareUtilHealthReport:
     return SystemMonitor.get_health_report(hardware_util_config)

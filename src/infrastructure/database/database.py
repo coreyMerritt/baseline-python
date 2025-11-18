@@ -16,6 +16,7 @@ from infrastructure.database.exceptions.database_select_err import DatabaseSelec
 from infrastructure.database.mappers.account_orm_mapper import AccountMapper
 from infrastructure.database.orm.account_orm import AccountORM
 from shared.models.configs.database_config import DatabaseConfig
+from shared.models.health_reports.database_health_report import DatabaseHealthReport
 
 
 class Database(Infrastructure):
@@ -41,6 +42,18 @@ class Database(Infrastructure):
       self.can_perform_basic_select()
     except Exception as e:
       raise DatabaseInitializationErr() from e
+
+  def get_health_report(self) -> DatabaseHealthReport:
+    can_perform_basic_select = self.can_perform_basic_select()
+    is_engine = self.get_engine() is not None
+    is_session_factory = self.get_session_factory() is not None
+    healthy = can_perform_basic_select and is_engine and is_session_factory
+    return DatabaseHealthReport(
+      can_perform_basic_select=can_perform_basic_select,
+      is_engine=is_engine,
+      is_session_factory=is_session_factory,
+      healthy=healthy
+    )
 
   def get_session(self) -> Session:
     return Session(self._engine)
