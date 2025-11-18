@@ -1,7 +1,7 @@
-name: Pythonic Linters
+name: Pythonic linters
 runs:
   using: "composite"
   steps:
-    - name: Run Linters
+    - name: Run Pythonic linters
       shell: bash
       run: ./tests/system/linters.sh

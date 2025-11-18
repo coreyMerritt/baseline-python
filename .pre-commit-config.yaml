@@ -9,9 +9,9 @@ repos:
         pass_filenames: false
         stages:
           - pre-push
-      - name: Unused Classes Check
-        id: unused-classes-check
-        entry: ./tests/system/unused-classes-check.py
+      - name: Unimported Classes Check
+        id: unimported-classes-check
+        entry: ./tests/system/unimported-classes-check.py
         language: script
         always_run: true
         pass_filenames: false

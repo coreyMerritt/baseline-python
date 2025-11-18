@@ -1,7 +1,0 @@
-name: Isort & Custom Import Check
-runs:
-  using: "composite"
-  steps:
-    - name: Run Custom Import Flow Check
-      shell: bash
-      run: .venv/bin/python ./tests/system/unused-classes-check.py

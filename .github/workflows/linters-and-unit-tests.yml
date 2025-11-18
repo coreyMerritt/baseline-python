@@ -11,6 +11,6 @@ jobs:
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
       - uses: ./.github/actions/import-flow-check
-      - uses: ./.github/actions/unused-classes-check
+      - uses: ./.github/actions/unimported-classes-check
       - uses: ./.github/actions/pythonic-linters
       - uses: ./.github/actions/unit-tests
