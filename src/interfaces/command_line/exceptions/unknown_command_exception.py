@@ -1,4 +1,7 @@
-class UnknownCommandException(Exception):
+from interfaces.exceptions.interface_exception import InterfaceException
+
+
+class UnknownCommandException(InterfaceException):
   message: str
 
   def __init__(self, *args):

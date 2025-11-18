@@ -1,5 +1,7 @@
-# TODO: Doesnt inherit from infra err, leaving this as a test for a new linting script
-class UnsetEnvironmentVariableErr(Exception):
+from infrastructure.exceptions.infrastructure_exception import InfrastructureException
+
+
+class UnsetEnvironmentVariableErr(InfrastructureException):
   message: str
 
   def __init__(self, env_var_name: str, *args):

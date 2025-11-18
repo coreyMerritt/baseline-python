@@ -1,4 +1,7 @@
-class UnknownRunTargetException(Exception):
+from interfaces.exceptions.interface_exception import InterfaceException
+
+
+class UnknownRunTargetException(InterfaceException):
   message: str
 
   def __init__(self, *args):
