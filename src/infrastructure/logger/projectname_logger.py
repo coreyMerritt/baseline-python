@@ -3,6 +3,7 @@ from typing import List
 
 from infrastructure.abc_infrastructure import Infrastructure
 from infrastructure.logger.exceptions.logger_configuration_err import LoggerConfigurationErr
+from infrastructure.logger.exceptions.logger_initialization_err import LoggerInitializationErr
 from infrastructure.logger.formatters.projectname_logger_formatter import CustomFormatter
 from infrastructure.logger.mapping.logger_level_mapper import LoggerLevelMapper
 from shared.enums.logger_level import LoggerLevel
@@ -14,9 +15,12 @@ class ProjectnameLogger(Infrastructure, Logger):
   _is_configured: bool = False
 
   def __init__(self, logger_config: LoggerConfig):
-    if not self._is_configured:
-      self._configure_logger(logger_config)
-    super().__init__("Projectname Logger")
+    try:
+      if not self._is_configured:
+        self._configure_logger(logger_config)
+      super().__init__("Projectname Logger")
+    except Exception as e:
+      raise LoggerInitializationErr() from e
 
   def get_health_report(self) -> LoggerHealthReport:
     is_configured = self._is_configured
