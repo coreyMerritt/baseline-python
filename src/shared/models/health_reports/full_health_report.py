@@ -1,6 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from shared.models.health_reports.abc_health_report import HealthReport
 from shared.models.health_reports.config_parser_health_report import ConfigParserHealthReport
 from shared.models.health_reports.cpu_health_report import CpuHealthReport
 from shared.models.health_reports.database_health_report import DatabaseHealthReport
@@ -12,7 +11,8 @@ from shared.models.health_reports.typicode_health_report import TypicodeHealthRe
 
 
 @dataclass
-class FullHealthReport(HealthReport):
+class FullHealthReport():
+  healthy: bool = field(init=False)
   config_parser_health_report: ConfigParserHealthReport
   cpu_health_report: CpuHealthReport
   database_health_report: DatabaseHealthReport
@@ -21,3 +21,15 @@ class FullHealthReport(HealthReport):
   logger_health_report: LoggerHealthReport
   memory_health_report: MemoryHealthReport
   typicode_health_report: TypicodeHealthReport
+
+  def __post_init__(self):
+    self.healthy = (
+      self.config_parser_health_report.healthy
+      and self.cpu_health_report.healthy
+      and self.database_health_report.healthy
+      and self.disk_health_report.healthy
+      and self.environment_health_report.healthy
+      and self.logger_health_report.healthy
+      and self.memory_health_report.healthy
+      and self.typicode_health_report.healthy
+    )

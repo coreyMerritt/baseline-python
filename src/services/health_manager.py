@@ -33,16 +33,6 @@ class HealthManager(DatabaseAwareService):
     logger_health_report = self._logger.get_health_report()
     memory_health_report = Memory(memory_config).get_health_report()
     typicode_health_report = Typicode(external_services_config, typicode_config).get_health_report()
-    healthy = (
-      config_parser_health_report.healthy
-      and cpu_health_report.healthy
-      and database_health_report.healthy
-      and disk_health_report.healthy
-      and environment_health_report.healthy
-      and logger_health_report.healthy
-      and memory_health_report.healthy
-      and typicode_health_report.healthy
-    )
     full_health_report = FullHealthReport(
       config_parser_health_report=config_parser_health_report,
       cpu_health_report=cpu_health_report,
@@ -51,8 +41,7 @@ class HealthManager(DatabaseAwareService):
       environment_health_report=environment_health_report,
       logger_health_report=logger_health_report,
       memory_health_report=memory_health_report,
-      typicode_health_report=typicode_health_report,
-      healthy=healthy
+      typicode_health_report=typicode_health_report
     )
     self._logger.debug("System Health:\n%s", json.dumps(asdict(full_health_report), indent=2))
     return full_health_report
