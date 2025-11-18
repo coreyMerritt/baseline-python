@@ -32,7 +32,7 @@ class HealthController:
     self._memory_config = req.app.state.config.memory
     self._typicode_config = req.app.state.config.typicode
     self._health_manager = HealthManager(
-      req.app.state.config.disk,
+      req.app.state.logger,
       req.app.state.database
     )
 

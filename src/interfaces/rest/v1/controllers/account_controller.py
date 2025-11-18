@@ -22,7 +22,7 @@ class AccountController:
     self._req = req
     self._logger = req.app.state.logger
     self._account_manager = AccountManager(
-      req.app.state.config.disk,
+      req.app.state.logger,
       req.app.state.database
     )
 

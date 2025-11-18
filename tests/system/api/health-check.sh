@@ -6,6 +6,12 @@ set -u
 set -o pipefail
 set -x
 
+function killServer() {
+  pid=$(ss -lntp | awk -F 'pid=' '/:8000/ { split($2, a, ","); print a[1] }') || true
+  kill "$pid" && sleep 0.5 || true
+  sleep 0.5
+}
+
 # Ensure we're in the project root
 while true; do
   if [[ -f "$(pwd)/pyproject.toml" ]]; then
@@ -24,6 +30,7 @@ fi
 source .venv/bin/activate
 
 # Test
+killServer
 bash "./start.sh" "run" "server" "--host" "127.0.0.1" "--port" "8000" "test" &
 pid=$!
 timeout=5
@@ -47,8 +54,5 @@ done
 [[ "$health_check_hit" == "true" ]]
 [[ "$health_check_healthy" == "true" ]]
 
-# Cleanup
-pid=$(ss -lntp | awk -F 'pid=' '/:8000/ { split($2, a, ","); print a[1] }')
-kill "$pid"
-sleep 1
+killServer
 exit 0

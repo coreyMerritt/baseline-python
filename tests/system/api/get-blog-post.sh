@@ -6,6 +6,12 @@ set -u
 set -o pipefail
 set -x
 
+
+function killServer() {
+  pid=$(ss -lntp | awk -F 'pid=' '/:8000/ { split($2, a, ","); print a[1] }') || true
+  kill "$pid" && sleep 0.5 || true
+}
+
 # Ensure we're in the project root
 while true; do
   if [[ -f "$(pwd)/pyproject.toml" ]]; then
@@ -24,6 +30,7 @@ fi
 source .venv/bin/activate
 
 # Wait for system to start
+killServer
 bash "./start.sh" "run" "server" "--host" "127.0.0.1" "--port" "8000" "test" &
 timeout=5
 start_time=$(date +%s)
@@ -59,8 +66,5 @@ expected=$'sunt aut facere repellat provident occaecati excepturi optio reprehen
 expected=$'quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto'
 [[ "$body" == "$expected" ]]
 
-# Cleanup
-pid=$(ss -lntp | awk -F 'pid=' '/:8000/ { split($2, a, ","); print a[1] }')
-kill "$pid"
-sleep 1
+killServer
 exit 0
