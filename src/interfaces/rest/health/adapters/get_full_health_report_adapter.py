@@ -40,14 +40,14 @@ class GetFullHealthReportAdapter:
     )
     try:
       return GetFullHealthReportRes(
-        get_config_parser_health_report_res=get_config_parser_health_report_res,
-        get_cpu_health_report_res=get_cpu_health_report_res,
-        get_database_health_report_res=get_database_health_report_res,
-        get_disk_health_report_res=get_disk_health_report_res,
-        get_environment_health_report_res=get_environment_health_report_res,
-        get_logger_health_report_res=get_logger_health_report_res,
-        get_memory_health_report_res=get_memory_health_report_res,
-        get_typicode_health_report_res=get_typicode_health_report_res,
+        config_parser=get_config_parser_health_report_res,
+        cpu=get_cpu_health_report_res,
+        database=get_database_health_report_res,
+        disk=get_disk_health_report_res,
+        environment=get_environment_health_report_res,
+        logger=get_logger_health_report_res,
+        memory=get_memory_health_report_res,
+        typicode=get_typicode_health_report_res,
         healthy=model.healthy
       )
     except Exception as e:

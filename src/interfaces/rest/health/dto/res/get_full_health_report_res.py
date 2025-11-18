@@ -10,11 +10,11 @@ from interfaces.rest.health.dto.res.get_typicode_health_report_res import GetTyp
 
 
 class GetFullHealthReportRes(GetHealthReportRes):
-  get_config_parser_health_report_res: GetConfigParserHealthReportRes
-  get_cpu_health_report_res: GetCpuHealthReportRes
-  get_database_health_report_res: GetDatabaseHealthReportRes
-  get_disk_health_report_res: GetDiskHealthReportRes
-  get_environment_health_report_res: GetEnvironmentHealthReportRes
-  get_logger_health_report_res: GetLoggerHealthReportRes
-  get_memory_health_report_res: GetMemoryHealthReportRes
-  get_typicode_health_report_res: GetTypicodeHealthReportRes
+  config_parser: GetConfigParserHealthReportRes
+  cpu: GetCpuHealthReportRes
+  database: GetDatabaseHealthReportRes
+  disk: GetDiskHealthReportRes
+  environment: GetEnvironmentHealthReportRes
+  logger: GetLoggerHealthReportRes
+  memory: GetMemoryHealthReportRes
+  typicode: GetTypicodeHealthReportRes
