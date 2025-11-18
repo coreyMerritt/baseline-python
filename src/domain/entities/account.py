@@ -62,13 +62,15 @@ class Account:
 
   def _validate_properties(self) -> None:
     try:
-      assert isinstance(self._name, str), "Name is not String"
-      assert len(self._name) > 0, "Name is too short"
-      assert len(self._name) < 100, "Name is too long"
-      assert isinstance(self._age, int), "Age is not int"
-      assert self._age > 0, "Age is too low"
-      assert self._age < 100, "Age is too high"
-      assert isinstance(self._account_type, AccountType), "Account Type doesn't conform to enum standards"
-      assert isinstance(self._uuid, str), "UUID is not String"
+      assert isinstance(self._name, str), "name"
+      assert len(self._name) > 0, "name"
+      assert len(self._name) < 100, "name"
+      assert isinstance(self._age, int), "age"
+      assert self._age > 0, "age"
+      assert self._age < 100, "age"
+      assert isinstance(self._account_type, AccountType), "account_type"
+      assert isinstance(self._uuid, str), "uuid"
     except AssertionError as e:
-      raise ValidationErr() from e
+      raise ValidationErr(
+        attribute_name=str(e)
+      ) from e

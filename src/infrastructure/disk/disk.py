@@ -13,4 +13,6 @@ class Disk(Infrastructure):
         some_data = yaml.safe_load(yaml_file)
         return some_data
     except Exception as e:
-      raise DiskReadErr() from e
+      raise DiskReadErr(
+        filename=yaml_path
+      ) from e

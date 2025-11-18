@@ -4,9 +4,8 @@ from domain.exceptions.validation_err import ValidationErr
 from infrastructure.database.exceptions.database_insert_err import DatabaseInsertErr
 from infrastructure.database.exceptions.database_select_err import DatabaseSelectErr
 from services.abc_database_aware_service import DatabaseAwareService
-from services.exceptions.database_err import DatabaseErr
-from services.exceptions.invalid_input_err import InvalidInputErr
 from services.exceptions.item_creation_err import ItemCreationErr
+from services.exceptions.item_not_found_err import ItemNotFoundErr
 
 
 class AccountManager(DatabaseAwareService):
@@ -14,7 +13,7 @@ class AccountManager(DatabaseAwareService):
     try:
       account = self._get_account_from_database(uuid)
     except DatabaseSelectErr as e:
-      raise DatabaseErr() from e
+      raise ItemNotFoundErr() from e
     return account
 
   def create_account(self, uuid: str, name: str,age: int, account_type: AccountType) -> Account | None:
@@ -26,11 +25,8 @@ class AccountManager(DatabaseAwareService):
         account_type=account_type
       )
     except ValidationErr as e:
-      raise InvalidInputErr() from e
-    try:
-      created_account = self._create_account_in_database(account)
-    except DatabaseSelectErr as e:
-      raise DatabaseErr() from e
+      raise ItemCreationErr() from e
+    created_account = self._create_account_in_database(account)
     return created_account
 
   def _get_account_from_database(

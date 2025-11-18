@@ -10,18 +10,20 @@ class Environment(Infrastructure):
   _first_call: bool = True
 
   @staticmethod
-  def get_env_var(var_name: str) -> str:
+  def get_env_var(env_var_name: str) -> str:
     try:
-      env_var = os.getenv(var_name)
+      env_var = os.getenv(env_var_name)
       if env_var is None:
         raise TypeError("env_var is None")
       return env_var
     except Exception as e:
-      raise UnsetEnvironmentVariableErr() from e
+      raise UnsetEnvironmentVariableErr(
+        env_var_name=env_var_name
+      ) from e
 
   @staticmethod
-  def set_env_var(var_name: str, var_value: str) -> None:
-    os.environ[var_name] = var_value
+  def set_env_var(env_var_name: str, var_value: str) -> None:
+    os.environ[env_var_name] = var_value
 
   @staticmethod
   def load_env() -> None:

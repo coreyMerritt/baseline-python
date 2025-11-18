@@ -9,8 +9,8 @@ from interfaces.rest.v1.adapters.create_account_adapter import CreateAccountAdap
 from interfaces.rest.v1.adapters.get_account_adapter import GetAccountAdapter
 from interfaces.rest.v1.dto.req.create_account_req import CreateAccountReq
 from services.account_manager import AccountManager
-from services.exceptions.database_err import DatabaseErr
-from services.exceptions.invalid_input_err import InvalidInputErr
+from services.exceptions.item_creation_err import ItemCreationErr
+from services.exceptions.item_not_found_err import ItemNotFoundErr
 
 
 class AccountController:
@@ -37,12 +37,12 @@ class AccountController:
       return ProjectnameHTTPResponse(
         data=get_account_res
       )
-    except DatabaseErr as e:
-      self._logger.error("Something went wrong at the data level", exc_info=e)
+    except ItemNotFoundErr as e:
+      self._logger.warning("No existing account found for uuid: %s", uuid)
       raise ProjectnameHTTPException(
-        status_code=500,
-        message="Internal server error"
-      ) from e
+        status_code=404,
+        message="Account not found"
+      )from e
 
   async def create_account(self, req: CreateAccountReq) -> ProjectnameHTTPResponse:
     try:
@@ -58,16 +58,10 @@ class AccountController:
       return ProjectnameHTTPResponse(
         data=create_account_res
       )
-    except InvalidInputErr as e:
+    except ItemCreationErr as e:
       # We drop exec_info=e for low-concern exceptions
       self._logger.warning("Bad request")
       raise ProjectnameHTTPException(
         status_code=400,
         message="Bad request"
-      ) from e
-    except DatabaseErr as e:
-      self._logger.error("Something went wrong at the data level", exc_info=e)
-      raise ProjectnameHTTPException(
-        status_code=500,
-        message="Internal server error"
       ) from e
