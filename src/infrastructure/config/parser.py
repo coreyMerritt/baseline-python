@@ -17,7 +17,10 @@ class ConfigParser(Infrastructure):
     try:
       return from_dict(
         data_class=DatabaseConfig,
-        data=some_data
+        data=some_data,
+        config=Config(
+          strict=True
+        )
       )
     except Exception as e:
       raise ConfigParserErr() from e
@@ -26,7 +29,10 @@ class ConfigParser(Infrastructure):
     try:
       return from_dict(
         data_class=ExternalServicesConfig,
-        data=some_data
+        data=some_data,
+        config=Config(
+          strict=True
+        )
       )
     except Exception as e:
       raise ConfigParserErr() from e
@@ -35,7 +41,10 @@ class ConfigParser(Infrastructure):
     try:
       return from_dict(
         data_class=HealthCheckConfig,
-        data=some_data
+        data=some_data,
+        config=Config(
+          strict=True
+        )
       )
     except Exception as e:
       raise ConfigParserErr() from e
@@ -45,10 +54,13 @@ class ConfigParser(Infrastructure):
       return from_dict(
         data_class=LoggerConfig,
         data=some_data,
-        config=Config(type_hooks={
-          LoggerLevel: LoggerLevel,
-          Timezone: Timezone
-        })
+        config=Config(
+          strict=True,
+          type_hooks={
+            LoggerLevel: LoggerLevel,
+            Timezone: Timezone,
+          }
+        ),
       )
     except Exception as e:
       raise ConfigParserErr() from e

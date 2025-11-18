@@ -14,6 +14,7 @@ def run_webserver(env_str: str, host: str, port: int):
   if env_enum == DeploymentEnvironment.DEV:
     uvicorn.run(
       "interfaces.rest.webserver_hook:create_app",
+      factory=True,
       host=host,
       port=port,
       reload=True,
@@ -22,6 +23,7 @@ def run_webserver(env_str: str, host: str, port: int):
   elif env_enum == DeploymentEnvironment.PROD:
     uvicorn.run(
       "interfaces.rest.webserver_hook:create_app",
+      factory=True,
       host=host,
       port=port,
       reload=False
@@ -29,6 +31,7 @@ def run_webserver(env_str: str, host: str, port: int):
   elif env_enum == DeploymentEnvironment.TEST:
     uvicorn.run(
       "interfaces.rest.webserver_hook:create_app",
+      factory=True,
       host=host,
       port=port,
       reload=False
