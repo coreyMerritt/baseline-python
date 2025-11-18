@@ -10,6 +10,7 @@ class Cpu(Infrastructure):
 
   def __init__(self, cpu_config: CpuConfig):
     self._cpu_config = cpu_config
+    super().__init__()
 
   def get_health_report(self) -> CpuHealthReport:
     maximum_healthy_cpu_usage_percentage = self._cpu_config.maximum_healthy_cpu_usage_percentage

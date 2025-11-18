@@ -18,7 +18,8 @@ class ProjectnameLogger(Infrastructure, Logger):
     try:
       if not self._is_configured:
         self._configure_logger(logger_config)
-      super().__init__("Projectname Logger")
+      Logger.__init__(self, name="Projectname Logger")
+      super().__init__()
     except Exception as e:
       raise LoggerInitializationErr() from e
 

@@ -14,7 +14,7 @@ def main():
   source_paths = get_source_paths()
   errors = get_errors(source_paths)
   assert_all_errors_dont_inherit_from_exception(errors)
-  print("All errors do not inherit from Exception. Success.")
+  print("All errors do not inherit from Exception.")
   print("Return 0")
   return 0
 
@@ -79,7 +79,7 @@ def get_error_name(path: str) -> str:
     error_name = match.group(1)
   if error_name:
     return error_name
-  raise ValueError("No error found")
+  raise ValueError("Not an exception")
 
 
 if __name__ == "__main__":

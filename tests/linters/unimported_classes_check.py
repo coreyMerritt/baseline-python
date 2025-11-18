@@ -10,7 +10,7 @@ def main():
   source_paths = get_source_paths()
   classes = get_classes(source_paths)
   assert_all_classes_are_imported(classes, source_paths)
-  print("All classes are imported. Success.")
+  print("All classes are imported.")
   print("Return 0")
   return 0
 

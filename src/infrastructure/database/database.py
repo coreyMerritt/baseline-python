@@ -40,6 +40,7 @@ class Database(Infrastructure):
         setattr(self._engine, "_schema_initialized", True)
       self._engine.connect().close()
       self.can_perform_basic_select()
+      super().__init__()
     except Exception as e:
       raise DatabaseInitializationErr() from e
 

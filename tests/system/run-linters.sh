@@ -36,6 +36,7 @@ which .venv/bin/python
 ./tests/linters/third-party-linters.sh
 ./tests/linters/import-flow-check.sh
 PYTHONPATH=./tests/ ./tests/linters/direct_exception_inheritence_check.py
+PYTHONPATH=./tests/ ./tests/linters/fake_abstract_classes_check.py
 PYTHONPATH=./tests/ ./tests/linters/unimplemented_classes_check.py
 PYTHONPATH=./tests/ ./tests/linters/unimported_classes_check.py
 exit 0

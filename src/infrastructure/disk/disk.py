@@ -14,6 +14,7 @@ class Disk(Infrastructure):
 
   def __init__(self, disk_config: DiskConfig):
     self._disk_config = disk_config
+    super().__init__()
 
   def get_health_report(self) -> DiskHealthReport:
     maximum_healthy_disk_usage_percentage = self._disk_config.maximum_healthy_disk_usage_percentage

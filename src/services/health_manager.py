@@ -7,7 +7,7 @@ from infrastructure.disk.disk import Disk
 from infrastructure.environment.environment import Environment
 from infrastructure.external_services.typicode.typicode import Typicode
 from infrastructure.memory.memory import Memory
-from services.abc_database_aware_service import DatabaseAwareService
+from services.base_database_aware_service import DatabaseAwareService
 from shared.models.configs.cpu_config import CpuConfig
 from shared.models.configs.disk_config import DiskConfig
 from shared.models.configs.external_services_config import ExternalServicesConfig

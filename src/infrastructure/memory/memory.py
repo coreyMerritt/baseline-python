@@ -10,6 +10,7 @@ class Memory(Infrastructure):
 
   def __init__(self, memory_config: MemoryConfig):
     self._memory_config = memory_config
+    super().__init__()
 
   def get_health_report(self) -> MemoryHealthReport:
     maximum_healthy_memory_usage_percentage = self._memory_config.maximum_healthy_memory_usage_percentage

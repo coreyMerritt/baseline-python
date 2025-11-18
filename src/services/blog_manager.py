@@ -2,7 +2,7 @@ from infrastructure.external_services.exceptions.requests_parse_err import Reque
 from infrastructure.external_services.exceptions.requests_status_err import RequestsStatusErr
 from infrastructure.external_services.typicode.typicode import Typicode
 from infrastructure.logger.projectname_logger import ProjectnameLogger
-from services.abc_service import Service
+from services.base_service import Service
 from services.exceptions.item_not_found_err import ItemNotFoundErr
 from shared.models.configs.external_services_config import ExternalServicesConfig
 from shared.models.configs.typicode_config import TypicodeConfig

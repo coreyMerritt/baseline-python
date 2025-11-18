@@ -1,4 +1,4 @@
-from shared.models.health_reports.abc_health_report import HealthReport
+from shared.models.health_reports.base_health_report import HealthReport
 
 
 class ConfigParserHealthReport(HealthReport):

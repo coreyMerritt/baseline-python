@@ -3,7 +3,7 @@ from domain.enums.account_type import AccountType
 from domain.exceptions.validation_err import ValidationErr
 from infrastructure.database.exceptions.database_insert_err import DatabaseInsertErr
 from infrastructure.database.exceptions.database_select_err import DatabaseSelectErr
-from services.abc_database_aware_service import DatabaseAwareService
+from services.base_database_aware_service import DatabaseAwareService
 from services.exceptions.item_creation_err import ItemCreationErr
 from services.exceptions.item_not_found_err import ItemNotFoundErr
 

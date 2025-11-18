@@ -17,6 +17,7 @@ class Typicode(Infrastructure):
   def __init__(self, external_services_config: ExternalServicesConfig, typicode_config: TypicodeConfig):
     self._external_services_config = external_services_config
     self._typicode_config = typicode_config
+    super().__init__()
 
   def get_health_report(self) -> TypicodeHealthReport:
     try:

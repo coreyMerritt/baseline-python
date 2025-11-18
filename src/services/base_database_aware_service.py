@@ -1,7 +1,7 @@
 from infrastructure.database.database import Database
 from infrastructure.database.exceptions.database_initialization_err import DatabaseInitializationErr
 from infrastructure.logger.projectname_logger import ProjectnameLogger
-from services.abc_service import Service
+from services.base_service import Service
 from services.exceptions.service_initialization_err import ServiceInitializationErr
 
 
