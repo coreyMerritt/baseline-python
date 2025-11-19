@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 import os
 import re
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from subprocess import CalledProcessError, run
-import sys
 from typing import List
 
 

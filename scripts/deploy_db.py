@@ -9,11 +9,9 @@ from docker import DockerClient
 from docker.errors import APIError
 from docker.models.containers import Container
 
-from _helpers import (
-  PostgresInfo,
-  backup_db, critical, debug, docker_volume_exists, filesystem_log, generate_new_database_info,
-  get_existing_database_info, info, is_docker_container_running, output_seperator, require_sudo, warn
-)
+from _helpers import (PostgresInfo, backup_db, critical, debug, docker_volume_exists, filesystem_log,
+                      generate_new_database_info, get_existing_database_info, info, is_docker_container_running,
+                      output_seperator, require_sudo, warn)
 
 LOG_PATH = "./deploy_db.log"
 IMAGE_VERSION = "18"

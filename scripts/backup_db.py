@@ -3,7 +3,6 @@ import sys
 
 from _helpers import backup_db, critical, require_sudo
 
-
 if __name__ == "__main__":
   require_sudo()
   if not sys.argv[1]:
