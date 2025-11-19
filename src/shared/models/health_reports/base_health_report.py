@@ -6,4 +6,4 @@ class HealthReport():
   healthy: bool
 
   def __post_init__(self):
-    assert not isinstance(self, HealthReport), "HealthReport is a base class and should not be instantiated"
+    assert type(self) is not HealthReport, "HealthReport is a base class and should not be instantiated"
