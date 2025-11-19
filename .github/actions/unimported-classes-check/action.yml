@@ -1,7 +1,0 @@
-name: Unimported class check
-runs:
-  using: "composite"
-  steps:
-    - name: Run unimported class check
-      shell: bash
-      run: PYTHONPATH=./tests/ .venv/bin/python ./tests/system/unimported-classes-check.py

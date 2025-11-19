@@ -1,7 +1,0 @@
-name: Import flow check
-runs:
-  using: "composite"
-  steps:
-    - name: Run Import flow check
-      shell: bash
-      run: ./tests/system/import-flow-check.sh
