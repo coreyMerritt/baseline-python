@@ -4,4 +4,4 @@ runs:
   steps:
     - name: Run Unit Tests
       shell: bash
-      run: ./tests/system/unit-tests.sh
+      run: ./tests/system/run-unit-tests.sh

@@ -5,7 +5,9 @@ on:
   pull_request:
     branches: [ main, master ]
 jobs:
-  linters-and-unit-tests:
-    uses: ./.github/workflows/linters-and-unit-tests.yml
+  linters:
+    uses: ./.github/workflows/linters.yml
+  unit-tests:
+    uses: ./.github/workflows/unit-tests.yml
   api:
     uses: ./.github/workflows/api.yml

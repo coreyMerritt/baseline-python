@@ -1,4 +1,4 @@
-name: Linters and unit tests
+name: Linters
 on:
   workflow_call:
 jobs:
