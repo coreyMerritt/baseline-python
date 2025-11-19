@@ -3,7 +3,8 @@ import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from subprocess import CompletedProcess, run
+from subprocess import CalledProcessError, run
+import sys
 from typing import List
 
 
@@ -21,8 +22,27 @@ class Module:
   filename: str
   filestem: str
 
+class BashError(Exception):
+  message: str
 
-# Functions
+
+# Public Functions
+def debug(message: str) -> None:
+  print(f"[DEBUG] {message}")
+
+def info(message: str) -> None:
+  print(f" [INFO] {message}")
+
+def warn(message: str) -> None:
+  print(f" [WARN] {message}")
+
+def error(message: str) -> None:
+  print(f"[ERROR] {message}")
+
+def critical(message: str) -> None:
+  print(f"\n\t[CRITICAL] {message}\n")
+  sys.exit(1)
+
 def ensure_in_project_root() -> None:
   project_root = get_project_root()
   os.chdir(project_root)
@@ -35,9 +55,13 @@ def get_project_root() -> Path:
   raise FileNotFoundError("pyproject.toml not found")
 
 def get_source_paths() -> List[str]:
-  cmd_return = bash('find ./src/ -type f | grep -v "__pycache__" | grep -F ".py" | grep -v "__init__"')
-  source_paths_blob = str(cmd_return.stdout)
-  source_paths_list = source_paths_blob.split("\n")
+  cmd_return = bash(
+    "find ./src/ -type f \
+      | grep -v \"__pycache__\" \
+      | grep -F \".py\" \
+      | grep -v \"__init__\""
+  )
+  source_paths_list = cmd_return.split("\n")
   source_paths_list.remove("")
   return source_paths_list
 
@@ -99,11 +123,17 @@ def get_filename(path: str) -> str:
 def get_filestem(path: str) -> str:
   return Path(path).stem
 
-def bash(cmd_str: str) -> CompletedProcess:
-  return run(
-    args=cmd_str,
-    capture_output=True,
-    check=True,
-    shell=True,
-    text=True
-  )
+def bash(cmd_str: str) -> str:
+  try:
+    return run(
+      args=cmd_str,
+      capture_output=True,
+      check=True,
+      shell=True,
+      text=True
+    ).stdout
+  except CalledProcessError as e:
+    message = "Bash call failed with:"
+    message += f"\tSTDOUT: {e.stdout}"
+    message += f"\tSTDERR: {e.stderr}"
+    raise BashError(message) from e

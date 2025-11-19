@@ -12,12 +12,17 @@ build/
 # Secrets
 .env
 config/test/*
-config/dev/*
-config/prod/*
 !config/test/.gitkeep
+config/dev/*
 !config/dev/.gitkeep
+config/prod/*
 !config/prod/.gitkeep
+backups/
+!backups/.gitkeep
+backups/database/
+!backups/database/.gitkeep
 
 # Misc
 .venv
 report
+deploy_db.log

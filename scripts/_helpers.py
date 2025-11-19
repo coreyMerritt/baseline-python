@@ -1,6 +1,93 @@
+from dataclasses import dataclass
+from datetime import datetime
+from subprocess import CalledProcessError, run
+import sys
+import os
+import secrets
+import string
 import tomllib
 from pathlib import Path
 
+from docker import DockerClient
+from docker.errors import NotFound
+import yaml
+
+
+# Classes
+@dataclass
+class PostgresInfo:
+  config_path: str
+  container_name: str
+  db_name: str
+  host_port: int
+  image_version: str
+  password: str
+  username: str
+
+class BashError(Exception):
+  message: str
+
+
+# Public Functions
+def debug(message: str) -> None:
+  print(f"[DEBUG] {message}")
+
+def info(message: str) -> None:
+  print(f" [INFO] {message}")
+
+def warn(message: str) -> None:
+  print(f" [WARN] {message}")
+
+def error(message: str) -> None:
+  print(f"[ERROR] {message}")
+
+def critical(message: str) -> None:
+  print(f"\n\t[CRITICAL] {message}\n")
+  sys.exit(1)
+
+def output_seperator() -> None:
+  print("=" * 120)
+
+def filesystem_log(log_message: str, log_path: str) -> None:
+  with open(log_path, "a", encoding="utf-8") as log_file:
+    log_file.write(f"[{get_now_formatted_str()}] {log_message}\n")
+
+def bash(cmd_str: str) -> str:
+  try:
+    return run(
+      args=cmd_str,
+      capture_output=True,
+      check=True,
+      shell=True,
+      text=True
+    ).stdout
+  except CalledProcessError as e:
+    message = "Bash call failed with:"
+    message += f"\tSTDOUT: {e.stdout}"
+    message += f"\tSTDERR: {e.stderr}"
+    raise BashError(message) from e
+
+def backup_db(deployment_environment: str) -> None:
+  debug(f"Environment: {deployment_environment}")
+  IMAGE_VERSION = "18"
+  POSTGRES_INFO: PostgresInfo = get_existing_database_info(deployment_environment, IMAGE_VERSION)
+  BACKUP_DIR = "./backups/database"
+  TIMESTAMP = get_now_formatted_fs_safe_str()
+  BACKUP_NAME = f"{TIMESTAMP}__{POSTGRES_INFO.container_name}.sql"
+  BACKUP_PATH = f"{BACKUP_DIR}/{BACKUP_NAME}"
+  bash(
+    f"docker exec \
+      {POSTGRES_INFO.container_name} \
+      pg_dump \
+        -U {POSTGRES_INFO.username} \
+        {POSTGRES_INFO.db_name} \
+      > {BACKUP_PATH}"
+  )
+  print("Backed up:")
+  print(f"\t Database: {POSTGRES_INFO.db_name} {POSTGRES_INFO.username}@127.0.0.1:{POSTGRES_INFO.host_port}")
+  print(f"\tContainer: {POSTGRES_INFO.container_name}")
+  print(f"\t     Path: {BACKUP_PATH}")
+  print()
 
 def get_project_name() -> str:
   pyproject_path = Path(__file__).resolve().parent.parent / "pyproject.toml"
@@ -18,3 +105,86 @@ def get_project_root() -> Path:
     if (parent / "pyproject.toml").exists():
       return parent
   raise FileNotFoundError("pyproject.toml not found")
+
+def is_docker_container_running(container_name: str, client: DockerClient) -> bool:
+  try:
+    container = client.containers.get(container_name)
+    return container.status == "running"
+  except NotFound:
+    return False
+
+def generate_new_database_info(deployment_environment: str) -> PostgresInfo:
+  if deployment_environment not in ["dev", "prod", "test"]:
+    raise AttributeError("deployment_environment must be dev|prod|test")
+  project_name = get_project_name()
+  project_root = get_project_root()
+  database_config_path = f"{project_root}/config/{deployment_environment}/database.yml"
+  postgres_username = f"{project_name}-user"
+  postgres_password = _generate_password(16)
+  postgres_dbname = f"{project_name}-{deployment_environment}"
+  host_port = _get_host_port(deployment_environment)
+  image_version = "18"
+  container_name = f"postgres-{image_version}-{project_name}-{deployment_environment}"
+  return PostgresInfo(
+    config_path=database_config_path,
+    container_name=container_name,
+    db_name=postgres_dbname,
+    host_port=host_port,
+    image_version=image_version,
+    password=postgres_password,
+    username=postgres_username
+  )
+
+def get_existing_database_info(deployment_environment: str, image_version: str) -> PostgresInfo:
+  if deployment_environment not in ["dev", "prod", "test"]:
+    raise AttributeError("deployment_environment must be dev|prod|test")
+  project_name = get_project_name()
+  project_root = get_project_root()
+  database_config_path = f"{project_root}/config/{deployment_environment}/database.yml"
+  with open(database_config_path, "r", encoding="utf-8") as database_yaml_file:
+    raw_database_config_dict = yaml.safe_load(database_yaml_file)
+  container_name = f"postgres-{image_version}-{project_name}-{deployment_environment}"
+  return PostgresInfo(
+    config_path=database_config_path,
+    container_name=container_name,
+    db_name=raw_database_config_dict["name"],
+    host_port=raw_database_config_dict["port"],
+    image_version=image_version,
+    password=raw_database_config_dict["password"],
+    username=raw_database_config_dict["username"]
+  )
+
+def require_sudo() -> None:
+  if os.geteuid() != 0:
+    critical("Run with sudo.")
+
+def get_now_formatted_fs_safe_str() -> str:
+  now = datetime.now()
+  formatted = now.strftime("%Y-%m-%d_%H-%M-%S-") + f"{int(now.microsecond / 1000):03d}"
+  return formatted
+
+def get_now_formatted_str() -> str:
+  now = datetime.now()
+  formatted = now.strftime("%Y-%m-%d %H:%M:%S.") + f"{int(now.microsecond / 1000):03d}"
+  return formatted
+
+def docker_volume_exists(volume_name: str, client: DockerClient) -> bool:
+  try:
+    client.volumes.get(volume_name)
+    return True
+  except NotFound:
+    return False
+
+# Private Functions
+def _generate_password(length: int) -> str:
+  alphabet = string.ascii_letters + string.digits
+  return ''.join(secrets.choice(alphabet) for _ in range(length))
+
+def _get_host_port(deployment_environment: str) -> int:
+  if deployment_environment == "test":
+    return 5434
+  if deployment_environment == "dev":
+    return 5433
+  if deployment_environment == "prod":
+    return 5431
+  raise AttributeError(f"Unknown deployment_environment: {deployment_environment}")

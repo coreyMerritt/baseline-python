@@ -1,163 +1,194 @@
 #!/usr/bin/env python3
-import os
-import secrets
-import string
 import sys
 import time
 
 import docker
 import psycopg
 import yaml
+from docker import DockerClient
+from docker.errors import APIError
+from docker.models.containers import Container
 
-from _helpers import get_project_name, get_project_root
+from _helpers import (
+  PostgresInfo,
+  backup_db, critical, debug, docker_volume_exists, filesystem_log, generate_new_database_info,
+  get_existing_database_info, info, is_docker_container_running, output_seperator, require_sudo, warn
+)
 
+LOG_PATH = "./deploy_db.log"
+IMAGE_VERSION = "18"
 
 def deploy_db() -> None:
-  __require_sudo()
+  require_sudo()
   if not sys.argv[1]:
-    print("\n\targ1 must be arg1 must be test|dev|prod\n")
-  PROJECT_ENVIRONMENT = sys.argv[1]
-  print(f"Environment: {PROJECT_ENVIRONMENT}")
-  PROJECT_NAME = get_project_name()
-  PROJECT_ROOT = get_project_root()
-  DB_CONFIG_PATH = f"{PROJECT_ROOT}/config/{PROJECT_ENVIRONMENT}/database.yml"
-  POSTGRES_USERNAME = f"{PROJECT_NAME}-user"
-  POSTGRES_PASSWORD = __generate_password(16)
-  POSTGRES_DBNAME = f"{PROJECT_NAME}-{PROJECT_ENVIRONMENT}"
-  HOST_PORT = __get_host_port(PROJECT_ENVIRONMENT)
-  IMAGE_VERSION = "18"
-  CONTAINER_NAME = f"postgres-{IMAGE_VERSION}-{PROJECT_NAME}-{PROJECT_ENVIRONMENT}"
-  created_new_config = False
-  if PROJECT_ENVIRONMENT in ["dev", "test"]:
-    __create_new_config(
-      new_config_path=DB_CONFIG_PATH,
-      port=HOST_PORT,
-      dbname=POSTGRES_DBNAME,
-      username=POSTGRES_USERNAME,
-      password=POSTGRES_PASSWORD
-    )
-    created_new_config=True
+    critical("arg1 must be dev|prod|test")
+  DEPLOYMENT_ENVIRONMENT = sys.argv[1]
+  debug(f"Environment: {DEPLOYMENT_ENVIRONMENT}")
+  client = docker.from_env()
+  container_name = generate_new_database_info(DEPLOYMENT_ENVIRONMENT).container_name
+  volume_name = f"{container_name}-volume"
+  if is_docker_container_running(container_name, client):
+    backup_db(DEPLOYMENT_ENVIRONMENT)
+  else:
+    warn(f"Couldn't find database to backup: {container_name}")
+    warn("Waiting 15s to allow user to abort, then proceeding without a backup...")
+    time.sleep(15)
+  if DEPLOYMENT_ENVIRONMENT == "prod":
+    if docker_volume_exists(volume_name, client):
+      _deploy_with_existing_volume(volume_name, DEPLOYMENT_ENVIRONMENT, client)
+    else:
+      _deploy_with_new_volume(volume_name, DEPLOYMENT_ENVIRONMENT, client)
+  else:
+    if docker_volume_exists(volume_name, client):
+      assert "prod" not in DEPLOYMENT_ENVIRONMENT, "TRYING TO REMOVE PROD VOLUME. ABORTING."
+      assert "prod" not in volume_name, "TRYING TO REMOVE PROD VOLUME. ABORTING."
+      container_name = generate_new_database_info(DEPLOYMENT_ENVIRONMENT).container_name
+      _stop_and_remove_container(client, container_name)
+      _remove_docker_volume(volume_name, client)
+    _deploy_with_new_volume(volume_name, DEPLOYMENT_ENVIRONMENT, client)
 
-  CLIENT = docker.from_env()
-  for container in CLIENT.containers.list(all=True):
-    if container.name == CONTAINER_NAME:
-      print(f"Stopping container: {container.name}")
-      container.stop()
-      print(f"Removing container: {container.name}")
-      container.remove()
-      break
-  print(f"Running container: {CONTAINER_NAME}")
-  if PROJECT_ENVIRONMENT == "prod":
-    CLIENT.containers.run(
-      detach=True,
-      remove=False,
-      name=CONTAINER_NAME,
-      environment={
-        "POSTGRES_DB": POSTGRES_DBNAME,
-        "POSTGRES_USER": POSTGRES_USERNAME,
-        "POSTGRES_PASSWORD": POSTGRES_PASSWORD
-      },
-      ports={
-        "5432/tcp": HOST_PORT
-      },
-      volumes={
-        f"{CONTAINER_NAME}-volume": {
-          "bind": "/var/lib/postgresql",
-          "mode": "rw",
-        }
-      },
-      image=f"postgres:{IMAGE_VERSION}"
-    )
-  else:
-    CLIENT.containers.run(
-      detach=True,
-      remove=False,
-      name=CONTAINER_NAME,
-      environment={
-        "POSTGRES_DB": POSTGRES_DBNAME,
-        "POSTGRES_USER": POSTGRES_USERNAME,
-        "POSTGRES_PASSWORD": POSTGRES_PASSWORD
-      },
-      ports={
-        "5432/tcp": HOST_PORT
-      },
-      image=f"postgres:{IMAGE_VERSION}"
-    )
-  print("\npsql \\")
-  print("  --host=127.0.0.1 \\")
-  print(f"  --port={HOST_PORT} \\")
-  print(f"  --dbname={POSTGRES_DBNAME} \\")
-  print(f"  --username={POSTGRES_USERNAME}\n")
-  if created_new_config:
-    print(f"Created new config with creds at: {DB_CONFIG_PATH}")
-  else:
-    print("Host: 127.0.0.1")
-    print(f"Port: {HOST_PORT}")
-    print(f"Database Name: {POSTGRES_DBNAME}")
-    print(f"Username: {POSTGRES_USERNAME}")
-    print(f"Password: {POSTGRES_PASSWORD}")
-  print()
-  __wait_for_healthy_db(
-    user=POSTGRES_USERNAME,
-    password=POSTGRES_PASSWORD,
-    dbname=POSTGRES_DBNAME,
-    port=HOST_PORT,
-    host="127.0.0.1"
+def _deploy_with_existing_volume(volume_name: str, deployment_environment: str, client: DockerClient) -> None:
+  postgres_info = get_existing_database_info(deployment_environment, IMAGE_VERSION)
+  _deploy_with_defined_volume(
+    volume_name,
+    postgres_info,
+    client
   )
-  print()
 
+def _deploy_with_new_volume(volume_name: str, deployment_environment: str, client: DockerClient) -> None:
+  postgres_info = generate_new_database_info(deployment_environment)
+  _create_new_project_database_config(postgres_info)
+  _deploy_with_defined_volume(
+    volume_name,
+    postgres_info,
+    client
+  )
+  info(f"Created new config with creds at: {postgres_info.config_path}")
 
-def __require_sudo():
-  if os.geteuid() != 0:
-    print("Run with sudo.")
-    sys.exit(1)
+def _deploy_with_defined_volume(
+  volume_name: str,
+  postgres_info: PostgresInfo,
+  client: DockerClient
+) -> None:
+  _stop_and_remove_container(client, postgres_info.container_name)
+  info(f"Running container: {postgres_info.container_name}")
+  try:
+    container = _run_container_with_volume_mount(volume_name, client, postgres_info)
+  except APIError as e:
+    if "port is already allocated" not in str(e):
+      raise e
+    critical(f"Failed to deploy container because port {postgres_info.host_port} is in use... Aborting.")
+  container.reload()
+  _output_logs(volume_name, postgres_info)
+  _wait_for_healthy_db(postgres_info)
 
-def __generate_password(length: int) -> str:
-  print("Generating password...")
-  alphabet = string.ascii_letters + string.digits
-  return ''.join(secrets.choice(alphabet) for _ in range(length))
-
-def __create_new_config(new_config_path: str, port: int, dbname: str, username: str, password: str) -> None:
-  print(f"New config: {new_config_path}")
+def _create_new_project_database_config(postgres_info: PostgresInfo) -> None:
+  info(f"New config: {postgres_info.config_path}")
   new_config = {
     "engine": "postgresql",
     "host": "127.0.0.1",
-    "port": port,
-    "name": dbname,
-    "username": username,
-    "password": password
+    "port": postgres_info.host_port,
+    "name": postgres_info.db_name,
+    "username": postgres_info.username,
+    "password": postgres_info.password
   }
-  with open(new_config_path, "w", encoding='utf-8') as config_file:
+  with open(postgres_info.config_path, "w", encoding='utf-8') as config_file:
     yaml.safe_dump(new_config, config_file)
 
-def __wait_for_healthy_db(user, password, dbname, port, host="localhost"):
-  print("Waiting for database to become healthy...")
+def _stop_and_remove_container(client: DockerClient, container_removal_name: str) -> None:
+  for container in client.containers.list(all=True):
+    if container.name == container_removal_name:
+      info(f"Stopping container: {container.name}")
+      container.stop()
+      info(f"Removing container: {container.name}")
+      container.remove()
+      break
+
+def _remove_docker_volume(volume_name: str, client: DockerClient) -> None:
+  debug(f"Removing docker volume: {volume_name}")
+  assert "prod" not in volume_name, "TRYING TO REMOVE PROD VOLUME. ABORTING."
+  volume = client.volumes.get(volume_name)
+  volume.remove(force=True)
+
+def _output_logs(volume_name: str, postgres_info: PostgresInfo) -> None:
+  output_seperator()
+  _output_container_info(volume_name, postgres_info)
+  output_seperator()
+  _output_psql_helper(postgres_info)
+  output_seperator()
+  _output_database_info(postgres_info)
+  output_seperator()
+  filesystem_log("=" * 120, LOG_PATH)
+
+def _run_container_with_volume_mount(volume_name: str, client: DockerClient, postgres_info: PostgresInfo) -> Container:
+  return client.containers.run(
+    detach=True,
+    remove=False,
+    name=postgres_info.container_name,
+    environment={
+      "POSTGRES_DB": postgres_info.db_name,
+      "POSTGRES_USER": postgres_info.username,
+      "POSTGRES_PASSWORD": postgres_info.password
+    },
+    ports={
+      "5432/tcp": postgres_info.host_port
+    },
+    volumes={
+      volume_name: {
+        "bind": "/var/lib/postgresql",
+        "mode": "rw",
+      }
+    },
+    image=f"postgres:{postgres_info.image_version}"
+  )
+
+def _output_psql_helper(postgres_info: PostgresInfo) -> None:
+  print("Command-line access:")
+  print("  psql \\")
+  print("    --host=127.0.0.1 \\")
+  print(f"    --port={postgres_info.host_port} \\")
+  print(f"    --dbname={postgres_info.db_name} \\")
+  print(f"    --username={postgres_info.username}")
+
+def _output_database_info(postgres_info: PostgresInfo) -> None:
+  print("Database Info:")
+  print( "           Host: 127.0.0.1")
+  print(f"           Port: {postgres_info.host_port}")
+  print(f"  Database Name: {postgres_info.db_name}")
+  print(f"       Username: {postgres_info.username}")
+  print(f"       Password: {postgres_info.password}")
+  filesystem_log("Host: 127.0.0.1", LOG_PATH)
+  filesystem_log(f"Port: {postgres_info.host_port}", LOG_PATH)
+  filesystem_log(f"Database Name: {postgres_info.db_name}", LOG_PATH)
+  filesystem_log(f"Username: {postgres_info.username}", LOG_PATH)
+  filesystem_log(f"Password: {postgres_info.password}", LOG_PATH)
+
+def _output_container_info(volume_name: str, postgres_info: PostgresInfo) -> None:
+  print("Container Info:")
+  print(f"      Name: {postgres_info.container_name}")
+  print(f"    Volume: {volume_name}")
+  filesystem_log(f"Name: {postgres_info.container_name}", LOG_PATH)
+  filesystem_log(f"Volume: {volume_name}", LOG_PATH)
+
+def _wait_for_healthy_db(postgres_info: PostgresInfo, host: str = "127.0.0.1"):
+  info("Waiting for database to become healthy...")
   timeout = 15
   start = time.time()
   while time.time() - start < timeout:
     try:
       with psycopg.connect(
-        dbname=dbname,
-        user=user,
-        password=password,
+        dbname=postgres_info.db_name,
+        user=postgres_info.username,
+        password=postgres_info.password,
         host=host,
-        port=port,
+        port=postgres_info.host_port,
         connect_timeout=2,
       ):
-        print("Confirmed database is healthy.")
+        info("Confirmed that database is healthy.")
         return
     except psycopg.OperationalError:
       time.sleep(1)
   raise TimeoutError("Timed out waiting for database health.")
-
-def __get_host_port(env_str: str) -> int:
-  if env_str == "test":
-    return 5434
-  if env_str == "dev":
-    return 5433
-  if env_str == "prod":
-    return 5432
-  raise RuntimeError(f"Unknown environment: {env_str}")
 
 
 if __name__ == "__main__":
