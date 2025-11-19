@@ -26,7 +26,10 @@ class AccountManager(DatabaseAwareService):
       )
     except ValidationErr as e:
       raise ItemCreationErr() from e
-    created_account = self._create_account_in_database(account)
+    try:
+      created_account = self._create_account_in_database(account)
+    except DatabaseInsertErr as e:
+      raise ItemCreationErr() from e
     return created_account
 
   def _get_account_from_database(
@@ -42,8 +45,7 @@ class AccountManager(DatabaseAwareService):
     self,
     account: Account
   ) -> Account:
-    try:
-      account = self._database.insert_account(account)
-    except DatabaseInsertErr as e:
-      raise ItemCreationErr() from e
+    self._logger.debug("Attempting to create account...")
+    account = self._database.insert_account(account)
+    self._logger.debug("Successfully created account for uuid: %s", account.get_uuid())
     return account
