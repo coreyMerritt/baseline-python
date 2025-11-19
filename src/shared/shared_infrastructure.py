@@ -5,6 +5,7 @@ from infrastructure.database.database import Database
 from infrastructure.disk.disk import Disk
 from infrastructure.environment.environment import Environment
 from infrastructure.logger.projectname_logger import ProjectnameLogger
+from shared.enums.config_filenames import ConfigFilenames
 from shared.enums.env_var import EnvVar
 
 # General
@@ -13,19 +14,19 @@ DEPLOYMENT_ENV = environment.get_env_var(EnvVar.DEPLOYMENT_ENVIRONMENT)
 CONFIG_DIR = f"./config/{DEPLOYMENT_ENV}"
 
 # Handle Disk first/manually as its a dependency for other operations
-DISK_CONFIG_PATH = f"{CONFIG_DIR}/disk.yml"
+DISK_CONFIG_PATH = f"{CONFIG_DIR}/{ConfigFilenames.DISK.value}"
 with open(DISK_CONFIG_PATH, "r", encoding='utf-8') as yaml_file:
   RAW_DISK_CONFIG = yaml.safe_load(yaml_file)
   DISK_CONFIG = ConfigParser().parse_disk_config(RAW_DISK_CONFIG)
   disk = Disk(DISK_CONFIG)
 
 # Config Paths
-CPU_CONFIG_PATH = f"{CONFIG_DIR}/cpu.yml"
-DATABASE_CONFIG_PATH = f"{CONFIG_DIR}/database.yml"
-EXTERNAL_SERVICE_CONFIG_PATH = f"{CONFIG_DIR}/external_services.yml"
-LOGGER_CONFIG_PATH = f"{CONFIG_DIR}/logger.yml"
-MEMORY_CONFIG_PATH = f"{CONFIG_DIR}/memory.yml"
-TYPICODE_CONFIG_PATH = f"{CONFIG_DIR}/typicode.yml"
+CPU_CONFIG_PATH = f"{CONFIG_DIR}/{ConfigFilenames.CPU.value}"
+DATABASE_CONFIG_PATH = f"{CONFIG_DIR}/{ConfigFilenames.DATABASE.value}"
+EXTERNAL_SERVICE_CONFIG_PATH = f"{CONFIG_DIR}/{ConfigFilenames.EXTERNAL_SERVICES.value}"
+LOGGER_CONFIG_PATH = f"{CONFIG_DIR}/{ConfigFilenames.LOGGER.value}"
+MEMORY_CONFIG_PATH = f"{CONFIG_DIR}/{ConfigFilenames.MEMORY.value}"
+TYPICODE_CONFIG_PATH = f"{CONFIG_DIR}/{ConfigFilenames.TYPICODE.value}"
 
 # Raw Configs
 RAW_CPU_CONFIG = disk.read_yaml(CPU_CONFIG_PATH)

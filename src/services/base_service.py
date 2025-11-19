@@ -6,4 +6,4 @@ class Service():
 
   def __init__(self, logger: ProjectnameLogger):
     self._logger = logger
-    assert not isinstance(self, Service), "Service is a base class and should not be instantiated"
+    assert type(self) is not Service, "Service is a base class and should not be instantiated"

@@ -101,7 +101,8 @@ disable=bad-inline-option,raw-checker-failed,
         too-many-lines,
         too-many-positional-arguments,
         use-symbolic-message-instead,
-        useless-suppression
+        useless-suppression,
+        unidiomatic-typecheck
 
 # Enable the message, report, category or checker with the given uuid(s). You can
 # either give multiple identifier separated by comma (,) or put this option

@@ -9,7 +9,11 @@ from shared.models.health_reports.environment_health_report import EnvironmentHe
 
 
 class Environment(Infrastructure):
-  _first_call: bool = True
+  _first_call: bool
+
+  def __init__(self):
+    self._first_call = True
+    super().__init__()
 
   def get_health_report(self) -> EnvironmentHealthReport:
     healthy = True

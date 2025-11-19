@@ -45,18 +45,10 @@ fi
 if [[ ! -f ".env" ]]; then
   cp -r .env.model .env
 fi
-config_file_names=(
-  "cpu.yml"
-  "database.yml"
-  "disk.yml"
-  "external_services.yml"
-  "logger.yml"
-  "memory.yml"
-  "typicode.yml"
-)
-for file_name in "${config_file_names[@]}"; do
-  if [[ ! -f "./config/${project_environment}/${file_name}" ]]; then
-    cp -r "./config/model/${file_name}" "./config/${project_environment}/${file_name}"
+config_filenames="$(cat src/shared/enums/config_filenames.py | grep -vi import | grep -vi class | awk '{print $3}' | jq -r)"
+for filename in $config_filenames; do
+  if [[ ! -f "./config/${project_environment}/${filename}" ]]; then
+    cp -r "./config/model/${filename}" "./config/${project_environment}/${filename}"
   fi
 done
 exit 0
