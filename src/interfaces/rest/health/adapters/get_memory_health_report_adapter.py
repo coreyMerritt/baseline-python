@@ -8,6 +8,7 @@ class GetMemoryHealthReportAdapter:
   def model_to_res(model: MemoryHealthReport) -> GetMemoryHealthReportRes:
     try:
       return GetMemoryHealthReportRes(
+        usage_percentage=model.usage_percentage,
         healthy=model.healthy
       )
     except Exception as e:

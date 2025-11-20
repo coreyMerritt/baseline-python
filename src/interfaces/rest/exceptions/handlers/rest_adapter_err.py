@@ -1,12 +1,11 @@
-from logging import Logger
-
 from fastapi import FastAPI, Request
 
 from interfaces.rest.exceptions.projectname_http_exception import ProjectnameHTTPException
 from interfaces.rest.exceptions.rest_adapter_err import RestAdapterErr
+from shared.types.logger_interface import LoggerInterface
 
 
-def register_rest_adapter_exception_handler(app: FastAPI, logger: Logger) -> None:
+def register_rest_adapter_exception_handler(app: FastAPI, logger: LoggerInterface) -> None:
   LOGGER = logger
 
   @app.exception_handler(RestAdapterErr)

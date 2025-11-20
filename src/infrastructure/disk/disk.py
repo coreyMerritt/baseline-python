@@ -18,9 +18,10 @@ class Disk(Infrastructure):
 
   def get_health_report(self) -> DiskHealthReport:
     maximum_healthy_disk_usage_percentage = self._disk_config.maximum_healthy_disk_usage_percentage
-    disk_usage_percentage = self._get_disk_usage_percentage()
-    healthy = disk_usage_percentage <= maximum_healthy_disk_usage_percentage
+    usage_percentage = self._get_disk_usage_percentage()
+    healthy = usage_percentage <= maximum_healthy_disk_usage_percentage
     return DiskHealthReport(
+      usage_percentage=usage_percentage,
       healthy=healthy
     )
 

@@ -1,24 +1,20 @@
-from logging import WARNING, Logger, basicConfig, error, getLogger
-from typing import List
+import logging
 
 from infrastructure.base_infrastructure import Infrastructure
-from infrastructure.logger.exceptions.logger_configuration_err import LoggerConfigurationErr
 from infrastructure.logger.exceptions.logger_initialization_err import LoggerInitializationErr
 from infrastructure.logger.formatters.projectname_logger_formatter import CustomFormatter
 from infrastructure.logger.mapping.logger_level_mapper import LoggerLevelMapper
-from shared.enums.logger_level import LoggerLevel
 from shared.models.configs.logger_config import LoggerConfig
 from shared.models.health_reports.logger_health_report import LoggerHealthReport
 
-
-class ProjectnameLogger(Infrastructure, Logger):
+class ProjectnameLogger(Infrastructure):
   _is_configured: bool = False
 
   def __init__(self, logger_config: LoggerConfig):
     try:
       if not self._is_configured:
         self._configure_logger(logger_config)
-      Logger.__init__(self, name="Projectname Logger")
+      self._logger = logging.getLogger("Projectname Logger")
       super().__init__()
     except Exception as e:
       raise LoggerInitializationErr() from e
@@ -34,29 +30,25 @@ class ProjectnameLogger(Infrastructure, Logger):
   def _configure_logger(self, logger_config: LoggerConfig) -> None:
     if self._is_configured:
       return
-    self._configure_base_logging(logger_config.level)
-    self._inject_custom_formatter()
-    noisy_loggers = logger_config.noisy_loggers
-    if noisy_loggers:
-      self._silence_noisy_loggers(noisy_loggers)
+    level = LoggerLevelMapper.local_enum_to_logging_const(logger_config.level)
+    logging.basicConfig(level=level)
+    for handler in logging.getLogger().handlers:
+      handler.setFormatter(CustomFormatter("%(asctime)-24s %(levelname)-9s %(message)s"))
+    for name in logger_config.noisy_loggers or []:
+      logging.getLogger(name).setLevel(logging.WARNING)
     self._is_configured = True
 
-  def _configure_base_logging(self, logger_level_enum: LoggerLevel) -> None:
-    logging_level_const = LoggerLevelMapper.local_enum_to_logging_const(logger_level_enum)
-    try:
-      basicConfig(
-        level=logging_level_const
-      )
-    except Exception as e:
-      raise LoggerConfigurationErr() from e
+  def debug(self, *args, **kwargs):
+    return self._logger.debug(*args, **kwargs)
 
-  def _inject_custom_formatter(self) -> None:
-    for handler in getLogger().handlers:
-      handler.setFormatter(CustomFormatter("%(asctime)-24s %(levelname)-9s %(message)s"))
+  def info(self, *args, **kwargs):
+    return self._logger.info(*args, **kwargs)
 
-  def _silence_noisy_loggers(self, noisy_loggers: List[str]) -> None:
-    try:
-      for name in noisy_loggers:
-        getLogger(name).setLevel(WARNING)
-    except Exception:
-      error("Failed to silence noisy loggers: %s", noisy_loggers)
+  def warning(self, *args, **kwargs):
+    return self._logger.warning(*args, **kwargs)
+
+  def error(self, *args, **kwargs):
+    return self._logger.error(*args, **kwargs)
+
+  def critical(self, *args, **kwargs):
+    return self._logger.critical(*args, **kwargs)

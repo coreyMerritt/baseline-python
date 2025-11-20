@@ -8,6 +8,7 @@ class GetCpuHealthReportAdapter:
   def model_to_res(model: CpuHealthReport) -> GetCpuHealthReportRes:
     try:
       return GetCpuHealthReportRes(
+        usage_percentage=model.usage_percentage,
         healthy=model.healthy
       )
     except Exception as e:

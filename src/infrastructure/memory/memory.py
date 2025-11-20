@@ -14,9 +14,10 @@ class Memory(Infrastructure):
 
   def get_health_report(self) -> MemoryHealthReport:
     maximum_healthy_memory_usage_percentage = self._memory_config.maximum_healthy_memory_usage_percentage
-    memory_usage_percentage = self.get_memory_usage_percentage()
-    healthy = memory_usage_percentage <= maximum_healthy_memory_usage_percentage
+    usage_percentage = self.get_memory_usage_percentage()
+    healthy = usage_percentage <= maximum_healthy_memory_usage_percentage
     return MemoryHealthReport(
+      usage_percentage=usage_percentage,
       healthy=healthy
     )
 

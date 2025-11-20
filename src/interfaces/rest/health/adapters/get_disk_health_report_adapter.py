@@ -8,6 +8,7 @@ class GetDiskHealthReportAdapter:
   def model_to_res(model: DiskHealthReport) -> GetDiskHealthReportRes:
     try:
       return GetDiskHealthReportRes(
+        usage_percentage=model.usage_percentage,
         healthy=model.healthy
       )
     except Exception as e:

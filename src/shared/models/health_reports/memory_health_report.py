@@ -1,5 +1,7 @@
+from dataclasses import dataclass
 from shared.models.health_reports.base_health_report import HealthReport
 
 
+@dataclass
 class MemoryHealthReport(HealthReport):
-  """ Only contains base health report values """
+  usage_percentage: float
