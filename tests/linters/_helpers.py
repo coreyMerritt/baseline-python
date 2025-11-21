@@ -73,6 +73,44 @@ def get_source_paths(
   source_paths_list.remove("")
   return source_paths_list
 
+def assert_all_classes_are_imported(classes: List[Class], source_paths: List[str]):
+  for class_ in classes:
+    assert is_imported_from_some_path(class_, source_paths), f"Never Imported:\n\t{class_.name}\n\t{class_.path}"
+
+def is_imported_from_some_path(class_: Class, source_paths: List[str]) -> bool:
+  for source_path in source_paths:
+    if is_imported_from_specific_path(class_, source_path):
+      return True
+  return False
+
+def is_imported_from_specific_path(class_: Class, source_path: str) -> bool:
+  with open(source_path, "r", encoding="utf-8") as source_file:
+    lines = source_file.readlines()
+  for line in lines:
+    match = re.match(fr"^from\ .+\ import\ ({class_.name})(?:,|\s|$)", line)
+    if match:
+      return True
+  return False
+
+def get_errors(paths: List[str]) -> List[Class]:
+  error_list = []
+  for path in paths:
+    try:
+      error_name = _get_error_name(path)
+      error_path = path
+      error_filename = get_filename(path)
+      error_filestem = get_filestem(path)
+      error_ = Class(
+        name=error_name,
+        path=error_path,
+        filename=error_filename,
+        filestem=error_filestem
+      )
+      error_list.append(error_)
+    except ValueError:
+      continue
+  return error_list
+
 def get_classes(paths: List[str]) -> List[Class]:
   class_list = []
   for path in paths:
@@ -145,3 +183,31 @@ def bash(cmd_str: str) -> str:
     message += f"\tSTDOUT: {e.stdout}"
     message += f"\tSTDERR: {e.stderr}"
     raise BashError(message) from e
+
+def _get_error_name(path: str) -> str:
+  match = None
+  error_name = None
+  with open(path, "r", encoding="utf-8") as error_file:
+    lines = error_file.readlines()
+  for line in lines:
+    err_match = re.match(r"^class ([A-Z][a-zA-Z]+Err)[:(]", line)
+    if err_match:
+      match = err_match
+      break
+    error_match = re.match(r"^class ([A-Z][a-zA-Z]+Error)[:(]", line)
+    if error_match:
+      match = error_match
+      break
+    exc_match = re.match(r"^class ([A-Z][a-zA-Z]+Exc)[:(]", line)
+    if exc_match:
+      match = exc_match
+      break
+    exception_match = re.match(r"^class ([A-Z][a-zA-Z]+Exception)[:(]", line)
+    if exception_match:
+      match = exception_match
+      break
+  if match:
+    error_name = match.group(1)
+  if error_name:
+    return error_name
+  raise ValueError("Not an exception")

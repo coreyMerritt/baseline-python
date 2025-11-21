@@ -1,7 +1,7 @@
-from services.exceptions.service_exception import ServiceException
+from services.exceptions.base_service_exception import BaseServiceException
 
 
-class ItemCreationErr(ServiceException):
+class ItemCreationErr(BaseServiceException):
   message: str
 
   def __init__(self, *args):

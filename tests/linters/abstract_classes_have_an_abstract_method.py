@@ -12,8 +12,7 @@ def main():
   for abstract_class in abstract_classes:
     print(abstract_class.name)
   assert_all_abstract_classes_have_abstract_methods(abstract_classes)
-  print("All abstract classes have at least one abstract method.")
-  print("Return 0")
+  print("0: All abstract classes have at least one abstract method.")
   return 0
 
 def assert_all_abstract_classes_have_abstract_methods(abstract_classes: List[Class]):

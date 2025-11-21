@@ -1,7 +1,7 @@
-from services.exceptions.service_exception import ServiceException
+from services.exceptions.base_service_exception import BaseServiceException
 
 
-class BadInputErr(ServiceException):
+class BadInputErr(BaseServiceException):
   message: str
 
   def __init__(self, *args):

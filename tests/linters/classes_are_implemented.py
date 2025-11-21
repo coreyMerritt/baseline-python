@@ -10,8 +10,7 @@ def main():
   source_paths = get_source_paths()
   classes = get_classes(source_paths)
   assert_all_classes_are_implemented(classes)
-  print("All classes are implemented.")
-  print("Return 0")
+  print("0: All classes are implemented.")
   return 0
 
 def assert_all_classes_are_implemented(classes: List[Class]):

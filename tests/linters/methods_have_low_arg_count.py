@@ -16,8 +16,7 @@ def main():
   source_paths.extend(get_source_paths(layer="services", max_depth=1))
   classes = get_classes(source_paths)
   assert_all_classes_contain_proper_arg_count(classes)
-  info("All classes contain proper arg counts.")
-  info("Return 0")
+  info("0")
   return 0
 
 def assert_all_classes_contain_proper_arg_count(classes: List[Class]):
