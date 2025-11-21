@@ -8,7 +8,7 @@ repos:
         always_run: true
         pass_filenames: false
         stages:
-          - pre-commit
+          - pre-push
       - name: Linters
         id: linters
         entry: ./tests/system/run-linters.sh
@@ -24,7 +24,7 @@ repos:
         always_run: true
         pass_filenames: false
         stages:
-          - pre-commit
+          - pre-push
       - name: Health Check
         id: health-check
         entry: ./tests/system/api/health-check.sh
@@ -32,7 +32,7 @@ repos:
         always_run: true
         pass_filenames: false
         stages:
-          - pre-commit
+          - pre-push
       - name: POST and GET Account
         id: post-and-get-account
         entry: ./tests/system/api/post-and-get-account.sh
@@ -40,7 +40,7 @@ repos:
         always_run: true
         pass_filenames: false
         stages:
-          - pre-commit
+          - pre-push
       - name: GET Blog Post
         id: get-blog-post
         entry: ./tests/system/api/get-blog-post.sh
@@ -48,4 +48,4 @@ repos:
         always_run: true
         pass_filenames: false
         stages:
-          - pre-commit
+          - pre-push
