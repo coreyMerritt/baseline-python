@@ -6,7 +6,6 @@ set -o pipefail
 set -u
 set -x
 
-
 # Ensure we're in the project root
 while true; do
   if [[ -f "$(pwd)/pyproject.toml" ]]; then
@@ -18,5 +17,6 @@ while true; do
   fi
 done
 
+source .env
 .venv/bin/python ./src/interfaces/command_line/entrypoint.py $@
 exit 0

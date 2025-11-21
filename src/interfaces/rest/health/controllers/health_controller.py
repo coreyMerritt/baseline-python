@@ -3,6 +3,7 @@ import asyncio
 from fastapi import Request
 
 from interfaces.rest.health.mappers.get_full_health_report_mapper import GetFullHealthReportMapper
+from interfaces.rest.health.mappers.get_simple_health_report_mapper import GetSimpleHealthReportMapper
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
 from services.health_manager import HealthManager
 from shared.models.configs.cpu_config import CpuConfig
@@ -10,6 +11,7 @@ from shared.models.configs.disk_config import DiskConfig
 from shared.models.configs.external_services_config import ExternalServicesConfig
 from shared.models.configs.memory_config import MemoryConfig
 from shared.models.configs.typicode_config import TypicodeConfig
+from shared.models.health_reports.full_health_report import FullHealthReport
 from shared.types.logger_interface import LoggerInterface
 
 
@@ -36,9 +38,22 @@ class HealthController:
       req.app.state.logger
     )
 
-  # NOTE: Most GETs will not use a Req, just one or more query params /health?uuid=123
+  async def get_simple_health_report(self) -> ProjectnameHTTPResponse:
+    health_report = await self._get_health_report()
+    get_simple_health_report_res = GetSimpleHealthReportMapper.model_to_res(health_report)
+    return ProjectnameHTTPResponse(
+      data=get_simple_health_report_res
+    )
+
   async def get_full_health_report(self) -> ProjectnameHTTPResponse:
-    health_report = await asyncio.to_thread(
+    health_report = await self._get_health_report()
+    get_full_health_report_res = GetFullHealthReportMapper.model_to_res(health_report)
+    return ProjectnameHTTPResponse(
+      data=get_full_health_report_res
+    )
+
+  async def _get_health_report(self) -> FullHealthReport:
+    return await asyncio.to_thread(
       self._health_manager.get_full_health_report,
       self._database,
       self._cpu_config,
@@ -46,9 +61,4 @@ class HealthController:
       self._external_services_config,
       self._memory_config,
       self._typicode_config
-    )
-    self._logger.info("Successfully retrieved full health report")
-    get_full_health_report_res = GetFullHealthReportMapper.model_to_res(health_report)
-    return ProjectnameHTTPResponse(
-      data=get_full_health_report_res
     )
