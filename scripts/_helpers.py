@@ -11,6 +11,7 @@ from subprocess import CalledProcessError, run
 import yaml
 from docker import DockerClient
 from docker.errors import NotFound
+from dotenv import load_dotenv
 
 
 # Classes
@@ -114,11 +115,13 @@ def is_docker_container_running(container_name: str, client: DockerClient) -> bo
     return False
 
 def generate_new_database_info(deployment_environment: str) -> PostgresInfo:
+  load_dotenv()
   if deployment_environment not in ["dev", "prod", "test"]:
     raise AttributeError("deployment_environment must be dev|prod|test")
   project_name = get_project_name()
-  project_root = get_project_root()
-  database_config_path = f"{project_root}/config/{deployment_environment}/database.yml"
+  global_config_dir = os.getenv("PROJECTNAME_GLOBAL_CONFIG_DIR")
+  assert global_config_dir
+  database_config_path = f"{global_config_dir}/{deployment_environment}/database.yml"
   postgres_username = f"{project_name}-user"
   postgres_password = _generate_password(16)
   postgres_dbname = f"{project_name}-{deployment_environment}"
@@ -139,8 +142,9 @@ def get_existing_database_info(deployment_environment: str, image_version: str) 
   if deployment_environment not in ["dev", "prod", "test"]:
     raise AttributeError("deployment_environment must be dev|prod|test")
   project_name = get_project_name()
-  project_root = get_project_root()
-  database_config_path = f"{project_root}/config/{deployment_environment}/database.yml"
+  global_config_dir = os.getenv("PROJECTNAME_GLOBAL_CONFIG_DIR")
+  assert global_config_dir
+  database_config_path = f"{global_config_dir}/{deployment_environment}/database.yml"
   with open(database_config_path, "r", encoding="utf-8") as database_yaml_file:
     raw_database_config_dict = yaml.safe_load(database_yaml_file)
   container_name = f"postgres-{image_version}-{project_name}-{deployment_environment}"

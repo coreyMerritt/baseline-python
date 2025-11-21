@@ -6,6 +6,11 @@ set -E
 set -o pipefail
 set -x
 
+# Enforce early sudo so the script doesn't halt mid-execution
+starting_user="$(id -un)"
+starting_group="$(id -gn)"
+sudo -k && sudo true
+
 # Vars
 project_environment="$1"
 [[ "$project_environment" == "test" ]] || [[ "$project_environment" == "dev" ]] || [[ "$project_environment" == "prod" ]] || {
@@ -41,14 +46,55 @@ elif [[ "$project_environment" == "prod" ]]; then
   pip install .[infra]
 fi
 
-# Ensure basic non-sensitive configs are in place
+# Configs
 if [[ ! -f ".env" ]]; then
   cp -r .env.model .env
 fi
-config_filenames="$(cat src/shared/enums/config_filenames.py | grep -vi import | grep -vi class | awk '{print $3}' | jq -r)"
-for filename in $config_filenames; do
-  if [[ ! -f "./config/${project_environment}/${filename}" ]]; then
-    cp -r "./config/model/${filename}" "./config/${project_environment}/${filename}"
-  fi
+source ".env"
+[[ -n "$PROJECTNAME_GLOBAL_CONFIG_DIR" ]]
+[[ -n "$PROJECTNAME_MODEL_CONFIG_DIR" ]]
+config_filenames="$(cat "./src/shared/enums/config_filenames.py" | grep -v "import" | grep -v "class" | awk '{print $3}' | jq -r)"
+deployment_environments="$(cat "./src/services/enums/deployment_environment.py" | grep -v "import" | grep -v "class" | awk '{print $3}' | jq -r .)" 
+## Assert all local configs exist
+for config_filename in $config_filenames; do
+  local_model_path="${PROJECTNAME_MODEL_CONFIG_DIR}/${config_filename}"
+  [[ -f "$local_model_path" ]] || {
+    echo -e "\n\tFatal error: $local_model_path does not exist"
+    exit 1
+  }
 done
+## Ensure all global config base dirs exist
+for environment in $deployment_environments; do
+  global_config_dir="${PROJECTNAME_GLOBAL_CONFIG_DIR}/${environment}"
+  [[ -d "$global_config_dir" ]] || {
+    sudo mkdir -p "$global_config_dir"
+  }
+done
+sudo find "$PROJECTNAME_GLOBAL_CONFIG_DIR" -type d -exec chmod 755 {} +
+## Copy any missing global configs to their respective global dir
+for environment in $deployment_environments; do
+  for config_filename in $config_filenames; do
+    local_model_path="${PROJECTNAME_MODEL_CONFIG_DIR}/${config_filename}"
+    global_config_path="${PROJECTNAME_GLOBAL_CONFIG_DIR}/${environment}/${config_filename}"
+    [[ -f "$global_config_path" ]] || {
+      sudo cp -r "$local_model_path" "$global_config_path"
+    }
+  done
+done
+sudo chown -R "$starting_user:$starting_group" "$PROJECTNAME_GLOBAL_CONFIG_DIR"
+sudo find "$PROJECTNAME_GLOBAL_CONFIG_DIR" -type f -exec chmod 644 {} +
+
+# If is prod install, make binary and toss into /usr/bin
+project_name_as_bin="projectname"
+installation_dir="/usr/bin"
+installation_path="${installation_dir}/${project_name_as_bin}"
+if [[ "$project_environment" == "prod" ]]; then
+  ./.venv/bin/pyinstaller \
+    --onefile \
+    --hidden-import=interfaces.rest.webserver_hook \
+    --name=${project_name_as_bin} \
+    src/interfaces/command_line/entrypoint.py
+  sudo cp "./dist/${project_name_as_bin}" "$installation_path"
+  sudo chmod 755 "$installation_path"
+fi
 exit 0

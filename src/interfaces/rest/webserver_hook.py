@@ -8,15 +8,16 @@ from interfaces.rest.exceptions.handlers._404_not_found import register_404_not_
 from interfaces.rest.exceptions.handlers._500_internal_server_error import register_500_internal_server_error_handlers
 from interfaces.rest.health.routes import health_routes
 from interfaces.rest.v1.routes import account_routes, blog_routes
-from shared.shared_infrastructure import (CPU_CONFIG, DATABASE_CONFIG, DISK_CONFIG, EXTERNAL_SERVICES_CONFIG,
-                                          LOGGER_CONFIG, MEMORY_CONFIG, TYPICODE_CONFIG, account_repository,
-                                          blog_post_repository, database, logger)
+from shared.shared_infrastructure import (CPU_CONFIG, DATABASE_CONFIG, DEPLOYMENT_ENV, DISK_CONFIG,
+                                          EXTERNAL_SERVICES_CONFIG, LOGGER_CONFIG, MEMORY_CONFIG, TYPICODE_CONFIG,
+                                          account_repository, blog_post_repository, database, logger)
 
 
 def create_app() -> FastAPI:
   @asynccontextmanager
   async def lifespan(app: FastAPI):
     # --- Startup ---
+    logger.debug(f"Using deployment environment: {DEPLOYMENT_ENV}")
     config = SimpleNamespace()
     config.cpu = CPU_CONFIG
     config.database = DATABASE_CONFIG

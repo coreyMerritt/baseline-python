@@ -18,5 +18,5 @@ while true; do
   fi
 done
 
-.venv/bin/python ./src/main.py $@
+.venv/bin/python ./src/interfaces/command_line/entrypoint.py $@
 exit 0

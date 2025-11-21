@@ -15,9 +15,4 @@ RUN dnf install -y \
 RUN ln -sf /usr/bin/python3.11 /usr/bin/python3 &&\
   ln -sf /usr/bin/pip3.11 /usr/bin/pip3
 
-RUN mkdir -p \
-  config/test \
-  config/dev \
-  config/prod
-
 CMD ["bash", "./start-with-uvicorn.sh"]

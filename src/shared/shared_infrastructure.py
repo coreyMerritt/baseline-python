@@ -12,10 +12,12 @@ from shared.enums.env_var import EnvVar
 
 # General
 __environment = Environment()
-__DEPLOYMENT_ENV = __environment.get_env_var(EnvVar.DEPLOYMENT_ENVIRONMENT)
-__CONFIG_DIR = f"./config/{__DEPLOYMENT_ENV}"
+__environment.load_env()
+DEPLOYMENT_ENV = __environment.get_env_var(EnvVar.DEPLOYMENT_ENVIRONMENT.value)
+__GLOBAL_CONFIG_DIR = __environment.get_env_var(EnvVar.GLOBAL_CONFIG_DIR.value)
+__CONFIG_DIR = f"{__GLOBAL_CONFIG_DIR}/{DEPLOYMENT_ENV}"
 
-# Handle Disk first/manually as its a dependency for other operations
+# Handle Disk first/manually as its a dependency for proceeding operations
 DISK_CONFIG_PATH = f"{__CONFIG_DIR}/{ConfigFilenames.DISK.value}"
 with open(DISK_CONFIG_PATH, "r", encoding='utf-8') as yaml_file:
   RAW_DISK_CONFIG = yaml.safe_load(yaml_file)
@@ -46,7 +48,7 @@ LOGGER_CONFIG = ConfigParser().parse_logger_config(RAW_LOGGER_CONFIG)
 MEMORY_CONFIG = ConfigParser().parse_memory_config(RAW_MEMORY_CONFIG)
 TYPICODE_CONFIG = ConfigParser().parse_typicode_config(RAW_TYPICODE_CONFIG)
 
-# BaseInfrastructure --- These should be imported at the interface level as needed
+# Infrastructure --- These should be imported at the interface level as needed
 database = Database(DATABASE_CONFIG)
 logger = ProjectnameLogger(LOGGER_CONFIG)
 account_repository = AccountRepository(database)

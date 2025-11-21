@@ -5,18 +5,14 @@
 .ruff_cache
 __pycache__
 
-# Package Data
+# Build & Package Data
+*.spec
 *.egg-info/
 build/
+dist/
 
 # Secrets
 .env
-config/test/*
-!config/test/.gitkeep
-config/dev/*
-!config/dev/.gitkeep
-config/prod/*
-!config/prod/.gitkeep
 backups/
 !backups/.gitkeep
 backups/database/

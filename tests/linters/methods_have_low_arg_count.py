@@ -2,7 +2,7 @@
 import re
 from typing import List
 
-from linters._helpers import Class, debug, ensure_in_project_root, get_classes, get_source_paths, info
+from linters._helpers import Class, debug, ensure_in_project_root, get_classes, get_source_paths
 
 MAX_ACCEPTABLE_ARG_COUNT = 2
 
@@ -16,7 +16,7 @@ def main():
   source_paths.extend(get_source_paths(layer="services", max_depth=1))
   classes = get_classes(source_paths)
   assert_all_classes_contain_proper_arg_count(classes)
-  info("0")
+  print("0: All classes contain proper arg counts.")
   return 0
 
 def assert_all_classes_contain_proper_arg_count(classes: List[Class]):

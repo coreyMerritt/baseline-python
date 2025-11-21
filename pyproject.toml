@@ -29,10 +29,14 @@ dev = [
 infra = [
   "docker==7.1.0",
   "psutil==7.1.3",
+  "pyinstaller==6.16.0",
   "types-docker==7.1.0.20251009",
   "uvicorn==0.38.0",
   "watchfiles==1.1.1"
 ]
+
+[project.scripts]
+projectname = "interfaces.command_line.entrypoint:entrypoint"
 
 [build-system]
 requires = [
@@ -77,3 +81,6 @@ select = [
   "W391"    # Extra Newline(s) at EOF
 ]
 preview = true
+
+[tool.setuptools]
+package-dir = {"" = "src"}

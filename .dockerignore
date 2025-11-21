@@ -11,9 +11,6 @@ build/
 
 # Secrets
 .env
-config/test/*
-config/dev/*
-config/prod/*
 
 # Misc
 .venv
