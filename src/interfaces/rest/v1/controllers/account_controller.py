@@ -1,5 +1,4 @@
 import asyncio
-from logging import Logger
 
 from fastapi import Request
 
@@ -11,11 +10,12 @@ from interfaces.rest.v1.mappers.get_account_mapper import GetAccountMapper
 from services.account_manager import AccountManager
 from services.exceptions.item_creation_err import ItemCreationErr
 from services.exceptions.item_not_found_err import ItemNotFoundErr
+from shared.types.logger_interface import LoggerInterface
 
 
 class AccountController:
   _req: Request
-  _logger: Logger
+  _logger: LoggerInterface
   _account_manager: AccountManager
 
   def __init__(self, req: Request):

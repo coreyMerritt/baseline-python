@@ -9,7 +9,6 @@ from domain.entities.account import Account
 from infrastructure.base_infrastructure import Infrastructure
 from infrastructure.database.exceptions.database_initialization_err import DatabaseInitializationErr
 from infrastructure.database.exceptions.database_insert_err import DatabaseInsertErr
-from infrastructure.database.exceptions.database_multiple_matches_err import DatabaseMultipleMatchesErr
 from infrastructure.database.exceptions.database_schema_creation_err import DatabaseSchemaCreationErr
 from infrastructure.database.exceptions.database_select_err import DatabaseSelectErr
 from infrastructure.database.exceptions.zero_query_results_err import ZeroQueryResultsErr
@@ -82,28 +81,6 @@ class Database(Infrastructure):
 
   def dispose(self):
     self._engine.dispose()
-
-  def get_uuid_from_account(
-    self,
-    account: Account
-  ) -> str | None:
-    try:
-      with self.get_session() as session:
-        stmt = select(AccountORM).where(
-          AccountORM.name == account.get_name(),
-          AccountORM.age == account.get_age(),
-        )
-        if account.get_uuid():
-          stmt = stmt.where(AccountORM.uuid == account.get_uuid())
-        results = session.exec(stmt).all()
-    except SQLAlchemyError as e:
-      raise DatabaseSelectErr() from e
-    if not results:
-      return None
-    if len(results) > 1:
-      raise DatabaseMultipleMatchesErr()
-    uuid = results[0].uuid
-    return uuid
 
   def get_account_from_uuid(
     self,

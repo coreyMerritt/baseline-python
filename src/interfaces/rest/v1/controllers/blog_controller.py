@@ -1,5 +1,4 @@
 import asyncio
-from logging import Logger
 
 from fastapi import Request
 
@@ -8,11 +7,12 @@ from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResp
 from interfaces.rest.v1.mappers.get_blog_post_mapper import GetBlogPostMapper
 from services.blog_manager import BlogManager
 from services.exceptions.item_not_found_err import ItemNotFoundErr
+from shared.types.logger_interface import LoggerInterface
 
 
 class BlogController:
   _req: Request
-  _logger: Logger
+  _logger: LoggerInterface
   _blog_manager: BlogManager
 
   def __init__(self, req: Request):

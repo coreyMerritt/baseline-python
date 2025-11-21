@@ -1,5 +1,4 @@
 import asyncio
-from logging import Logger
 
 from fastapi import Request
 
@@ -11,11 +10,12 @@ from shared.models.configs.disk_config import DiskConfig
 from shared.models.configs.external_services_config import ExternalServicesConfig
 from shared.models.configs.memory_config import MemoryConfig
 from shared.models.configs.typicode_config import TypicodeConfig
+from shared.types.logger_interface import LoggerInterface
 
 
 class HealthController:
   _req: Request
-  _logger: Logger
+  _logger: LoggerInterface
   _cpu_config: CpuConfig
   _disk_config: DiskConfig
   _external_services_config: ExternalServicesConfig
