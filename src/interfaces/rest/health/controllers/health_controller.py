@@ -26,20 +26,21 @@ class HealthController:
   def __init__(self, req: Request):
     self._req = req
     self._logger = req.app.state.logger
+    self._database = req.app.state.database
     self._cpu_config = req.app.state.config.cpu
     self._disk_config = req.app.state.config.disk
     self._external_services_config = req.app.state.config.external_services
     self._memory_config = req.app.state.config.memory
     self._typicode_config = req.app.state.config.typicode
     self._health_manager = HealthManager(
-      req.app.state.logger,
-      req.app.state.database
+      req.app.state.logger
     )
 
   # NOTE: Most GETs will not use a Req, just one or more query params /health?uuid=123
   async def get_full_health_report(self) -> ProjectnameHTTPResponse:
     health_report = await asyncio.to_thread(
       self._health_manager.get_full_health_report,
+      self._database,
       self._cpu_config,
       self._disk_config,
       self._external_services_config,

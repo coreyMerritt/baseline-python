@@ -1,7 +1,7 @@
-from infrastructure.exceptions.infrastructure_exception import InfrastructureException
+from infrastructure.exceptions.infrastructure_exception import BaseInfrastructureException
 
 
-class UnsetEnvironmentVariableErr(InfrastructureException):
+class UnsetEnvironmentVariableErr(BaseInfrastructureException):
   message: str
 
   def __init__(self, env_var_name: str, *args):

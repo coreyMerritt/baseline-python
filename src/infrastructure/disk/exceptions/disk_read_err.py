@@ -1,7 +1,7 @@
-from infrastructure.exceptions.infrastructure_exception import InfrastructureException
+from infrastructure.exceptions.infrastructure_exception import BaseInfrastructureException
 
 
-class DiskReadErr(InfrastructureException):
+class DiskReadErr(BaseInfrastructureException):
   message: str
 
   def __init__(self, filename: str, *args):

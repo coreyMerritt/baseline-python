@@ -1,4 +1,4 @@
-# Infrastructure
+# BaseInfrastructure
 
 | Exceptions | When | Details |
 |----------|----------|----------|

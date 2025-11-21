@@ -2,13 +2,13 @@ import os
 
 from dotenv import load_dotenv
 
-from infrastructure.base_infrastructure import Infrastructure
+from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.environment.exceptions.unset_environment_variable_err import UnsetEnvironmentVariableErr
 from shared.enums.env_var import EnvVar
 from shared.models.health_reports.environment_health_report import EnvironmentHealthReport
 
 
-class Environment(Infrastructure):
+class Environment(BaseInfrastructure):
   _first_call: bool
 
   def __init__(self):

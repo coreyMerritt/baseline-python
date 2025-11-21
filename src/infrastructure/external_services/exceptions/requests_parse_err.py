@@ -1,7 +1,7 @@
-from infrastructure.exceptions.infrastructure_exception import InfrastructureException
+from infrastructure.exceptions.infrastructure_exception import BaseInfrastructureException
 
 
-class RequestsParseErr(InfrastructureException):
+class RequestsParseErr(BaseInfrastructureException):
   message: str
 
   def __init__(self, *args):

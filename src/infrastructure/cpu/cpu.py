@@ -1,11 +1,11 @@
 import psutil
 
-from infrastructure.base_infrastructure import Infrastructure
+from infrastructure.base_infrastructure import BaseInfrastructure
 from shared.models.configs.cpu_config import CpuConfig
 from shared.models.health_reports.cpu_health_report import CpuHealthReport
 
 
-class Cpu(Infrastructure):
+class Cpu(BaseInfrastructure):
   _cpu_config: CpuConfig
 
   def __init__(self, cpu_config: CpuConfig):

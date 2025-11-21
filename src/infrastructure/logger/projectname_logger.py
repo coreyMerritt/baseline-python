@@ -1,6 +1,6 @@
 import logging
 
-from infrastructure.base_infrastructure import Infrastructure
+from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.logger.exceptions.logger_configuration_err import LoggerConfigurationErr
 from infrastructure.logger.exceptions.logger_initialization_err import LoggerInitializationErr
 from infrastructure.logger.formatters.projectname_logger_formatter import CustomFormatter
@@ -9,7 +9,7 @@ from shared.models.configs.logger_config import LoggerConfig
 from shared.models.health_reports.logger_health_report import LoggerHealthReport
 
 
-class ProjectnameLogger(Infrastructure):
+class ProjectnameLogger(BaseInfrastructure):
   _is_configured: bool = False
 
   def __init__(self, logger_config: LoggerConfig):

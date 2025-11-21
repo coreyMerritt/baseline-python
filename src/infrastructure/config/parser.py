@@ -2,7 +2,7 @@ from typing import Any
 
 from dacite import Config, from_dict
 
-from infrastructure.base_infrastructure import Infrastructure
+from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.config.exceptions.config_parser_err import ConfigParserErr
 from shared.enums.logger_level import LoggerLevel
 from shared.enums.timezone import Timezone
@@ -16,7 +16,7 @@ from shared.models.configs.typicode_config import TypicodeConfig
 from shared.models.health_reports.config_parser_health_report import ConfigParserHealthReport
 
 
-class ConfigParser(Infrastructure):
+class ConfigParser(BaseInfrastructure):
   def get_health_report(self) -> ConfigParserHealthReport:
     return ConfigParserHealthReport(
       healthy=True

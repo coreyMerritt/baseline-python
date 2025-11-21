@@ -286,10 +286,10 @@ variable-naming-style=snake_case
 
 [FORMAT]
 # Allow both snake_case and UPPER_CASE for variables
-variable-rgx=^[a-z_][a-z0-9_]*$|^[A-Z][A-Z0-9_]*$
+variable-rgx=^_?_?[a-z_][a-z0-9_]*$|^[A-Z][A-Z0-9_]*$
 
 # Allow UPPER_CASE with optional digits for constants
-const-rgx=^[A-Z][A-Z0-9_]*$
+const-rgx=^_?_?[A-Z][A-Z0-9_]*$
 
 # Expected format of line ending, e.g. empty (any line ending), LF or CRLF.
 expected-line-ending-format=

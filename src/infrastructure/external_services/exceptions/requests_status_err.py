@@ -1,7 +1,7 @@
-from infrastructure.exceptions.infrastructure_exception import InfrastructureException
+from infrastructure.exceptions.infrastructure_exception import BaseInfrastructureException
 
 
-class RequestsStatusErr(InfrastructureException):
+class RequestsStatusErr(BaseInfrastructureException):
   def __init__(self, status_code: int, reason: str):
     if not isinstance(status_code, int):
       raise TypeError("status_code must be an int")

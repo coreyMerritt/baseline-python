@@ -3,7 +3,7 @@ from typing import Any
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
-from interfaces.rest.exceptions.projectname_http_exception import ProjectnameHTTPException
+from interfaces.rest.exceptions.projectname_httpexception import ProjectnameHTTPException
 from interfaces.rest.models.projectname_http_error import ProjectnameHTTPError
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
 

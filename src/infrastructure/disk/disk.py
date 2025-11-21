@@ -3,13 +3,13 @@ from typing import Any
 import psutil
 import yaml
 
-from infrastructure.base_infrastructure import Infrastructure
+from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.disk.exceptions.disk_read_err import DiskReadErr
 from shared.models.configs.disk_config import DiskConfig
 from shared.models.health_reports.disk_health_report import DiskHealthReport
 
 
-class Disk(Infrastructure):
+class Disk(BaseInfrastructure):
   _disk_config: DiskConfig
 
   def __init__(self, disk_config: DiskConfig):

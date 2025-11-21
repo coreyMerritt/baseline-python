@@ -12,13 +12,45 @@ class Account:
 
   def __init__(self, name: str, age: int, account_type: AccountType, uuid: str | None = None):
     if uuid:
-      self._uuid = uuid
+      self.uuid = uuid
     else:
-      self._uuid = str(uuid4())
-    self._name = name
-    self._age = age
-    self._account_type = account_type
+      self.uuid = str(uuid4())
+    self.name = name
+    self.age = age
+    self.account_type = account_type
     self._validate_properties()
+
+  @property
+  def uuid(self) -> str:
+    return self._uuid
+
+  @uuid.setter
+  def uuid(self, uuid: str) -> None:
+    self._uuid = uuid
+
+  @property
+  def name(self) -> str:
+    return self.name
+
+  @name.setter
+  def name(self, name: str) -> None:
+    self._name = name
+
+  @property
+  def age(self) -> int:
+    return self._age
+
+  @age.setter
+  def age(self, age: int) -> None:
+    self._age = age
+
+  @property
+  def account_type(self) -> AccountType:
+    return self._account_type
+
+  @account_type.setter
+  def account_type(self, account_type: AccountType) -> None:
+    self._account_type = account_type
 
   def __eq__(self, other):
     return (
@@ -26,48 +58,14 @@ class Account:
       and self._uuid == other._uuid
     )
 
-  def __str__(self) -> str:
-    return (
-      f"{self.__class__.__name__}(\n"
-      f"  name={self._name}\n"
-      f"  age={self._age}\n"
-      f"  type={self._account_type.value}\n"
-      f"  uuid={self._uuid}\n"
-      ")"
-    )
-
-  def get_name(self) -> str:
-    return self._name
-
-  def get_age(self) -> int:
-    return self._age
-
-  def get_account_type(self) -> AccountType:
-    return self._account_type
-
-  def get_uuid(self) -> str:
-    return self._uuid
-
-  def set_name(self, name: str) -> None:
-    self._name = name
-
-  def set_age(self, age: int) -> None:
-    self._age = age
-
-  def set_account_type(self, account_type: AccountType) -> None:
-    self._account_type = account_type
-
-  def set_uuid(self, uuid: str) -> None:
-    self._uuid = uuid
-
   def _validate_properties(self) -> None:
     try:
       assert isinstance(self._name, str), "name"
-      assert len(self._name) > 0, "name"
-      assert len(self._name) < 100, "name"
+      assert len(self._name) >= 1, "name"
+      assert len(self._name) <= 99, "name"
       assert isinstance(self._age, int), "age"
-      assert self._age > 0, "age"
-      assert self._age < 100, "age"
+      assert self._age >= 1, "age"
+      assert self._age <= 99, "age"
       assert isinstance(self._account_type, AccountType), "account_type"
       assert isinstance(self._uuid, str), "uuid"
     except AssertionError as e:

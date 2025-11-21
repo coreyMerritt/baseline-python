@@ -1,7 +1,7 @@
-from infrastructure.exceptions.infrastructure_exception import InfrastructureException
+from infrastructure.exceptions.infrastructure_exception import BaseInfrastructureException
 
 
-class ConfigParserErr(InfrastructureException):
+class ConfigParserErr(BaseInfrastructureException):
   config_name: str
   message: str
 

@@ -3,23 +3,16 @@ from urllib.parse import quote_plus
 from sqlalchemy import Engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
-from sqlmodel import Session, SQLModel, create_engine, select, text
+from sqlmodel import Session, SQLModel, create_engine, text
 
-from domain.entities.account import Account
-from infrastructure.base_infrastructure import Infrastructure
+from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.database.exceptions.database_initialization_err import DatabaseInitializationErr
-from infrastructure.database.exceptions.database_insert_err import DatabaseInsertErr
 from infrastructure.database.exceptions.database_schema_creation_err import DatabaseSchemaCreationErr
-from infrastructure.database.exceptions.database_select_err import DatabaseSelectErr
-from infrastructure.database.exceptions.zero_query_results_err import ZeroQueryResultsErr
-from infrastructure.database.mappers.account_orm_mapper import AccountMapper
-from infrastructure.database.orm.account_orm import AccountORM
-from shared.exceptions.mapper_err import MapperErr
 from shared.models.configs.database_config import DatabaseConfig
 from shared.models.health_reports.database_health_report import DatabaseHealthReport
 
 
-class Database(Infrastructure):
+class Database(BaseInfrastructure):
   _engine: Engine
   _session_factory: sessionmaker
 
@@ -44,6 +37,14 @@ class Database(Infrastructure):
     except Exception as e:
       raise DatabaseInitializationErr() from e
 
+  def can_perform_basic_select(self) -> bool:
+    try:
+      with self._engine.connect() as conn:
+        conn.execute(text("SELECT 1"))
+      return True
+    except SQLAlchemyError:
+      return False
+
   def get_health_report(self) -> DatabaseHealthReport:
     can_perform_basic_select = self.can_perform_basic_select()
     is_engine = self.get_engine() is not None
@@ -56,22 +57,14 @@ class Database(Infrastructure):
       healthy=healthy
     )
 
+  def get_engine(self) -> Engine:
+    return self._engine
+
   def get_session(self) -> Session:
     return Session(self._engine)
 
   def get_session_factory(self) -> sessionmaker:
     return self._session_factory
-
-  def get_engine(self) -> Engine:
-    return self._engine
-
-  def can_perform_basic_select(self) -> bool:
-    try:
-      with self._engine.connect() as conn:
-        conn.execute(text("SELECT 1"))
-      return True
-    except SQLAlchemyError:
-      return False
 
   def create_schema(self) -> None:
     try:
@@ -81,41 +74,3 @@ class Database(Infrastructure):
 
   def dispose(self):
     self._engine.dispose()
-
-  def get_account_from_uuid(
-    self,
-    uuid: str
-  ) -> Account:
-    try:
-      with self.get_session() as session:
-        stmt = select(AccountORM).where(
-          AccountORM.uuid == uuid
-        )
-        first_account_orm_match = session.exec(stmt).first()
-    except SQLAlchemyError as e:
-      raise DatabaseSelectErr() from e
-    if first_account_orm_match is None:
-      raise ZeroQueryResultsErr()
-    account_match = AccountMapper.orm_to_domain(first_account_orm_match)
-    return account_match
-
-  def insert_account(
-    self,
-    account: Account
-  ) -> Account:
-    try:
-      print(AccountORM.model_fields['timestamp'])
-      account_orm = AccountMapper.domain_to_orm(account)
-    except MapperErr as e:
-      raise DatabaseInsertErr() from e
-    with self.get_session() as session:
-      try:
-        session.add(account_orm)   # "local load", nothing is executed in the DBMS yet
-        session.flush()      # Create a transaction in the DBMS -- "load the DBMS"
-        session.refresh(account_orm)  # Fetch the ORM from transaction -- give "account_orm" id/timestamp/etc
-        session.commit()
-      except SQLAlchemyError as e:
-        session.rollback()
-        raise DatabaseInsertErr() from e
-      account = AccountMapper.orm_to_domain(account_orm)
-      return account

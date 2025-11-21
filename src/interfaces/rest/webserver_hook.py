@@ -3,34 +3,33 @@ from types import SimpleNamespace
 from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 
-from interfaces.rest.exceptions.app_initialization_err import AppInitializationErr
-from interfaces.rest.exceptions.handlers.exception import register_unhandled_exception_handler
-from interfaces.rest.exceptions.handlers.projectname_http_exception import register_projectname_httpexception_handler
-from interfaces.rest.exceptions.handlers.rest_mapper_err import register_rest_mapper_exception_handler
+from interfaces.rest.exceptions.handlers._400_bad_request import register_400_bad_request_handlers
+from interfaces.rest.exceptions.handlers._404_not_found import register_404_not_found_handlers
+from interfaces.rest.exceptions.handlers._500_internal_server_error import register_500_internal_server_error_handlers
 from interfaces.rest.health.routes import health_routes
 from interfaces.rest.v1.routes import account_routes, blog_routes
 from shared.shared_infrastructure import (CPU_CONFIG, DATABASE_CONFIG, DISK_CONFIG, EXTERNAL_SERVICES_CONFIG,
-                                          LOGGER_CONFIG, MEMORY_CONFIG, TYPICODE_CONFIG, database, logger)
+                                          LOGGER_CONFIG, MEMORY_CONFIG, TYPICODE_CONFIG, account_repository,
+                                          blog_post_repository, logger)
 
 
 def create_app() -> FastAPI:
   @asynccontextmanager
   async def lifespan(app: FastAPI):
     # --- Startup ---
-    try:
-      config = SimpleNamespace()
-      config.cpu = CPU_CONFIG
-      config.database = DATABASE_CONFIG
-      config.disk = DISK_CONFIG
-      config.external_services = EXTERNAL_SERVICES_CONFIG
-      config.memory = MEMORY_CONFIG
-      config.typicode = TYPICODE_CONFIG
-      config.logger = LOGGER_CONFIG
-      app.state.config = config
-      app.state.database = database
-      app.state.logger = logger
-    except Exception as e:
-      raise AppInitializationErr() from e
+    config = SimpleNamespace()
+    config.cpu = CPU_CONFIG
+    config.database = DATABASE_CONFIG
+    config.disk = DISK_CONFIG
+    config.external_services = EXTERNAL_SERVICES_CONFIG
+    config.memory = MEMORY_CONFIG
+    config.typicode = TYPICODE_CONFIG
+    config.logger = LOGGER_CONFIG
+    repository = SimpleNamespace()
+    repository.account = account_repository
+    repository.blog_post = blog_post_repository
+    app.state.config = config
+    app.state.logger = logger
 
     yield  # Application runs during this period
 
@@ -43,9 +42,9 @@ def create_app() -> FastAPI:
   return app
 
 def __register_exception_handlers(app: FastAPI) -> FastAPI:
-  register_rest_mapper_exception_handler(app, logger)
-  register_unhandled_exception_handler(app, logger)
-  register_projectname_httpexception_handler(app)
+  register_400_bad_request_handlers(app, logger)
+  register_404_not_found_handlers(app, logger)
+  register_500_internal_server_error_handlers(app, logger)
   return app
 
 def __register_routes(app: FastAPI) -> FastAPI:
