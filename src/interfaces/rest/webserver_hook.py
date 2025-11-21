@@ -10,7 +10,7 @@ from interfaces.rest.health.routes import health_routes
 from interfaces.rest.v1.routes import account_routes, blog_routes
 from shared.shared_infrastructure import (CPU_CONFIG, DATABASE_CONFIG, DISK_CONFIG, EXTERNAL_SERVICES_CONFIG,
                                           LOGGER_CONFIG, MEMORY_CONFIG, TYPICODE_CONFIG, account_repository,
-                                          blog_post_repository, logger)
+                                          blog_post_repository, database, logger)
 
 
 def create_app() -> FastAPI:
@@ -29,7 +29,9 @@ def create_app() -> FastAPI:
     repository.account = account_repository
     repository.blog_post = blog_post_repository
     app.state.config = config
+    app.state.database = database
     app.state.logger = logger
+    app.state.repository = repository
 
     yield  # Application runs during this period
 

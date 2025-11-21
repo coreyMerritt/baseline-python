@@ -46,10 +46,8 @@ LOGGER_CONFIG = ConfigParser().parse_logger_config(RAW_LOGGER_CONFIG)
 MEMORY_CONFIG = ConfigParser().parse_memory_config(RAW_MEMORY_CONFIG)
 TYPICODE_CONFIG = ConfigParser().parse_typicode_config(RAW_TYPICODE_CONFIG)
 
-# Private Infra -- Do not import
-__database = Database(DATABASE_CONFIG)
-
 # BaseInfrastructure --- These should be imported at the interface level as needed
+database = Database(DATABASE_CONFIG)
 logger = ProjectnameLogger(LOGGER_CONFIG)
-account_repository = AccountRepository(__database)
+account_repository = AccountRepository(database)
 blog_post_repository = BlogPostRepository(EXTERNAL_SERVICES_CONFIG, TYPICODE_CONFIG)
