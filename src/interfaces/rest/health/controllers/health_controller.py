@@ -3,7 +3,7 @@ from logging import Logger
 
 from fastapi import Request
 
-from interfaces.rest.health.adapters.get_full_health_report_adapter import GetFullHealthReportAdapter
+from interfaces.rest.health.mappers.get_full_health_report_mapper import GetFullHealthReportMapper
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
 from services.health_manager import HealthManager
 from shared.models.configs.cpu_config import CpuConfig
@@ -47,7 +47,7 @@ class HealthController:
       self._typicode_config
     )
     self._logger.info("Successfully retrieved full health report")
-    get_full_health_report_res = GetFullHealthReportAdapter.model_to_res(health_report)
+    get_full_health_report_res = GetFullHealthReportMapper.model_to_res(health_report)
     return ProjectnameHTTPResponse(
       data=get_full_health_report_res
     )

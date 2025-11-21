@@ -9,12 +9,13 @@ from domain.entities.account import Account
 from infrastructure.base_infrastructure import Infrastructure
 from infrastructure.database.exceptions.database_initialization_err import DatabaseInitializationErr
 from infrastructure.database.exceptions.database_insert_err import DatabaseInsertErr
-from infrastructure.database.exceptions.database_mapper_err import DatabaseMapperErr
 from infrastructure.database.exceptions.database_multiple_matches_err import DatabaseMultipleMatchesErr
 from infrastructure.database.exceptions.database_schema_creation_err import DatabaseSchemaCreationErr
 from infrastructure.database.exceptions.database_select_err import DatabaseSelectErr
+from infrastructure.database.exceptions.zero_query_results_err import ZeroQueryResultsErr
 from infrastructure.database.mappers.account_orm_mapper import AccountMapper
 from infrastructure.database.orm.account_orm import AccountORM
+from shared.exceptions.mapper_err import MapperErr
 from shared.models.configs.database_config import DatabaseConfig
 from shared.models.health_reports.database_health_report import DatabaseHealthReport
 
@@ -107,7 +108,7 @@ class Database(Infrastructure):
   def get_account_from_uuid(
     self,
     uuid: str
-  ) -> Account | None:
+  ) -> Account:
     try:
       with self.get_session() as session:
         stmt = select(AccountORM).where(
@@ -117,7 +118,7 @@ class Database(Infrastructure):
     except SQLAlchemyError as e:
       raise DatabaseSelectErr() from e
     if first_account_orm_match is None:
-      return None
+      raise ZeroQueryResultsErr()
     account_match = AccountMapper.orm_to_domain(first_account_orm_match)
     return account_match
 
@@ -128,7 +129,7 @@ class Database(Infrastructure):
     try:
       print(AccountORM.model_fields['timestamp'])
       account_orm = AccountMapper.domain_to_orm(account)
-    except DatabaseMapperErr as e:
+    except MapperErr as e:
       raise DatabaseInsertErr() from e
     with self.get_session() as session:
       try:

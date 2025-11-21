@@ -1,9 +1,9 @@
-from interfaces.rest.exceptions.rest_adapter_err import RestAdapterErr
 from interfaces.rest.health.dto.res.get_full_health_report_res import GetLoggerHealthReportRes
+from shared.exceptions.mapper_err import MapperErr
 from shared.models.health_reports.logger_health_report import LoggerHealthReport
 
 
-class GetLoggerHealthReportAdapter:
+class GetLoggerHealthReportMapper:
   @staticmethod
   def model_to_res(model: LoggerHealthReport) -> GetLoggerHealthReportRes:
     try:
@@ -11,4 +11,4 @@ class GetLoggerHealthReportAdapter:
         healthy=model.healthy
       )
     except Exception as e:
-      raise RestAdapterErr() from e
+      raise MapperErr() from e

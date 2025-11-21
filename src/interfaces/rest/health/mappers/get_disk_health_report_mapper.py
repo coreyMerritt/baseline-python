@@ -1,9 +1,9 @@
-from interfaces.rest.exceptions.rest_adapter_err import RestAdapterErr
 from interfaces.rest.health.dto.res.get_disk_health_report_res import GetDiskHealthReportRes
+from shared.exceptions.mapper_err import MapperErr
 from shared.models.health_reports.disk_health_report import DiskHealthReport
 
 
-class GetDiskHealthReportAdapter:
+class GetDiskHealthReportMapper:
   @staticmethod
   def model_to_res(model: DiskHealthReport) -> GetDiskHealthReportRes:
     try:
@@ -12,4 +12,4 @@ class GetDiskHealthReportAdapter:
         healthy=model.healthy
       )
     except Exception as e:
-      raise RestAdapterErr() from e
+      raise MapperErr() from e

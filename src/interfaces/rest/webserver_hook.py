@@ -6,7 +6,7 @@ from fastapi.concurrency import asynccontextmanager
 from interfaces.rest.exceptions.app_initialization_err import AppInitializationErr
 from interfaces.rest.exceptions.handlers.exception import register_unhandled_exception_handler
 from interfaces.rest.exceptions.handlers.projectname_http_exception import register_projectname_httpexception_handler
-from interfaces.rest.exceptions.handlers.rest_adapter_err import register_rest_adapter_exception_handler
+from interfaces.rest.exceptions.handlers.rest_mapper_err import register_rest_mapper_exception_handler
 from interfaces.rest.health.routes import health_routes
 from interfaces.rest.v1.routes import account_routes, blog_routes
 from shared.shared_infrastructure import (CPU_CONFIG, DATABASE_CONFIG, DISK_CONFIG, EXTERNAL_SERVICES_CONFIG,
@@ -43,7 +43,7 @@ def create_app() -> FastAPI:
   return app
 
 def __register_exception_handlers(app: FastAPI) -> FastAPI:
-  register_rest_adapter_exception_handler(app, logger)
+  register_rest_mapper_exception_handler(app, logger)
   register_unhandled_exception_handler(app, logger)
   register_projectname_httpexception_handler(app)
   return app

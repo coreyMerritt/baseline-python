@@ -1,9 +1,9 @@
-from interfaces.rest.exceptions.rest_adapter_err import RestAdapterErr
 from interfaces.rest.health.dto.res.get_memory_health_report_res import GetMemoryHealthReportRes
+from shared.exceptions.mapper_err import MapperErr
 from shared.models.health_reports.memory_health_report import MemoryHealthReport
 
 
-class GetMemoryHealthReportAdapter:
+class GetMemoryHealthReportMapper:
   @staticmethod
   def model_to_res(model: MemoryHealthReport) -> GetMemoryHealthReportRes:
     try:
@@ -12,4 +12,4 @@ class GetMemoryHealthReportAdapter:
         healthy=model.healthy
       )
     except Exception as e:
-      raise RestAdapterErr() from e
+      raise MapperErr() from e

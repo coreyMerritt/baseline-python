@@ -4,6 +4,8 @@ from infrastructure.external_services.typicode.typicode import Typicode
 from infrastructure.logger.projectname_logger import ProjectnameLogger
 from services.base_service import Service
 from services.exceptions.item_not_found_err import ItemNotFoundErr
+from services.mappers.get_blog_post_mapper import GetBlogPostMapper
+from services.models.outputs.get_blog_post_som import GetBlogPostSOM
 from shared.models.configs.external_services_config import ExternalServicesConfig
 from shared.models.configs.typicode_config import TypicodeConfig
 
@@ -23,10 +25,12 @@ class BlogManager(Service):
     )
     super().__init__(logger)
 
-  def get_blog_post(self, user_id: int, post_number: int):
+  def get_blog_post(self, user_id: int, post_number: int) -> GetBlogPostSOM:
     try:
-      return self._typicode_manager.get_blog_post(user_id, post_number)
+      blog_post_ext_res = self._typicode_manager.get_blog_post(user_id, post_number)
     except RequestsParseErr as e:
       raise ItemNotFoundErr() from e
     except RequestsStatusErr as e:
       raise ItemNotFoundErr() from e
+    get_blog_post_som = GetBlogPostMapper.blog_post_ext_res_to_som(blog_post_ext_res)
+    return get_blog_post_som

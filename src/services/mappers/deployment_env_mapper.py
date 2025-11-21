@@ -1,5 +1,5 @@
 from services.enums.deployment_environment import DeploymentEnvironment
-from services.exceptions.service_mapper_err import ServiceMapperErr
+from shared.exceptions.mapper_err import MapperErr
 
 
 class DeploymentEnvMapper:
@@ -8,4 +8,4 @@ class DeploymentEnvMapper:
     for enum in DeploymentEnvironment:
       if string.lower() == enum.value.lower():
         return enum
-    raise ServiceMapperErr(string)
+    raise MapperErr()

@@ -3,9 +3,9 @@ import os
 import uvicorn
 
 from services.enums.deployment_environment import DeploymentEnvironment
-from services.exceptions.service_mapper_err import ServiceMapperErr
-from services.mapping.deployment_env_mapper import DeploymentEnvMapper
+from services.mappers.deployment_env_mapper import DeploymentEnvMapper
 from shared.enums.env_var import EnvVar
+from shared.exceptions.mapper_err import MapperErr
 
 
 def run_webserver(env_str: str, host: str, port: int):
@@ -37,4 +37,4 @@ def run_webserver(env_str: str, host: str, port: int):
       reload=False
     )
   else:
-    raise ServiceMapperErr()
+    raise MapperErr()

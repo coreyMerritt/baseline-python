@@ -1,10 +1,10 @@
 from infrastructure.exceptions.infrastructure_exception import InfrastructureException
 
 
-class DatabaseMapperErr(InfrastructureException):
+class ZeroQueryResultsErr(InfrastructureException):
   message: str
 
   def __init__(self, *args):
-    message="Database mapping error occurred"
+    message="Query returned zero results."
     self.message = message
     super().__init__(message, *args)

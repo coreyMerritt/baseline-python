@@ -54,9 +54,17 @@ def get_project_root() -> Path:
       return parent
   raise FileNotFoundError("pyproject.toml not found")
 
-def get_source_paths() -> List[str]:
+def get_source_paths(
+  layer: str | None = None,
+  max_depth: int = 99
+) -> List[str]:
+  source_code_dir = "./src"
+  if layer:
+    source_code_dir = f"{source_code_dir}/{layer}"
+  source_code_dir = f"{source_code_dir}/"
+  maxdepth = f"-maxdepth {max_depth}"
   cmd_return = bash(
-    "find ./src/ -type f \
+    f"find {source_code_dir} {maxdepth} -type f \
       | grep -v \"__pycache__\" \
       | grep -F \".py\" \
       | grep -v \"__init__\""
