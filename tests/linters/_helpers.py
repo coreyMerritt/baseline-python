@@ -10,8 +10,21 @@ from typing import List
 
 # Classes
 @dataclass
+class Arg:
+  name: str
+  type: str
+
+@dataclass
+class Method:
+  name: str
+  args: List[Arg]
+  return_type: str
+  content: List[str]
+
+@dataclass
 class Class:
   name: str
+  methods: List[Method]
   path: str
   filename: str
   filestem: str
@@ -22,6 +35,7 @@ class Module:
   filename: str
   filestem: str
 
+@dataclass
 class BashError(Exception):
   message: str
 
@@ -55,16 +69,18 @@ def get_project_root() -> Path:
   raise FileNotFoundError("pyproject.toml not found")
 
 def get_source_paths(
+  base_dir: str,
   layer: str | None = None,
   max_depth: int = 99
 ) -> List[str]:
-  source_code_dir = "./src"
+  if base_dir[-1] == "/":
+    base_dir = base_dir[:-1]
   if layer:
-    source_code_dir = f"{source_code_dir}/{layer}"
-  source_code_dir = f"{source_code_dir}/"
+    base_dir = f"{base_dir}/{layer}"
+  base_dir = f"{base_dir}/"
   maxdepth = f"-maxdepth {max_depth}"
   cmd_return = bash(
-    f"find {source_code_dir} {maxdepth} -type f \
+    f"find {base_dir} {maxdepth} -type f \
       | grep -v \"__pycache__\" \
       | grep -F \".py\" \
       | grep -v \"__init__\""
@@ -75,6 +91,7 @@ def get_source_paths(
 
 def assert_all_classes_are_imported(classes: List[Class], source_paths: List[str]):
   for class_ in classes:
+    debug(f"Checking class: {class_.name}")
     assert is_imported_from_some_path(class_, source_paths), f"Never Imported:\n\t{class_.name}\n\t{class_.path}"
 
 def is_imported_from_some_path(class_: Class, source_paths: List[str]) -> bool:
@@ -92,35 +109,32 @@ def is_imported_from_specific_path(class_: Class, source_path: str) -> bool:
       return True
   return False
 
-def get_errors(paths: List[str]) -> List[Class]:
-  error_list = []
-  for path in paths:
-    try:
-      error_name = _get_error_name(path)
-      error_path = path
-      error_filename = get_filename(path)
-      error_filestem = get_filestem(path)
-      error_ = Class(
-        name=error_name,
-        path=error_path,
-        filename=error_filename,
-        filestem=error_filestem
-      )
-      error_list.append(error_)
-    except ValueError:
-      continue
-  return error_list
+def get_error_classes(paths: List[str]) -> List[Class]:
+  err_identifiers = [
+    "err",
+    "exc"
+  ]
+  return _get_some_classes(paths, err_identifiers)
+
+def get_abstract_classes(paths: List[str]) -> List[Class]:
+  abs_identifiers = [
+    "abstract",
+    "abc"
+  ]
+  return _get_some_classes(paths, abs_identifiers)
 
 def get_classes(paths: List[str]) -> List[Class]:
-  class_list = []
+  class_list: List[Class] = []
   for path in paths:
     try:
       class_name = get_class_name(path)
+      class_methods = get_class_methods(path)
       class_path = path
       class_filename = get_filename(path)
       class_filestem = get_filestem(path)
       class_ = Class(
         name=class_name,
+        methods=class_methods,
         path=class_path,
         filename=class_filename,
         filestem=class_filestem
@@ -128,7 +142,18 @@ def get_classes(paths: List[str]) -> List[Class]:
       class_list.append(class_)
     except ValueError:
       continue
+  class_list.sort(key=lambda c: c.name)
   return class_list
+
+def get_class_methods(path: str) -> List[Method]:
+  with open(path, "r", encoding="utf-8") as class_file:
+    raw_class_data_lines = class_file.readlines()
+  method_lines_lists = _get_list_of_method_lines_lists(raw_class_data_lines)
+  methods: List[Method] = []
+  for method_lines_list in method_lines_lists:
+    method = _build_method(method_lines_list)
+    methods.append(method)
+  return methods
 
 def get_modules(paths: List[str]) -> List[Module]:
   modules_list = []
@@ -184,30 +209,94 @@ def bash(cmd_str: str) -> str:
     message += f"\tSTDERR: {e.stderr}"
     raise BashError(message) from e
 
-def _get_error_name(path: str) -> str:
-  match = None
-  error_name = None
-  with open(path, "r", encoding="utf-8") as error_file:
-    lines = error_file.readlines()
-  for line in lines:
-    err_match = re.match(r"^class ([A-Z][a-zA-Z]+Err)[:(]", line)
-    if err_match:
-      match = err_match
-      break
-    error_match = re.match(r"^class ([A-Z][a-zA-Z]+Error)[:(]", line)
-    if error_match:
-      match = error_match
-      break
-    exc_match = re.match(r"^class ([A-Z][a-zA-Z]+Exc)[:(]", line)
-    if exc_match:
-      match = exc_match
-      break
-    exception_match = re.match(r"^class ([A-Z][a-zA-Z]+Exception)[:(]", line)
-    if exception_match:
-      match = exception_match
-      break
-  if match:
-    error_name = match.group(1)
-  if error_name:
-    return error_name
-  raise ValueError("Not an exception")
+def _get_list_of_method_lines_lists(raw_class_data_lines: List[str]) -> List[List[str]]:
+  found_class_definition = False
+  found_first_method = False
+  rolling_method_lines: List[List[str]] = []
+  current_method_lines: List[str] = []
+  for line in raw_class_data_lines:
+    if _is_class_definition(line):
+      if not found_class_definition:
+        found_class_definition = True
+        continue
+      raise RuntimeError("Found a second class in file.")
+    if _is_method_definition(line):
+      if len(current_method_lines) > 0:
+        rolling_method_lines.append(current_method_lines)
+        current_method_lines = []
+      current_method_lines.append(line)
+      if not found_first_method:
+        found_first_method = True
+      continue
+    if found_first_method:
+      current_method_lines.append(line)
+  if len(current_method_lines) > 0:
+    rolling_method_lines.append(current_method_lines)
+  return rolling_method_lines
+
+def _is_class_definition(line: str) -> bool:
+  return bool(re.match(r"^\s*class\s+\w+\s*(\(.*\))?:", line))
+
+def _is_method_definition(line: str) -> bool:
+  return bool(re.match(r"^\s*def\s+\w+\s*\(.*\)\s?-?>?\s?.*:", line))
+
+def _get_method_name(line: str) -> str:
+  assert _is_method_definition(line)
+  match = re.match(r"^\s*def\s+(\w+)\s*\(.*\)\s*-?>?\s?.*:", line)
+  if not match:
+    raise RuntimeError("Method definition does not contain a method name???")
+  return match.group(1)
+
+def _get_method_return_type(line: str) -> str:
+  assert _is_method_definition(line)
+  match = re.match(r"^\s*def\s+\w+\s*\(.*\)\s?-?>?\s?(.*):", line)
+  if not match:
+    return "Undefined"
+  if match.group(1) == "":
+    return "Undefined"
+  return match.group(1)
+
+def _get_method_args(line: str) -> List[Arg]:
+  assert _is_method_definition(line)
+  match = re.match(r"^\s*def\s+\w+\s*\((.*?)\)\s*-?>?.*:", line)
+  if not match:
+    raise RuntimeError("Method definition does not contain any args???")
+  raw_args = match.group(1).strip().replace(" ", "").split(",")
+  args: List[Arg] = []
+  for raw_arg in raw_args:
+    raw_arg_split = raw_arg.split(":")
+    assert len(raw_arg_split) >= 1
+    assert len(raw_arg_split) <= 2
+    arg_name = raw_arg_split[0]
+    arg_type = "Undefined"
+    if len(raw_arg_split) == 2:
+      arg_type = raw_arg_split[1]
+    args.append(
+      Arg(
+        name=arg_name,
+        type=arg_type
+      )
+    )
+  return args
+
+def _build_method(method_lines_list: List[str]) -> Method:
+  return Method(
+    name=_get_method_name(method_lines_list[0]),
+    args=_get_method_args(method_lines_list[0]),
+    return_type=_get_method_return_type(method_lines_list[0]),
+    content=method_lines_list[1:]
+  )
+
+
+def _get_some_classes(paths: List[str], loose_matching_name_identifiers: List[str]) -> List[Class]:
+  classes = get_classes(paths)
+  some_classes: List[Class] = []
+  for class_ in classes:
+    for identifier in loose_matching_name_identifiers:
+      if identifier.lower() in class_.name.lower():
+        some_classes.append(class_)
+        break
+      if identifier.lower() in class_.path.lower():
+        some_classes.append(class_)
+        break
+  return some_classes

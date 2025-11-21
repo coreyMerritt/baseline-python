@@ -72,5 +72,5 @@ class Database(BaseInfrastructure):
     except SQLAlchemyError as e:
       raise DatabaseSchemaCreationErr() from e
 
-  def dispose(self):
+  def dispose(self) -> None:
     self._engine.dispose()

@@ -1,18 +1,27 @@
 #!/usr/bin/env python3
-from linters._helpers import assert_all_classes_are_imported, ensure_in_project_root, get_errors, get_source_paths
+from linters._helpers import (assert_all_classes_are_imported, ensure_in_project_root, get_error_classes,
+                              get_source_paths)
 
 MAX_ACCEPTABLE_ARG_COUNT = 2
 
 def main():
   ensure_in_project_root()
-  service_exception_paths = get_source_paths(layer="services/exceptions", max_depth=99)
-  interface_paths = get_source_paths(layer="interfaces", max_depth=99)
-  service_errors = get_errors(service_exception_paths)
-  for error in service_errors.copy():
+  service_exception_paths = get_source_paths(
+    base_dir="./src/",
+    layer="services/exceptions",
+    max_depth=99
+  )
+  interface_paths = get_source_paths(
+    base_dir="./src/",
+    layer="interfaces",
+    max_depth=99
+  )
+  service_error_classes = get_error_classes(service_exception_paths)
+  for error in service_error_classes.copy():
     if "Base" in error.name and "base" in error.path:
-      service_errors.remove(error)
-  assert_all_classes_are_imported(service_errors, interface_paths)
-  print("0: All service-level errors are imported by some interface class.")
+      service_error_classes.remove(error)
+  assert_all_classes_are_imported(service_error_classes, interface_paths)
+  print("0: All service-level errors are imported by some interface-level class.")
   return 0
 
 

@@ -33,17 +33,18 @@ which .venv/bin/python
 .venv/bin/pip show ruff 1>/dev/null
 
 # Test
+PYTHONPATH=./tests/ ./tests/linters/abstract_classes_have_an_abstract_method.py
+PYTHONPATH=./tests/ ./tests/linters/classes_are_implemented.py
+PYTHONPATH=./tests/ ./tests/linters/classes_are_imported.py
+PYTHONPATH=./tests/ ./tests/linters/errs_dont_inherit_directly_from_exception.py
+./tests/linters/imports-flow-in-correct-direction.sh
+PYTHONPATH=./tests/ ./tests/linters/methods_declare_return_type.py
+PYTHONPATH=./tests/ ./tests/linters/methods_have_low_arg_count.py
+PYTHONPATH=./tests/ ./tests/linters/service_exceptions_are_imported_in_interfaces.py
 .venv/bin/python -m isort --check-only .
 .venv/bin/python -m mypy .
 .venv/bin/python -m pylint ./scripts/
 .venv/bin/python -m pylint ./src/
 .venv/bin/python -m pylint ./tests/
 .venv/bin/python -m ruff check .
-PYTHONPATH=./tests/ ./tests/linters/abstract_classes_have_an_abstract_method.py
-PYTHONPATH=./tests/ ./tests/linters/classes_are_implemented.py
-PYTHONPATH=./tests/ ./tests/linters/classes_are_imported.py
-PYTHONPATH=./tests/ ./tests/linters/errs_dont_inherit_directly_from_exception.py
-./tests/linters/imports-flow-in-correct-direction.sh
-PYTHONPATH=./tests/ ./tests/linters/methods_have_low_arg_count.py
-PYTHONPATH=./tests/ ./tests/linters/service_exceptions_are_imported_in_interfaces.py
 exit 0

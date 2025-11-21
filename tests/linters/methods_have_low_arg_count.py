@@ -8,12 +8,46 @@ MAX_ACCEPTABLE_ARG_COUNT = 2
 
 def main():
   ensure_in_project_root()
-  source_paths = get_source_paths(layer="interfaces/rest/health/controllers", max_depth=1)
-  source_paths.extend(get_source_paths(layer="interfaces/rest/health/routes", max_depth=1))
-  source_paths.extend(get_source_paths(layer="interfaces/rest/v1/controllers", max_depth=1))
-  source_paths.extend(get_source_paths(layer="interfaces/rest/v1/routes", max_depth=1))
-  source_paths.extend(get_source_paths(layer="infrastructure", max_depth=2))
-  source_paths.extend(get_source_paths(layer="services", max_depth=1))
+  source_paths = get_source_paths(
+    base_dir="./src/",
+    layer="interfaces/rest/health/controllers",
+    max_depth=1
+  )
+  source_paths.extend(
+    get_source_paths(
+      base_dir="./src/",
+      layer="interfaces/rest/health/routes",
+      max_depth=1
+    )
+  )
+  source_paths.extend(
+    get_source_paths(
+      base_dir="./src/",
+      layer="interfaces/rest/v1/controllers",
+      max_depth=1
+    )
+  )
+  source_paths.extend(
+    get_source_paths(
+      base_dir="./src/",
+      layer="interfaces/rest/v1/routes",
+      max_depth=1
+    )
+  )
+  source_paths.extend(
+    get_source_paths(
+      base_dir="./src/",
+      layer="infrastructure",
+      max_depth=2
+    )
+  )
+  source_paths.extend(
+    get_source_paths(
+      base_dir="./src/",
+      layer="services",
+      max_depth=1
+    )
+  )
   classes = get_classes(source_paths)
   assert_all_classes_contain_proper_arg_count(classes)
   print("0: All classes contain proper arg counts.")

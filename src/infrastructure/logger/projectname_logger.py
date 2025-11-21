@@ -43,17 +43,17 @@ class ProjectnameLogger(BaseInfrastructure):
     except Exception as e:
       raise LoggerConfigurationErr() from e
 
-  def debug(self, *args, **kwargs):
+  def debug(self, *args, **kwargs) -> None:
     return self._logger.debug(*args, **kwargs)
 
-  def info(self, *args, **kwargs):
+  def info(self, *args, **kwargs) -> None:
     return self._logger.info(*args, **kwargs)
 
-  def warning(self, *args, **kwargs):
+  def warning(self, *args, **kwargs) -> None:
     return self._logger.warning(*args, **kwargs)
 
-  def error(self, *args, **kwargs):
+  def error(self, *args, **kwargs) -> None:
     return self._logger.error(*args, **kwargs)
 
-  def critical(self, *args, **kwargs):
+  def critical(self, *args, **kwargs) -> None:
     return self._logger.critical(*args, **kwargs)
