@@ -69,16 +69,18 @@ def get_project_root() -> Path:
   raise FileNotFoundError("pyproject.toml not found")
 
 def get_source_paths(
+  recursive: bool,
   base_dir: str,
-  layer: str | None = None,
-  max_depth: int = 99
+  layer: str | None = None
 ) -> List[str]:
   if base_dir[-1] == "/":
     base_dir = base_dir[:-1]
   if layer:
     base_dir = f"{base_dir}/{layer}"
   base_dir = f"{base_dir}/"
-  maxdepth = f"-maxdepth {max_depth}"
+  maxdepth = "-maxdepth 1"
+  if recursive:
+    maxdepth = "-maxdepth 99"
   cmd_return = bash(
     f"find {base_dir} {maxdepth} -type f \
       | grep -v \"__pycache__\" \

@@ -6,19 +6,19 @@ from typing import List
 from linters._helpers import Class, ensure_in_project_root, get_classes, get_source_paths
 
 
-def main():
+def classes_are_implemented() -> bool:
   ensure_in_project_root()
-  source_paths = get_source_paths(base_dir="./src/")
+  source_paths = get_source_paths(recursive=True, base_dir="./src/")
   classes = get_classes(source_paths)
-  assert_all_classes_are_implemented(classes)
+  __assert_all_classes_are_implemented(classes)
   print("0: All classes are implemented.")
-  return 0
+  return True
 
-def assert_all_classes_are_implemented(classes: List[Class]):
+def __assert_all_classes_are_implemented(classes: List[Class]):
   for class_ in classes:
-    assert is_implemented(class_), f"Never Implemented:\n\t{class_.name}\n\t{class_.path}"
+    assert __is_implemented(class_), f"Never Implemented:\n\t{class_.name}\n\t{class_.path}"
 
-def is_implemented(class_: Class) -> bool:
+def __is_implemented(class_: Class) -> bool:
   debug(f"Checking class: {class_.name}")
   with open(class_.path, "r", encoding="utf-8") as source_file:
     lines = source_file.readlines()
@@ -36,4 +36,4 @@ def is_implemented(class_: Class) -> bool:
 
 
 if __name__ == "__main__":
-  main()
+  classes_are_implemented()

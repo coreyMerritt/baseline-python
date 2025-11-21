@@ -6,59 +6,59 @@ from linters._helpers import Class, debug, ensure_in_project_root, get_classes, 
 
 MAX_ACCEPTABLE_ARG_COUNT = 2
 
-def main():
+def methods_have_low_arg_count() -> bool:
   ensure_in_project_root()
   source_paths = get_source_paths(
+    recursive=False,
     base_dir="./src/",
-    layer="interfaces/rest/health/controllers",
-    max_depth=1
+    layer="interfaces/rest/health/controllers"
   )
   source_paths.extend(
     get_source_paths(
+      recursive=False,
       base_dir="./src/",
-      layer="interfaces/rest/health/routes",
-      max_depth=1
+      layer="interfaces/rest/health/routes"
     )
   )
   source_paths.extend(
     get_source_paths(
+      recursive=False,
       base_dir="./src/",
-      layer="interfaces/rest/v1/controllers",
-      max_depth=1
+      layer="interfaces/rest/v1/controllers"
     )
   )
   source_paths.extend(
     get_source_paths(
+      recursive=False,
       base_dir="./src/",
-      layer="interfaces/rest/v1/routes",
-      max_depth=1
+      layer="interfaces/rest/v1/routes"
     )
   )
   source_paths.extend(
     get_source_paths(
+      recursive=True,
       base_dir="./src/",
-      layer="infrastructure",
-      max_depth=2
+      layer="infrastructure"
     )
   )
   source_paths.extend(
     get_source_paths(
+      recursive=False,
       base_dir="./src/",
-      layer="services",
-      max_depth=1
+      layer="services"
     )
   )
   classes = get_classes(source_paths)
-  assert_all_classes_contain_proper_arg_count(classes)
+  __assert_all_classes_contain_proper_arg_count(classes)
   print("0: All classes contain proper arg counts.")
-  return 0
+  return True
 
-def assert_all_classes_contain_proper_arg_count(classes: List[Class]):
+def __assert_all_classes_contain_proper_arg_count(classes: List[Class]):
   for class_ in classes:
     fail_msg = f"Class method contains too many args:\n\t{class_.name}\n\t{class_.path}"
-    assert contains_healthy_arg_count(class_), fail_msg
+    assert __contains_healthy_arg_count(class_), fail_msg
 
-def contains_healthy_arg_count(class_: Class) -> bool:
+def __contains_healthy_arg_count(class_: Class) -> bool:
   debug(f"Checking class: {class_.name}")
   with open(class_.path, "r", encoding="utf-8") as source_file:
     lines = source_file.readlines()
@@ -77,4 +77,4 @@ def contains_healthy_arg_count(class_: Class) -> bool:
 
 
 if __name__ == "__main__":
-  main()
+  methods_have_low_arg_count()

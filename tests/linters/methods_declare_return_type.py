@@ -10,15 +10,18 @@ METHOD_NAME_EXCEPTION_LIST = [
   "__post_init__"
 ]
 
-def main():
+def methods_declare_return_type() -> bool:
   ensure_in_project_root()
-  source_paths = get_source_paths(base_dir="./src/")
+  source_paths = get_source_paths(
+    recursive=True,
+    base_dir="./src/"
+  )
   classes = get_classes(source_paths)
-  assert_all_methods_declare_return_type(classes)
+  __assert_all_methods_declare_return_type(classes)
   print("0: All methods declare a return type.")
-  return 0
+  return True
 
-def assert_all_methods_declare_return_type(classes: List[Class]) -> None:
+def __assert_all_methods_declare_return_type(classes: List[Class]) -> None:
   for class_ in classes:
     debug(f"Checking class: {class_.name}")
     for class_method in class_.methods:
@@ -34,4 +37,4 @@ def assert_all_methods_declare_return_type(classes: List[Class]) -> None:
       assert class_method.return_type != "Undefined", fail_msg
 
 if __name__ == "__main__":
-  main()
+  methods_declare_return_type()
