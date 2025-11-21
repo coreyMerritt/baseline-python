@@ -1,5 +1,6 @@
 from typing import Protocol
 
+
 class LoggerInterface(Protocol):
   def debug(self, msg: str, *args, **kwargs): ...
   def info(self, msg: str, *args, **kwargs): ...
