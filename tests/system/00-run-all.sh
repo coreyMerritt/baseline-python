@@ -17,5 +17,5 @@ while true; do
 done
 
 # Test
-bash "./tests/system/api/00-run-api.sh"
+bash "./tests/system/api/00-run-all.sh"
 exit 0

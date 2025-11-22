@@ -17,7 +17,7 @@ while true; do
 done
 
 # Test
-bash "./tests/linters/00-run-linters.sh"
-bash "./tests/unit/00-run-unit.sh"
-bash "./tests/system/00-run-system.sh"
+bash "./tests/linters/00-run-all.sh"
+bash "./tests/unit/00-run-all.sh"
+bash "./tests/system/00-run-all.sh"
 exit 0
