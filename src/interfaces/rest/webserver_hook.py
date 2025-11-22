@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from types import SimpleNamespace
 
 from fastapi import FastAPI
@@ -8,9 +9,8 @@ from interfaces.rest.exceptions.handlers._404_not_found import register_404_not_
 from interfaces.rest.exceptions.handlers._500_internal_server_error import register_500_internal_server_error_handlers
 from interfaces.rest.health.routes import health_routes
 from interfaces.rest.v1.routes import account_routes, blog_routes
-from shared.shared_infrastructure import (CPU_CONFIG, DATABASE_CONFIG, DEPLOYMENT_ENV, DISK_CONFIG,
-                                          EXTERNAL_SERVICES_CONFIG, LOGGER_CONFIG, MEMORY_CONFIG, TYPICODE_CONFIG,
-                                          account_repository, blog_post_repository, database, logger)
+from shared.shared_infrastructure import (DEPLOYMENT_ENV, account_repository, blog_post_repository, config_parser, cpu,
+                                          database, disk, environment, logger, memory, typicode_client)
 
 
 def create_app() -> FastAPI:
@@ -18,26 +18,28 @@ def create_app() -> FastAPI:
   async def lifespan(app: FastAPI):
     # --- Startup ---
     logger.debug(f"Using deployment environment: {DEPLOYMENT_ENV}")
-    config = SimpleNamespace()
-    config.cpu = CPU_CONFIG
-    config.database = DATABASE_CONFIG
-    config.disk = DISK_CONFIG
-    config.external_services = EXTERNAL_SERVICES_CONFIG
-    config.memory = MEMORY_CONFIG
-    config.typicode = TYPICODE_CONFIG
-    config.logger = LOGGER_CONFIG
-    repository = SimpleNamespace()
-    repository.account = account_repository
-    repository.blog_post = blog_post_repository
-    app.state.config = config
-    app.state.database = database
-    app.state.logger = logger
-    app.state.repository = repository
+    ## Infra
+    infra = SimpleNamespace()
+    infra.config_parser = config_parser
+    infra.cpu = cpu
+    infra.database = database
+    infra.disk = disk
+    infra.environment = environment
+    infra.logger = logger
+    infra.memory = memory
+    infra.typicode_client = typicode_client
+    ## Repositories
+    repo = SimpleNamespace()
+    repo.account = account_repository
+    repo.blog_post = blog_post_repository
+    ## Namespace assignments
+    app.state.infra = infra
+    app.state.repo = repo
 
     yield  # Application runs during this period
 
     # --- Shutdown ---
-    app.state.database.dispose()
+    app.state.infra.database.dispose()
 
   app = FastAPI(lifespan=lifespan)
   app = __register_exception_handlers(app)

@@ -4,6 +4,7 @@ from dacite import Config, from_dict
 
 from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.config.exceptions.config_parser_err import ConfigParserErr
+from infrastructure.config.models.config_parser_health_report import ConfigParserHealthReport
 from infrastructure.cpu.models.cpu_config import CpuConfig
 from infrastructure.database.models.database_config import DatabaseConfig
 from infrastructure.disk.models.disk_config import DiskConfig
@@ -13,7 +14,6 @@ from infrastructure.logger.models.logger_config import LoggerConfig
 from infrastructure.memory.models.memory_config import MemoryConfig
 from shared.enums.logger_level import LoggerLevel
 from shared.enums.timezone import Timezone
-from shared.models.health_reports.config_parser_health_report import ConfigParserHealthReport
 
 
 class ConfigParser(BaseInfrastructure):

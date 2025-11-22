@@ -6,7 +6,7 @@ import yaml
 from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.disk.exceptions.disk_read_err import DiskReadErr
 from infrastructure.disk.models.disk_config import DiskConfig
-from shared.models.health_reports.disk_health_report import DiskHealthReport
+from infrastructure.disk.models.disk_health_report import DiskHealthReport
 
 
 class Disk(BaseInfrastructure):

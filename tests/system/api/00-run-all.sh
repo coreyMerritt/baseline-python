@@ -17,6 +17,8 @@ while true; do
 done
 
 # Test
+bash "./tests/system/api/system-starts-happily.sh"
+bash "./tests/system/api/system-exits-happily.sh"
 bash "./tests/system/api/health-check.sh"
 bash "./tests/system/api/get-blog-post.sh"
 bash "./tests/system/api/post-and-get-account.sh"

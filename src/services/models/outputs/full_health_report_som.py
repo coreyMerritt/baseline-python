@@ -1,17 +1,17 @@
 from dataclasses import dataclass, field
 
-from shared.models.health_reports.config_parser_health_report import ConfigParserHealthReport
-from shared.models.health_reports.cpu_health_report import CpuHealthReport
-from shared.models.health_reports.database_health_report import DatabaseHealthReport
-from shared.models.health_reports.disk_health_report import DiskHealthReport
-from shared.models.health_reports.environment_health_report import EnvironmentHealthReport
-from shared.models.health_reports.logger_health_report import LoggerHealthReport
-from shared.models.health_reports.memory_health_report import MemoryHealthReport
-from shared.models.health_reports.typicode_health_report import TypicodeHealthReport
+from infrastructure.config.models.config_parser_health_report import ConfigParserHealthReport
+from infrastructure.cpu.models.cpu_health_report import CpuHealthReport
+from infrastructure.database.models.database_health_report import DatabaseHealthReport
+from infrastructure.disk.models.disk_health_report import DiskHealthReport
+from infrastructure.environment.models.environment_health_report import EnvironmentHealthReport
+from infrastructure.external_services.models.typicode_health_report import TypicodeHealthReport
+from infrastructure.logger.models.logger_health_report import LoggerHealthReport
+from infrastructure.memory.models.memory_health_report import MemoryHealthReport
 
 
 @dataclass
-class FullHealthReport():
+class FullHealthReportSOM():
   healthy: bool = field(init=False)
   config_parser_health_report: ConfigParserHealthReport
   cpu_health_report: CpuHealthReport

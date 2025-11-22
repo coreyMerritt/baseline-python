@@ -6,11 +6,6 @@ set -u
 set -o pipefail
 set -x
 
-function killServer() {
-  pid=$(ss -lntp | awk -F 'pid=' '/:8000/ { split($2, a, ","); print a[1] }') || true
-  kill "$pid" && sleep 0.5 || true
-}
-
 # Ensure we're in the project root
 while true; do
   if [[ -f "$(pwd)/pyproject.toml" ]]; then
@@ -21,16 +16,16 @@ while true; do
     cd ..
   fi
 done
+source "./tests/system/api/_helper.sh"
 
 # venv
 if [[ ! -d ".venv" ]]; then
   python3 -m venv ".venv"
 fi
-source .venv/bin/activate
+source ".venv/bin/activate"
 
 # Wait for system to start
-killServer
-bash "./start.sh" "run" "server" "--host" "127.0.0.1" "--port" "8000" "test" &
+startServer
 timeout=5
 start_time=$(date +%s)
 current_time=$(date +%s)
@@ -49,11 +44,17 @@ while (( current_time - start_time < timeout )); do
   sleep 1
   current_time=$(date +%s)
 done
-[[ "$health_check_hit" == "true" ]]
-[[ "$health_check_healthy" == "true" ]]
+[[ "$health_check_hit" == "true" ]] || {
+  echo -e "\n\tFailed to hit health endpoint"
+  exit 1
+}
+[[ "$health_check_healthy" == "true" ]] || {
+  echo -e "\n\tHealth endpoint did not return healthy"
+  exit 1
+}
 
 # Post the Account
-result="$(
+response="$(
   curl \
     --silent \
     --location 'http://127.0.0.1:8000/api/v1/account' \
@@ -66,16 +67,24 @@ result="$(
       | jq  
 )"
 post_time=$(date +%s%3N)
-error="$(echo "$result" | jq -r .error)"
-uuid="$(echo "$result" | jq -r .data.uuid)"
-[[ "$error" == "null" ]]
+error="$(echo "$response" | jq -r .error)"
+[[ "$error" == "null" ]] || {
+  echo -e "\n\t\"error\" is not null"
+  exit 1
+}
+uuid="$(echo "$response" | jq -r .data.uuid)"
 
 # Get the Account
-account="$(curl --silent --location "http://127.0.0.1:8000/api/v1/account?uuid=$uuid" | jq)"
+response="$(curl --silent --location "http://127.0.0.1:8000/api/v1/account?uuid=$uuid" | jq)"
 get_time=$(date +%s%3N)
-name="$(echo "$account" | jq -r .data.name)"
-age=$(echo "$account" | jq -r .data.age)
-account_type="$(echo "$account" | jq -r .data.account_type)"
+error="$(echo "$response" | jq -r .error)"
+[[ "$error" == "null" ]] || {
+  echo -e "\n\t\"error\" is not null"
+  exit 1
+}
+name="$(echo "$response" | jq -r .data.name)"
+age=$(echo "$response" | jq -r .data.age)
+account_type="$(echo "$response" | jq -r .data.account_type)"
 [[ "$name" == "Test Name" ]]
 [[ $age -eq 23 ]]
 [[ "$account_type" == "business" ]]
@@ -83,5 +92,5 @@ account_type="$(echo "$account" | jq -r .data.account_type)"
 # Some extra output
 echo -e "\n\tDEBUG: Delay was: $(( get_time - post_time ))ms\n"
 
-killServer
+cleanup
 exit 0

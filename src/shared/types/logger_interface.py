@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from shared.models.health_reports.logger_health_report import LoggerHealthReport
+from infrastructure.logger.models.logger_health_report import LoggerHealthReport
 
 
 class LoggerInterface(Protocol):

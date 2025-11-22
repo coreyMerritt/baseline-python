@@ -6,12 +6,6 @@ set -u
 set -o pipefail
 set -x
 
-function killServer() {
-  pid=$(ss -lntp | awk -F 'pid=' '/:8000/ { split($2, a, ","); print a[1] }') || true
-  kill "$pid" && sleep 0.5 || true
-  sleep 0.5
-}
-
 # Ensure we're in the project root
 while true; do
   if [[ -f "$(pwd)/pyproject.toml" ]]; then
@@ -22,16 +16,16 @@ while true; do
     cd ..
   fi
 done
+source "./tests/system/api/_helper.sh"
 
 # venv
 if [[ ! -d ".venv" ]]; then
   python3 -m venv ".venv"
 fi
-source .venv/bin/activate
+source ".venv/bin/activate"
 
 # Test
-killServer
-bash "./start.sh" "run" "server" "--host" "127.0.0.1" "--port" "8000" "test" &
+startServer
 pid=$!
 timeout=5
 start_time=$(date +%s)
@@ -39,8 +33,8 @@ current_time=$(date +%s)
 health_check_hit="false"
 health_check_healthy="false"
 while (( current_time - start_time < timeout )); do
-  health_check_results="$(curl --silent --location "http://127.0.0.1:8000/api/health" | jq)" || true
-  healthy="$(echo "$health_check_results" | jq .data.healthy)" || true
+  response="$(curl --silent --location "http://127.0.0.1:8000/api/health" | jq)" || true
+  healthy="$(echo "$response" | jq .data.healthy)" || true
   if [[ "$health_check_hit" == "false" && -n "$healthy" ]]; then
     health_check_hit="true"
   fi
@@ -51,8 +45,19 @@ while (( current_time - start_time < timeout )); do
   sleep 1
   current_time=$(date +%s)
 done
-[[ "$health_check_hit" == "true" ]]
-[[ "$health_check_healthy" == "true" ]]
+error="$(echo "$response" | jq -r .error)"
+[[ "$error" == "null" ]] || {
+  echo -e "\n\t\"error\" is not null"
+  exit 1
+}
+[[ "$health_check_hit" == "true" ]] || {
+  echo -e "\n\tFailed to hit health endpoint"
+  exit 1
+}
+[[ "$health_check_healthy" == "true" ]] || {
+  echo -e "\n\tHealth endpoint did not return healthy"
+  exit 1
+}
 
-killServer
+cleanup
 exit 0

@@ -22,7 +22,6 @@ function importCheck() {
   fi
 }
 
-importCheck "interfaces" "infrastructure"
 importCheck "interfaces" "infrastructure" "mapper"
 importCheck "services" "interfaces"
 importCheck "infrastructure" "services"

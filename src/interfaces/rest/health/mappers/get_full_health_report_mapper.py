@@ -7,36 +7,36 @@ from interfaces.rest.health.mappers.get_environment_health_report_mapper import 
 from interfaces.rest.health.mappers.get_logger_health_report_mapper import GetLoggerHealthReportMapper
 from interfaces.rest.health.mappers.get_memory_health_report_mapper import GetMemoryHealthReportMapper
 from interfaces.rest.health.mappers.get_typicode_health_report_mapper import GetTypicodeHealthReportMapper
+from services.models.outputs.full_health_report_som import FullHealthReportSOM
 from shared.exceptions.mapper_err import MapperErr
-from shared.models.health_reports.full_health_report import FullHealthReport
 
 
 class GetFullHealthReportMapper:
   @staticmethod
-  def model_to_res(model: FullHealthReport) -> GetFullHealthReportRes:
-    get_config_parser_health_report_res = GetConfigParserHealthReportMapper.model_to_res(
-      model.config_parser_health_report
+  def som_to_res(som: FullHealthReportSOM) -> GetFullHealthReportRes:
+    get_config_parser_health_report_res = GetConfigParserHealthReportMapper.infrastructure_model_to_res(
+      som.config_parser_health_report
     )
-    get_cpu_health_report_res = GetCpuHealthReportMapper.model_to_res(
-      model.cpu_health_report
+    get_cpu_health_report_res = GetCpuHealthReportMapper.infrastructure_model_to_res(
+      som.cpu_health_report
     )
-    get_database_health_report_res = GetDatabaseHealthReportMapper.model_to_res(
-      model.database_health_report
+    get_database_health_report_res = GetDatabaseHealthReportMapper.infrastructure_model_to_res(
+      som.database_health_report
     )
-    get_disk_health_report_res = GetDiskHealthReportMapper.model_to_res(
-      model.disk_health_report
+    get_disk_health_report_res = GetDiskHealthReportMapper.infrastructure_model_to_res(
+      som.disk_health_report
     )
-    get_environment_health_report_res = GetEnvironmentHealthReportMapper.model_to_res(
-      model.environment_health_report
+    get_environment_health_report_res = GetEnvironmentHealthReportMapper.infrastructure_model_to_res(
+      som.environment_health_report
     )
-    get_logger_health_report_res = GetLoggerHealthReportMapper.model_to_res(
-      model.logger_health_report
+    get_logger_health_report_res = GetLoggerHealthReportMapper.infrastructure_model_to_res(
+      som.logger_health_report
     )
-    get_memory_health_report_res = GetMemoryHealthReportMapper.model_to_res(
-      model.memory_health_report
+    get_memory_health_report_res = GetMemoryHealthReportMapper.infrastructure_model_to_res(
+      som.memory_health_report
     )
-    get_typicode_health_report_res = GetTypicodeHealthReportMapper.model_to_res(
-      model.typicode_health_report
+    get_typicode_health_report_res = GetTypicodeHealthReportMapper.infrastructure_model_to_res(
+      som.typicode_health_report
     )
     try:
       return GetFullHealthReportRes(
@@ -48,7 +48,7 @@ class GetFullHealthReportMapper:
         logger=get_logger_health_report_res,
         memory=get_memory_health_report_res,
         typicode=get_typicode_health_report_res,
-        healthy=model.healthy
+        healthy=som.healthy
       )
     except Exception as e:
       raise MapperErr() from e

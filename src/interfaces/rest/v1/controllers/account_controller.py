@@ -13,8 +13,8 @@ from services.exceptions.item_creation_err import ItemCreationErr
 class AccountController:
   async def get_account(self, req: Request, uuid: str) -> ProjectnameHTTPResponse:
     account_manager = AccountManager(
-      req.app.state.logger,
-      req.app.state.repository.account
+      req.app.state.infra.logger,
+      req.app.state.repo.account
     )
     account_som = await asyncio.to_thread(account_manager.get_account, uuid)
     get_account_res = GetAccountMapper.som_to_res(account_som)
@@ -24,8 +24,8 @@ class AccountController:
 
   async def create_account(self, req: Request, body: CreateAccountReq) -> ProjectnameHTTPResponse:
     account_manager = AccountManager(
-      req.app.state.logger,
-      req.app.state.repository.account
+      req.app.state.infra.logger,
+      req.app.state.repo.account
     )
     create_account_service_model = CreateAccountMapper.req_to_servicemodel(body)
     create_account_som = account_manager.create_account(create_account_service_model)

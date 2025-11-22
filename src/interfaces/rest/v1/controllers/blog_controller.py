@@ -10,8 +10,8 @@ from services.blog_manager import BlogManager
 class BlogController:
   async def get_blog_post(self, req: Request, user_id: int, post_number: int) -> ProjectnameHTTPResponse:
     blog_manager = BlogManager(
-      req.app.state.logger,
-      req.app.state.repository.blog_post
+      req.app.state.infra.logger,
+      req.app.state.repo.blog_post
     )
     blog_post_som = await asyncio.to_thread(
       blog_manager.get_blog_post,

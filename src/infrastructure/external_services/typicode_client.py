@@ -7,7 +7,7 @@ from infrastructure.external_services.exceptions.requests_parse_err import Reque
 from infrastructure.external_services.exceptions.requests_status_err import RequestsStatusErr
 from infrastructure.external_services.models.external_services_config import ExternalServicesConfig
 from infrastructure.external_services.models.typicode_config import TypicodeConfig
-from shared.models.health_reports.typicode_health_report import TypicodeHealthReport
+from infrastructure.external_services.models.typicode_health_report import TypicodeHealthReport
 
 
 class TypicodeClient(BaseInfrastructure):

@@ -2,7 +2,7 @@ import psutil
 
 from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.cpu.models.cpu_config import CpuConfig
-from shared.models.health_reports.cpu_health_report import CpuHealthReport
+from infrastructure.cpu.models.cpu_health_report import CpuHealthReport
 
 
 class Cpu(BaseInfrastructure):

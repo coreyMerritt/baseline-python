@@ -2,7 +2,7 @@ import psutil
 
 from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.memory.models.memory_config import MemoryConfig
-from shared.models.health_reports.memory_health_report import MemoryHealthReport
+from infrastructure.memory.models.memory_health_report import MemoryHealthReport
 
 
 class Memory(BaseInfrastructure):

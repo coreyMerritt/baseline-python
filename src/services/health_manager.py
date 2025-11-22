@@ -3,39 +3,56 @@ from dataclasses import asdict
 
 from infrastructure.config.parser import ConfigParser
 from infrastructure.cpu.cpu import Cpu
-from infrastructure.cpu.models.cpu_config import CpuConfig
 from infrastructure.database.database import Database
 from infrastructure.disk.disk import Disk
-from infrastructure.disk.models.disk_config import DiskConfig
 from infrastructure.environment.environment import Environment
-from infrastructure.external_services.models.external_services_config import ExternalServicesConfig
-from infrastructure.external_services.models.typicode_config import TypicodeConfig
 from infrastructure.external_services.typicode_client import TypicodeClient
 from infrastructure.memory.memory import Memory
-from infrastructure.memory.models.memory_config import MemoryConfig
 from services.base_service import BaseService
-from shared.models.health_reports.full_health_report import FullHealthReport
+from services.models.outputs.full_health_report_som import FullHealthReportSOM
+from shared.types.logger_interface import LoggerInterface
 
 
 class HealthManager(BaseService):
-  def get_full_health_report(
+  _logger: LoggerInterface
+  _config_parser: ConfigParser
+  _cpu: Cpu
+  _database: Database
+  _disk: Disk
+  _environment: Environment
+  _memory: Memory
+  _typicode_client: TypicodeClient
+
+  def __init__(
     self,
+    logger: LoggerInterface,
+    config_parser: ConfigParser,
+    cpu: Cpu,
     database: Database,
-    cpu_config: CpuConfig,
-    disk_config: DiskConfig,
-    external_services_config: ExternalServicesConfig,
-    memory_config: MemoryConfig,
-    typicode_config: TypicodeConfig
-  ) -> FullHealthReport:
-    config_parser_health_report = ConfigParser().get_health_report()
-    cpu_health_report = Cpu(cpu_config).get_health_report()
-    database_health_report = database.get_health_report()
-    disk_health_report = Disk(disk_config).get_health_report()
-    environment_health_report = Environment().get_health_report()
+    disk: Disk,
+    environment: Environment,
+    memory: Memory,
+    typicode_client: TypicodeClient,
+  ):
+    self._config_parser = config_parser
+    self._cpu = cpu
+    self._database = database
+    self._disk = disk
+    self._environment = environment
+    self._memory = memory
+    self._typicode_client = typicode_client
+    super().__init__(logger)
+
+  def get_full_health_report(self) -> FullHealthReportSOM:
+    config_parser_health_report = self._config_parser.get_health_report()
+    cpu_health_report = self._cpu.get_health_report()
+    database_health_report = self._database.get_health_report()
+    disk_health_report = self._disk.get_health_report()
+    environment_health_report = self._environment.get_health_report()
     logger_health_report = self._logger.get_health_report()
-    memory_health_report = Memory(memory_config).get_health_report()
-    typicode_health_report = TypicodeClient(external_services_config, typicode_config).get_health_report()
-    full_health_report = FullHealthReport(
+    memory_health_report = self._memory.get_health_report()
+    typicode_health_report = self._typicode_client.get_health_report()
+    full_health_report = FullHealthReportSOM(
       config_parser_health_report=config_parser_health_report,
       cpu_health_report=cpu_health_report,
       database_health_report=database_health_report,

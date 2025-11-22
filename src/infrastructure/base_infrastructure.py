@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from shared.models.health_reports.base_health_report import HealthReport
+from infrastructure.models.base_health_report import HealthReport
 
 
 class BaseInfrastructure(ABC):
