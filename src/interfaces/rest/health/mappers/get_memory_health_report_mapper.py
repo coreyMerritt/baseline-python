@@ -1,15 +1,11 @@
 from infrastructure.memory.models.memory_health_report import MemoryHealthReport
 from interfaces.rest.health.dto.res.get_memory_health_report_res import GetMemoryHealthReportRes
-from shared.exceptions.mapper_err import MapperErr
 
 
 class GetMemoryHealthReportMapper:
   @staticmethod
   def infrastructure_model_to_res(model: MemoryHealthReport) -> GetMemoryHealthReportRes:
-    try:
-      return GetMemoryHealthReportRes(
-        usage_percentage=model.usage_percentage,
-        healthy=model.healthy
-      )
-    except Exception as e:
-      raise MapperErr() from e
+    return GetMemoryHealthReportRes(
+      usage_percentage=model.usage_percentage,
+      healthy=model.healthy
+    )

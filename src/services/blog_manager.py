@@ -1,5 +1,5 @@
 from domain.interfaces.repositories.blog_post_repository_interface import BlogPostRepositoryInterface
-from infrastructure.logger.projectname_logger import ProjectnameLogger
+from infrastructure.types.logger_interface import LoggerInterface
 from services.base_service import BaseService
 from services.mappers.get_blog_post_mapper import GetBlogPostMapper
 from services.models.outputs.get_blog_post_som import GetBlogPostSOM
@@ -10,7 +10,7 @@ class BlogManager(BaseService):
 
   def __init__(
     self,
-    logger: ProjectnameLogger,
+    logger: LoggerInterface,
     blog_post_repository: BlogPostRepositoryInterface
   ):
     self._blog_post_repository = blog_post_repository

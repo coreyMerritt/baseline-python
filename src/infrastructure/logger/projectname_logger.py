@@ -3,7 +3,7 @@ import logging
 from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.logger.exceptions.logger_configuration_err import LoggerConfigurationErr
 from infrastructure.logger.exceptions.logger_initialization_err import LoggerInitializationErr
-from infrastructure.logger.formatters.projectname_logger_formatter import CustomFormatter
+from infrastructure.logger.formatter import Formatter
 from infrastructure.logger.mapping.logger_level_mapper import LoggerLevelMapper
 from infrastructure.logger.models.logger_config import LoggerConfig
 from infrastructure.logger.models.logger_health_report import LoggerHealthReport
@@ -36,7 +36,10 @@ class ProjectnameLogger(BaseInfrastructure):
       level = LoggerLevelMapper.local_enum_to_logging_const(logger_config.level)
       logging.basicConfig(level=level)
       for handler in logging.getLogger().handlers:
-        handler.setFormatter(CustomFormatter("%(asctime)-24s %(levelname)-9s %(message)s"))
+        handler.setFormatter(Formatter(
+          "%(asctime)-24s %(levelname)-9s %(message)s",
+          logger_config.timezone.value
+        ))
       for name in logger_config.noisy_loggers or []:
         logging.getLogger(name).setLevel(logging.WARNING)
       self._is_configured = True

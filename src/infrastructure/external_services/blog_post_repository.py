@@ -8,7 +8,6 @@ from infrastructure.external_services.mappers.blog_post_mapper import BlogPostMa
 from infrastructure.external_services.models.external_services_config import ExternalServicesConfig
 from infrastructure.external_services.models.typicode_config import TypicodeConfig
 from infrastructure.external_services.typicode_client import TypicodeClient
-from shared.exceptions.mapper_err import MapperErr
 
 
 class BlogPostRepository(BlogPostRepositoryInterface):
@@ -27,8 +26,5 @@ class BlogPostRepository(BlogPostRepositoryInterface):
       raise RepositoryUnavailableErr() from e
     except RequestsParseErr as e:
       raise RepositoryDataIntegrityErr() from e
-    try:
-      blog_post = BlogPostMapper.ext_res_to_domain(blog_post_ext_res)
-    except MapperErr as e:
-      raise RepositoryDataIntegrityErr() from e
+    blog_post = BlogPostMapper.ext_res_to_domain(blog_post_ext_res)
     return blog_post

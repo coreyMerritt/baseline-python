@@ -1,11 +1,11 @@
 from domain.interfaces.repositories.account_repository_interface import AccountRepositoryInterface
+from infrastructure.types.logger_interface import LoggerInterface
 from services.base_service import BaseService
 from services.mappers.create_account_mapper import CreateAccountMapper
 from services.mappers.get_account_mapper import GetAccountMapper
 from services.models.inputs.create_account_sim import CreateAccountSIM
 from services.models.outputs.create_account_som import CreateAccountSOM
 from services.models.outputs.get_account_som import GetAccountSOM
-from shared.types.logger_interface import LoggerInterface
 
 
 class AccountManager(BaseService):

@@ -1,7 +1,7 @@
 import logging
 
+from infrastructure.logger.enums.logger_level import LoggerLevel
 from infrastructure.logger.exceptions.logger_level_err import LoggerLevelErr
-from shared.enums.logger_level import LoggerLevel
 
 
 class LoggerLevelMapper:

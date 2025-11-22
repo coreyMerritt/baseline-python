@@ -8,9 +8,9 @@ from infrastructure.disk.disk import Disk
 from infrastructure.environment.environment import Environment
 from infrastructure.external_services.typicode_client import TypicodeClient
 from infrastructure.memory.memory import Memory
+from infrastructure.types.logger_interface import LoggerInterface
 from services.base_service import BaseService
 from services.models.outputs.full_health_report_som import FullHealthReportSOM
-from shared.types.logger_interface import LoggerInterface
 
 
 class HealthManager(BaseService):

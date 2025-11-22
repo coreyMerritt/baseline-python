@@ -11,9 +11,12 @@ grep \
   --recursive \
   --line-number \
   --ignore-case \
+  --exclude "deploy_db.log" \
   --exclude-dir "*cache*" \
   --exclude-dir "*egg-info*" \
+  --exclude-dir "backups" \
   --exclude-dir ".git" \
   --exclude-dir ".venv" \
   "projectname" \
-  . 2>/dev/null
+  "." \
+  2>/dev/null

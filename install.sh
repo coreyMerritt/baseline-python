@@ -12,6 +12,8 @@ starting_group="$(id -gn)"
 sudo -k && sudo true
 
 # Vars
+config_filenames_path="src/composition/enums/config_filenames.py"
+deployment_environments_path="./src/composition/enums/deployment_environment.py"
 project_environment="$1"
 [[ "$project_environment" == "test" ]] || [[ "$project_environment" == "dev" ]] || [[ "$project_environment" == "prod" ]] || {
   echo -e "\n\targ1 must be test|dev|prod\n"
@@ -53,8 +55,8 @@ fi
 source ".env"
 [[ -n "$PROJECTNAME_GLOBAL_CONFIG_DIR" ]]
 [[ -n "$PROJECTNAME_MODEL_CONFIG_DIR" ]]
-config_filenames="$(cat "./src/shared/enums/config_filenames.py" | grep -v "import" | grep -v "class" | awk '{print $3}' | jq -r)"
-deployment_environments="$(cat "./src/services/enums/deployment_environment.py" | grep -v "import" | grep -v "class" | awk '{print $3}' | jq -r .)" 
+config_filenames="$(cat "$config_filenames_path" | grep -v "import" | grep -v "class" | awk '{print $3}' | jq -r)"
+deployment_environments="$(cat "$deployment_environments_path" | grep -v "import" | grep -v "class" | awk '{print $3}' | jq -r .)" 
 ## Assert all local configs exist
 for config_filename in $config_filenames; do
   local_model_path="${PROJECTNAME_MODEL_CONFIG_DIR}/${config_filename}"

@@ -2,10 +2,10 @@ from domain.exceptions.repository_data_integrity_err import RepositoryDataIntegr
 from domain.exceptions.repository_not_found_err import RepositoryNotFoundErr
 from domain.exceptions.repository_unavailable_err import RepositoryUnavailableErr
 from domain.exceptions.validation_err import ValidationErr
+from infrastructure.types.logger_interface import LoggerInterface
 from services.exceptions.bad_input_err import BadInputErr
 from services.exceptions.item_not_found_err import ItemNotFoundErr
 from services.exceptions.service_unavailable_err import ServiceUnavailableErr
-from shared.types.logger_interface import LoggerInterface
 
 
 class BaseService():

@@ -1,7 +1,7 @@
-from interfaces.exceptions.interface_exception import InterfaceException
+from interfaces.command_line.exceptions.base_interface_exception import BaseInterfaceException
 
 
-class UnknownRunTargetException(InterfaceException):
+class UnknownRunTargetException(BaseInterfaceException):
   message: str
 
   def __init__(self, *args):

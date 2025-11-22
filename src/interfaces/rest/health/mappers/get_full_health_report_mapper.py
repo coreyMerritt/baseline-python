@@ -8,7 +8,6 @@ from interfaces.rest.health.mappers.get_logger_health_report_mapper import GetLo
 from interfaces.rest.health.mappers.get_memory_health_report_mapper import GetMemoryHealthReportMapper
 from interfaces.rest.health.mappers.get_typicode_health_report_mapper import GetTypicodeHealthReportMapper
 from services.models.outputs.full_health_report_som import FullHealthReportSOM
-from shared.exceptions.mapper_err import MapperErr
 
 
 class GetFullHealthReportMapper:
@@ -38,17 +37,14 @@ class GetFullHealthReportMapper:
     get_typicode_health_report_res = GetTypicodeHealthReportMapper.infrastructure_model_to_res(
       som.typicode_health_report
     )
-    try:
-      return GetFullHealthReportRes(
-        config_parser=get_config_parser_health_report_res,
-        cpu=get_cpu_health_report_res,
-        database=get_database_health_report_res,
-        disk=get_disk_health_report_res,
-        environment=get_environment_health_report_res,
-        logger=get_logger_health_report_res,
-        memory=get_memory_health_report_res,
-        typicode=get_typicode_health_report_res,
-        healthy=som.healthy
-      )
-    except Exception as e:
-      raise MapperErr() from e
+    return GetFullHealthReportRes(
+      config_parser=get_config_parser_health_report_res,
+      cpu=get_cpu_health_report_res,
+      database=get_database_health_report_res,
+      disk=get_disk_health_report_res,
+      environment=get_environment_health_report_res,
+      logger=get_logger_health_report_res,
+      memory=get_memory_health_report_res,
+      typicode=get_typicode_health_report_res,
+      healthy=som.healthy
+    )

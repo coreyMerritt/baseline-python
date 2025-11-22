@@ -1,14 +1,10 @@
 from infrastructure.logger.models.logger_health_report import LoggerHealthReport
 from interfaces.rest.health.dto.res.get_full_health_report_res import GetLoggerHealthReportRes
-from shared.exceptions.mapper_err import MapperErr
 
 
 class GetLoggerHealthReportMapper:
   @staticmethod
   def infrastructure_model_to_res(model: LoggerHealthReport) -> GetLoggerHealthReportRes:
-    try:
-      return GetLoggerHealthReportRes(
-        healthy=model.healthy
-      )
-    except Exception as e:
-      raise MapperErr() from e
+    return GetLoggerHealthReportRes(
+      healthy=model.healthy
+    )

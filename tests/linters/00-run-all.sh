@@ -36,7 +36,7 @@ PYTHONPATH=./tests/ .venv/bin/python "./tests/linters/classes_are_implemented.py
 PYTHONPATH=./tests/ .venv/bin/python "./tests/linters/classes_are_imported.py"
 PYTHONPATH=./tests/ .venv/bin/python "./tests/linters/errs_dont_inherit_directly_from_exception.py"
 PYTHONPATH=./tests/ .venv/bin/python "./tests/linters/methods_declare_return_type.py"
-PYTHONPATH=./tests/ .venv/bin/python "./tests/linters/methods_have_low_arg_count.py"
+PYTHONPATH=./tests/ .venv/bin/python "./tests/linters/methods_have_low_param_count.py"
 PYTHONPATH=./tests/ .venv/bin/python "./tests/linters/service_exceptions_are_imported_in_interfaces.py"
 .venv/bin/python -m isort --check-only "."
 .venv/bin/python -m mypy "."

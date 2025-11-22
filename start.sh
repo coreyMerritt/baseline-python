@@ -18,5 +18,5 @@ while true; do
 done
 
 source .env
-.venv/bin/python ./src/interfaces/command_line/entrypoint.py $@
+.venv/bin/python ./src/composition/cli_entrypoint.py $@
 exit 0

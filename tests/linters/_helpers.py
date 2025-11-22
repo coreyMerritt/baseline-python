@@ -10,14 +10,14 @@ from typing import List
 
 # Classes
 @dataclass
-class Arg:
+class Parameter:
   name: str
   type: str
 
 @dataclass
 class Method:
   name: str
-  args: List[Arg]
+  parameters: List[Parameter]
   return_type: str
   content: List[str]
 
@@ -258,33 +258,33 @@ def _get_method_return_type(line: str) -> str:
     return "Undefined"
   return match.group(1)
 
-def _get_method_args(line: str) -> List[Arg]:
+def _get_method_parameters(line: str) -> List[Parameter]:
   assert _is_method_definition(line)
   match = re.match(r"^\s*def\s+\w+\s*\((.*?)\)\s*-?>?.*:", line)
   if not match:
-    raise RuntimeError("Method definition does not contain any args???")
-  raw_args = match.group(1).strip().replace(" ", "").split(",")
-  args: List[Arg] = []
-  for raw_arg in raw_args:
-    raw_arg_split = raw_arg.split(":")
-    assert len(raw_arg_split) >= 1
-    assert len(raw_arg_split) <= 2
-    arg_name = raw_arg_split[0]
-    arg_type = "Undefined"
-    if len(raw_arg_split) == 2:
-      arg_type = raw_arg_split[1]
-    args.append(
-      Arg(
-        name=arg_name,
-        type=arg_type
+    raise RuntimeError("Method definition does not contain any parameters???")
+  raw_parameters = match.group(1).strip().replace(" ", "").split(",")
+  parameters: List[Parameter] = []
+  for raw_parameter in raw_parameters:
+    raw_parameter_split = raw_parameter.split(":")
+    assert len(raw_parameter_split) >= 1
+    assert len(raw_parameter_split) <= 2
+    parameter_name = raw_parameter_split[0]
+    parameter_type = "Undefined"
+    if len(raw_parameter_split) == 2:
+      parameter_type = raw_parameter_split[1]
+    parameters.append(
+      Parameter(
+        name=parameter_name,
+        type=parameter_type
       )
     )
-  return args
+  return parameters
 
 def _build_method(method_lines_list: List[str]) -> Method:
   return Method(
     name=_get_method_name(method_lines_list[0]),
-    args=_get_method_args(method_lines_list[0]),
+    parameters=_get_method_parameters(method_lines_list[0]),
     return_type=_get_method_return_type(method_lines_list[0]),
     content=method_lines_list[1:]
   )

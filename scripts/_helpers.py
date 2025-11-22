@@ -190,5 +190,5 @@ def _get_host_port(deployment_environment: str) -> int:
   if deployment_environment == "dev":
     return 5433
   if deployment_environment == "prod":
-    return 5431
+    return 5432
   raise AttributeError(f"Unknown deployment_environment: {deployment_environment}")

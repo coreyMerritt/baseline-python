@@ -1,8 +1,8 @@
+from domain.mappers.account_type_mapper import AccountTypeMapper
 from interfaces.rest.v1.dto.req.create_account_req import CreateAccountReq
 from interfaces.rest.v1.dto.res.create_account_res import CreateAccountRes
 from services.models.inputs.create_account_sim import CreateAccountSIM
 from services.models.outputs.create_account_som import CreateAccountSOM
-from shared.mappers.account_type_mapper import AccountTypeMapper
 
 
 class CreateAccountMapper:

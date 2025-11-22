@@ -8,12 +8,12 @@ from infrastructure.config.models.config_parser_health_report import ConfigParse
 from infrastructure.cpu.models.cpu_config import CpuConfig
 from infrastructure.database.models.database_config import DatabaseConfig
 from infrastructure.disk.models.disk_config import DiskConfig
+from infrastructure.enums.timezone import Timezone
 from infrastructure.external_services.models.external_services_config import ExternalServicesConfig
 from infrastructure.external_services.models.typicode_config import TypicodeConfig
+from infrastructure.logger.enums.logger_level import LoggerLevel
 from infrastructure.logger.models.logger_config import LoggerConfig
 from infrastructure.memory.models.memory_config import MemoryConfig
-from shared.enums.logger_level import LoggerLevel
-from shared.enums.timezone import Timezone
 
 
 class ConfigParser(BaseInfrastructure):
