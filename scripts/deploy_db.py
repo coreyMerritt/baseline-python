@@ -17,9 +17,7 @@ LOG_PATH = "./deploy_db.log"
 IMAGE_VERSION = "18"
 
 def deploy_db() -> None:
-  require_sudo()
-  if not sys.argv[1]:
-    critical("arg1 must be dev|prod|test")
+  _validate()
   DEPLOYMENT_ENVIRONMENT = sys.argv[1]
   debug(f"Environment: {DEPLOYMENT_ENVIRONMENT}")
   client = docker.from_env()
@@ -44,6 +42,15 @@ def deploy_db() -> None:
       _stop_and_remove_container(client, container_name)
       _remove_docker_volume(volume_name, client)
     _deploy_with_new_volume(volume_name, DEPLOYMENT_ENVIRONMENT, client)
+
+def _validate() -> None:
+  require_sudo()
+  if len(sys.argv) < 2:
+    critical("arg1 must be dev|prod|test")
+  if len(sys.argv) > 2:
+    critical("script does not accept 2nd arg")
+  if sys.argv[1] not in ("dev", "prod", "test"):
+    critical("arg1 must be dev|prod|test")
 
 def _deploy_with_existing_volume(volume_name: str, deployment_environment: str, client: DockerClient) -> None:
   postgres_info = get_existing_database_info(deployment_environment, IMAGE_VERSION)
