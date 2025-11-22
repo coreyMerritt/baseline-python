@@ -5,8 +5,8 @@ from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.external_services.dto.res.blog_post_ext_res import BlogPostExtRes
 from infrastructure.external_services.exceptions.requests_parse_err import RequestsParseErr
 from infrastructure.external_services.exceptions.requests_status_err import RequestsStatusErr
-from shared.models.configs.external_services_config import ExternalServicesConfig
-from shared.models.configs.typicode_config import TypicodeConfig
+from infrastructure.external_services.models.external_services_config import ExternalServicesConfig
+from infrastructure.external_services.models.typicode_config import TypicodeConfig
 from shared.models.health_reports.typicode_health_report import TypicodeHealthReport
 
 

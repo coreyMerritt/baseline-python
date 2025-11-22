@@ -5,7 +5,7 @@ from infrastructure.logger.exceptions.logger_configuration_err import LoggerConf
 from infrastructure.logger.exceptions.logger_initialization_err import LoggerInitializationErr
 from infrastructure.logger.formatters.projectname_logger_formatter import CustomFormatter
 from infrastructure.logger.mapping.logger_level_mapper import LoggerLevelMapper
-from shared.models.configs.logger_config import LoggerConfig
+from infrastructure.logger.models.logger_config import LoggerConfig
 from shared.models.health_reports.logger_health_report import LoggerHealthReport
 
 

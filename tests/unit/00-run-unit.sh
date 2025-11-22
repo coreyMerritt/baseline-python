@@ -21,14 +21,9 @@ if [[ ! -d ".venv" ]]; then
   python3 -m venv ".venv"
 fi
 
-# Validate some binaries
-which .venv/bin/pip
-which .venv/bin/python
-
 # Validate some packages
-.venv/bin/pip show pytest
+which ".venv/bin/pytest"
 
 # Test
-echo -e "\n\tRunning unit tests...\n"
-.venv/bin/python3 -m pytest -v ./tests/unit
+.venv/bin/pytest -v "./tests/unit/"
 exit 0

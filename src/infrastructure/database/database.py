@@ -8,7 +8,7 @@ from sqlmodel import Session, SQLModel, create_engine, text
 from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.database.exceptions.database_initialization_err import DatabaseInitializationErr
 from infrastructure.database.exceptions.database_schema_creation_err import DatabaseSchemaCreationErr
-from shared.models.configs.database_config import DatabaseConfig
+from infrastructure.database.models.database_config import DatabaseConfig
 from shared.models.health_reports.database_health_report import DatabaseHealthReport
 
 

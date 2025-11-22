@@ -5,10 +5,10 @@ from domain.interfaces.repositories.blog_post_repository_interface import BlogPo
 from infrastructure.external_services.exceptions.requests_parse_err import RequestsParseErr
 from infrastructure.external_services.exceptions.requests_status_err import RequestsStatusErr
 from infrastructure.external_services.mappers.blog_post_mapper import BlogPostMapper
+from infrastructure.external_services.models.external_services_config import ExternalServicesConfig
+from infrastructure.external_services.models.typicode_config import TypicodeConfig
 from infrastructure.external_services.typicode_client import TypicodeClient
 from shared.exceptions.mapper_err import MapperErr
-from shared.models.configs.external_services_config import ExternalServicesConfig
-from shared.models.configs.typicode_config import TypicodeConfig
 
 
 class BlogPostRepository(BlogPostRepositoryInterface):

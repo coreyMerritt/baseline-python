@@ -5,14 +5,14 @@ from dacite import Config, from_dict
 from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.config.exceptions.config_parser_err import ConfigParserErr
 from infrastructure.cpu.models.cpu_config import CpuConfig
+from infrastructure.database.models.database_config import DatabaseConfig
+from infrastructure.disk.models.disk_config import DiskConfig
+from infrastructure.external_services.models.external_services_config import ExternalServicesConfig
+from infrastructure.external_services.models.typicode_config import TypicodeConfig
+from infrastructure.logger.models.logger_config import LoggerConfig
+from infrastructure.memory.models.memory_config import MemoryConfig
 from shared.enums.logger_level import LoggerLevel
 from shared.enums.timezone import Timezone
-from shared.models.configs.database_config import DatabaseConfig
-from shared.models.configs.disk_config import DiskConfig
-from shared.models.configs.external_services_config import ExternalServicesConfig
-from shared.models.configs.logger_config import LoggerConfig
-from shared.models.configs.memory_config import MemoryConfig
-from shared.models.configs.typicode_config import TypicodeConfig
 from shared.models.health_reports.config_parser_health_report import ConfigParserHealthReport
 
 

@@ -10,4 +10,5 @@ jobs:
       - uses: ./.github/actions/env-setup-dev
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
-      - uses: ./.github/actions/unit-tests
+      - shell: bash
+        run: ./tests/unit/run-unit-tests.sh

@@ -1,7 +1,0 @@
-name: Run Unit Tests
-runs:
-  using: "composite"
-  steps:
-    - name: Run Unit Tests
-      shell: bash
-      run: ./tests/system/run-unit-tests.sh
