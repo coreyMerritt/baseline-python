@@ -4,6 +4,7 @@ from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResp
 from interfaces.rest.v1.controllers.account_controller import AccountController
 from interfaces.rest.v1.dto.req.create_account_req import CreateAccountReq
 
+controller = AccountController()
 router = APIRouter(prefix="/api/v1/account")
 
 @router.get(
@@ -12,14 +13,18 @@ router = APIRouter(prefix="/api/v1/account")
   status_code=200
 )
 async def get_account(req: Request, uuid: str) -> ProjectnameHTTPResponse:
-  controller = AccountController(req)
-  return await controller.get_account(uuid)
+  return await controller.get_account(
+    req=req,
+    uuid=uuid
+  )
 
 @router.post(
   path="",
   response_model=ProjectnameHTTPResponse,
   status_code=201
 )
-async def create_account(req: Request, create_account_req: CreateAccountReq) -> ProjectnameHTTPResponse:
-  controller = AccountController(req)
-  return await controller.create_account(create_account_req)
+async def create_account(req: Request, body: CreateAccountReq) -> ProjectnameHTTPResponse:
+  return await controller.create_account(
+    req=req,
+    body=body
+  )

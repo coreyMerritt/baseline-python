@@ -3,13 +3,13 @@ from dataclasses import asdict
 
 from infrastructure.config.parser import ConfigParser
 from infrastructure.cpu.cpu import Cpu
+from infrastructure.cpu.models.cpu_config import CpuConfig
 from infrastructure.database.database import Database
 from infrastructure.disk.disk import Disk
 from infrastructure.environment.environment import Environment
 from infrastructure.external_services.typicode_client import TypicodeClient
 from infrastructure.memory.memory import Memory
 from services.base_service import BaseService
-from shared.models.configs.cpu_config import CpuConfig
 from shared.models.configs.disk_config import DiskConfig
 from shared.models.configs.external_services_config import ExternalServicesConfig
 from shared.models.configs.memory_config import MemoryConfig

@@ -4,9 +4,9 @@ from dacite import Config, from_dict
 
 from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.config.exceptions.config_parser_err import ConfigParserErr
+from infrastructure.cpu.models.cpu_config import CpuConfig
 from shared.enums.logger_level import LoggerLevel
 from shared.enums.timezone import Timezone
-from shared.models.configs.cpu_config import CpuConfig
 from shared.models.configs.database_config import DatabaseConfig
 from shared.models.configs.disk_config import DiskConfig
 from shared.models.configs.external_services_config import ExternalServicesConfig
