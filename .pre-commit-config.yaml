@@ -9,6 +9,14 @@ repos:
         pass_filenames: false
         stages:
           - pre-push
+      - name: Run all linters
+        id: tests
+        entry: ./tests/linters/00-run-all.sh
+        language: script
+        always_run: true
+        pass_filenames: false
+        stages:
+          - pre-commit
       - name: Run all tests
         id: tests
         entry: ./tests/00-run-all.sh
@@ -16,4 +24,4 @@ repos:
         always_run: true
         pass_filenames: false
         stages:
-          - pre-commit
+          - pre-push

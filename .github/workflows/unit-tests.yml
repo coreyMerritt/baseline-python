@@ -11,4 +11,4 @@ jobs:
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
       - shell: bash
-        run: ./tests/unit/run-unit-tests.sh
+        run: ./tests/unit/00-run-all.sh

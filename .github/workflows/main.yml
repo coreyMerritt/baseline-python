@@ -9,5 +9,5 @@ jobs:
     uses: ./.github/workflows/linters.yml
   unit-tests:
     uses: ./.github/workflows/unit-tests.yml
-  api:
-    uses: ./.github/workflows/api.yml
+  system:
+    uses: ./.github/workflows/system.yml

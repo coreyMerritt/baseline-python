@@ -11,4 +11,4 @@ jobs:
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
       - shell: bash
-        run: ./tests/linters/00-run-linters.sh
+        run: ./tests/linters/00-run-all.sh
