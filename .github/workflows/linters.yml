@@ -2,7 +2,7 @@ name: Linters
 on:
   workflow_call:
 jobs:
-  linters-and-unit-tests:
+  linters:
     runs-on: ubuntu-latest
     environment: test
     steps:
