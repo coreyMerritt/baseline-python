@@ -11,6 +11,6 @@ jobs:
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
       - shell: bash
-        run: sudo .venv/bin/python /home/gmukko/00-manual/projects/baseline-python/scripts/deploy_db.py "test"
+        run: sudo .venv/bin/python "./scripts/deploy_db.py" "test"
       - shell: bash
         run: ./tests/system/00-run-all.sh
