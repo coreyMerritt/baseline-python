@@ -1,16 +1,17 @@
 from typing import Any
 
-from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from interfaces.rest.exceptions.projectname_httpexception import ProjectnameHTTPException
 from interfaces.rest.models.projectname_http_error import ProjectnameHTTPError
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
+from interfaces.rest.types.projectname_fastapi import ProjectnameFastAPI
+from interfaces.rest.types.projectname_request import ProjectnameRequest
 
 
-def register_projectname_httpexception_handler(app: FastAPI) -> None:
+def register_projectname_httpexception_handler(app: ProjectnameFastAPI) -> None:
   @app.exception_handler(ProjectnameHTTPException)
-  async def projectname_httpexception_handler(r: Request, e: ProjectnameHTTPException):
+  async def projectname_httpexception_handler(r: ProjectnameRequest, e: ProjectnameHTTPException):
     _ = r
     payload: ProjectnameHTTPResponse[Any] = ProjectnameHTTPResponse(
       data=None,

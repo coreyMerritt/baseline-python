@@ -1,7 +1,7 @@
-from fastapi import FastAPI
+from interfaces.rest.types.projectname_fastapi import ProjectnameFastAPI
 
 
-def shutdown(app: FastAPI) -> None:
-  logger = app.state.infra.logger
+def shutdown(app: ProjectnameFastAPI) -> None:
+  logger = app.infra.logger
   logger.debug("Shutting down webserver...")
-  app.state.infra.database.dispose()
+  app.infra.database.dispose()

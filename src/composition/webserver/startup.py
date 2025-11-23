@@ -1,15 +1,14 @@
-from fastapi import FastAPI
-
 from composition.infrastructure_instances import (DEPLOYMENT_ENVIRONMENT_STR, account_repository, blog_post_repository,
                                                   config_parser, cpu, database, disk, environment, logger, memory,
                                                   typicode_client)
-from composition.webserver.types.infra import Infra
-from composition.webserver.types.repo import Repo
+from interfaces.rest.types.infrastructure_collection import InfrastructureCollection
+from interfaces.rest.types.projectname_fastapi import ProjectnameFastAPI
+from interfaces.rest.types.repository_collection import RepositoryCollection
 
 
-def startup(app: FastAPI) -> None:
+def startup(app: ProjectnameFastAPI) -> None:
   logger.debug(f"Using deployment environment: {DEPLOYMENT_ENVIRONMENT_STR}")
-  infra = Infra(
+  infra = InfrastructureCollection(
     config_parser=config_parser,
     cpu=cpu,
     database=database,
@@ -19,9 +18,9 @@ def startup(app: FastAPI) -> None:
     memory=memory,
     typicode_client=typicode_client
   )
-  repo = Repo(
+  repos = RepositoryCollection(
     account=account_repository,
     blog_post=blog_post_repository
   )
   app.state.infra = infra
-  app.state.repo = repo
+  app.state.repos = repos

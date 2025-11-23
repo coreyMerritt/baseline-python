@@ -22,7 +22,14 @@ function importCheck() {
   fi
 }
 
-importCheck "interfaces" "infrastructure" "mapper"
+# Tests
+importCheck "interfaces/rest/health/controllers" "infrastructure"
+importCheck "interfaces/rest/health/dtos" "infrastructure"
+importCheck "interfaces/rest/health/routes" "infrastructure"
+importCheck "interfaces/rest/v1/controllers" "infrastructure"
+importCheck "interfaces/rest/v1/dtos" "infrastructure"
+importCheck "interfaces/rest/v1/routes" "infrastructure"
+importCheck "interfaces/command_line" "infrastructure"
 importCheck "services" "interfaces"
 importCheck "infrastructure" "services"
 importCheck "infrastructure" "interfaces"

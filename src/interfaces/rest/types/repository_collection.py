@@ -5,6 +5,6 @@ from infrastructure.external_services.blog_post_repository import BlogPostReposi
 
 
 @dataclass
-class Repo:
+class RepositoryCollection:
   account: AccountRepository
   blog_post: BlogPostRepository

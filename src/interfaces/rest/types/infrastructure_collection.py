@@ -11,7 +11,7 @@ from infrastructure.memory.memory import Memory
 
 
 @dataclass
-class Infra:
+class InfrastructureCollection:
   config_parser: ConfigParser
   cpu: Cpu
   database: Database

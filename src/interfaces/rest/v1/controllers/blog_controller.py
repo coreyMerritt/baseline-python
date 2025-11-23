@@ -1,17 +1,16 @@
 import asyncio
 
-from fastapi import Request
-
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
+from interfaces.rest.types.projectname_request import ProjectnameRequest
 from interfaces.rest.v1.mappers.get_blog_post_mapper import GetBlogPostMapper
 from services.blog_manager import BlogManager
 
 
 class BlogController:
-  async def get_blog_post(self, req: Request, user_id: int, post_number: int) -> ProjectnameHTTPResponse:
+  async def get_blog_post(self, req: ProjectnameRequest, user_id: int, post_number: int) -> ProjectnameHTTPResponse:
     blog_manager = BlogManager(
-      req.app.state.infra.logger,
-      req.app.state.repo.blog_post
+      req.infra.logger,
+      req.repos.blog_post
     )
     blog_post_som = await asyncio.to_thread(
       blog_manager.get_blog_post,
