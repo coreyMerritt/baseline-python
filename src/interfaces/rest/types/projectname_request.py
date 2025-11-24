@@ -26,12 +26,20 @@ class ProjectnameRequest:
     return self._req.app
 
   @property
+  def correlation_id(self) -> str:
+    return self._req.state.correlation_id
+
+  @property
   def headers(self) -> Headers:
     return self._req.headers
 
   @property
   def method(self) -> str:
     return self._req.method
+
+  @property
+  def request_id(self) -> str:
+    return self._req.state.request_id
 
   @property
   def url(self) -> URL:

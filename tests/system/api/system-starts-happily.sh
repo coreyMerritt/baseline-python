@@ -17,7 +17,7 @@ while true; do
     cd ..
   fi
 done
-source "./tests/system/api/_helper.sh"
+source "./tests/system/api/_helpers.sh"
 
 # venv
 if [[ ! -d ".venv" ]]; then
