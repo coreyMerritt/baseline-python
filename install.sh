@@ -41,7 +41,6 @@ source .venv/bin/activate
 pip install --upgrade pip setuptools wheel
 if [[ "$project_environment" == "dev" ]]; then
   pip install -e .[infra,dev]
-  pre-commit install
 elif [[ "$project_environment" == "test" ]]; then
   pip install -e .[infra,dev]
 elif [[ "$project_environment" == "prod" ]]; then
