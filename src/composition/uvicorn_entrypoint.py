@@ -31,7 +31,7 @@ def run_webserver(env_str: str, host: str, port: int):
     access_log=False,
     factory=True,
     host=host,
-    log_config="uvicorn.json",
+    log_config=".uvicorn.json",
     port=port,
     reload=RELOAD,
     reload_excludes=RELOAD_EXCLUDES
