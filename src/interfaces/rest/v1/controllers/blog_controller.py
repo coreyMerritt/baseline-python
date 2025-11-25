@@ -1,7 +1,7 @@
 import asyncio
 
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
-from interfaces.rest.types.projectname_request import ProjectnameRequest
+from interfaces.rest.models.projectname_request import ProjectnameRequest
 from interfaces.rest.v1.mappers.get_blog_post_mapper import GetBlogPostMapper
 from services.blog_manager import BlogManager
 

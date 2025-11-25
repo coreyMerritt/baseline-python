@@ -1,8 +1,8 @@
 from fastapi import Request
 
 from interfaces.rest.exceptions.projectname_httpexception import ProjectnameHTTPException
-from interfaces.rest.types.projectname_fastapi import ProjectnameFastAPI
-from interfaces.rest.types.projectname_request import ProjectnameRequest
+from interfaces.rest.models.projectname_fastapi import ProjectnameFastAPI
+from interfaces.rest.models.projectname_request import ProjectnameRequest
 from services.exceptions.bad_input_err import BadInputErr
 
 
@@ -13,10 +13,7 @@ def register_400_bad_request_handlers(app: ProjectnameFastAPI) -> None:
     logger = req.infra.logger
     logger.warning(
       message="Bad request",
-      error=e,
-      correlation_id=req.correlation_id,
-      endpoint=req.endpoint,
-      request_id=req.request_id
+      error=e
     )
     raise ProjectnameHTTPException(
       status_code=400,

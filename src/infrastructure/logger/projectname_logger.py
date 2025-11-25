@@ -2,6 +2,7 @@ import json
 import traceback
 from dataclasses import asdict
 from datetime import datetime
+from http import HTTPStatus
 from zoneinfo import ZoneInfo
 
 from rich.traceback import install as install_rich_tracebacks
@@ -11,11 +12,15 @@ from infrastructure.logger.exceptions.logger_initialization_err import LoggerIni
 from infrastructure.logger.models.logger_config import LoggerConfig
 from infrastructure.logger.models.logger_health_report import LoggerHealthReport
 from infrastructure.logger.models.logs.base_log import BaseLog
-from infrastructure.logger.models.logs.http_log import HTTPLog
-from infrastructure.logger.models.logs.log_error import LogError
-from infrastructure.logger.models.logs.log_ids import LogIDs
-from infrastructure.logger.models.logs.log_timestamps import LogTimestamps
+from infrastructure.logger.models.logs.error import Error
+from infrastructure.logger.models.logs.http_request_log import HTTPRequestLog
+from infrastructure.logger.models.logs.http_response_log import HTTPResponseLog
+from infrastructure.logger.models.logs.ids import IDs
+from infrastructure.logger.models.logs.raw_http_request_info import RawHTTPRequestInfo
+from infrastructure.logger.models.logs.raw_http_response_info import RawHTTPResponseInfo
 from infrastructure.logger.models.logs.simple_log import SimpleLog
+from infrastructure.logger.models.logs.status import Status
+from infrastructure.logger.models.logs.timestamps import Timestamps
 from infrastructure.types.logger_interface import LoggerInterface
 from shared.enums.deployment_environment import DeploymentEnvironment
 from shared.exceptions.undocumented_case_err import UndocumentedCaseErr
@@ -41,27 +46,23 @@ class ProjectnameLogger(LoggerInterface):
       healthy=True
     )
 
+####################### Simple Logging Methods #######################
+
   def debug(
     self,
-    message: str,
-    correlation_id: str | None = None,
-    endpoint: str | None = None,
-    request_id: str | None = None
+    message: str
   ) -> None:
     if self._level not in (
       LoggerLevel.DEBUG
     ):
       return
     level = "DEBUG"
-    log = self._get_some_log(message, level, None, correlation_id, endpoint, request_id)
+    log = self._get_simple_log(message, level, None)
     self._print_log(log, None)
 
   def info(
     self,
-    message: str,
-    correlation_id: str | None = None,
-    endpoint: str | None = None,
-    request_id: str | None = None
+    message: str
   ) -> None:
     if self._level not in (
       LoggerLevel.INFO,
@@ -69,16 +70,13 @@ class ProjectnameLogger(LoggerInterface):
     ):
       return
     level = "INFO"
-    log = self._get_some_log(message, level, None, correlation_id, endpoint, request_id)
+    log = self._get_simple_log(message, level, None)
     self._print_log(log, None)
 
   def warning(
     self,
     message: str,
-    error: Exception | None = None,
-    correlation_id: str | None = None,
-    endpoint: str | None = None,
-    request_id: str | None = None
+    error: Exception | None
   ) -> None:
     if self._level not in (
       LoggerLevel.WARNING,
@@ -87,16 +85,13 @@ class ProjectnameLogger(LoggerInterface):
     ):
       return
     level = "WARNING"
-    log = self._get_some_log(message, level, error, correlation_id, endpoint, request_id)
+    log = self._get_simple_log(message, level, error)
     self._print_log(log, error)
 
-  def err(
+  def error(
     self,
     message: str,
-    error: Exception,
-    correlation_id: str | None = None,
-    endpoint: str | None = None,
-    request_id: str | None = None
+    error: Exception | None
   ) -> None:
     if self._level not in (
       LoggerLevel.ERROR,
@@ -106,16 +101,13 @@ class ProjectnameLogger(LoggerInterface):
     ):
       return
     level = "ERROR"
-    log = self._get_some_log(message, level, error, correlation_id, endpoint, request_id)
+    log = self._get_simple_log(message, level, error)
     self._print_log(log, error)
 
   def critical(
     self,
     message: str,
-    error: Exception,
-    correlation_id: str | None = None,
-    endpoint: str | None = None,
-    request_id: str | None = None
+    error: Exception | None
   ) -> None:
     if self._level not in (
       LoggerLevel.CRITICAL,
@@ -126,78 +118,260 @@ class ProjectnameLogger(LoggerInterface):
     ):
       return
     level = "CRITICAL"
-    log = self._get_some_log(message, level, error, correlation_id, endpoint, request_id)
+    log = self._get_simple_log(message, level, error)
     self._print_log(log, error)
 
-  def _get_some_log(
+####################### HTTP Request Logging Methods #######################
+
+  def http_req_debug(
     self,
     message: str,
-    level: str,
+    raw_http_req_info: RawHTTPRequestInfo
+  ) -> None:
+    if self._level not in (
+      LoggerLevel.DEBUG
+    ):
+      return
+    level = "DEBUG"
+    log = self._build_http_request_log(message, level, None, raw_http_req_info)
+    self._print_log(log, None)
+
+  def http_req_info(
+    self,
+    message: str,
+    raw_http_req_info: RawHTTPRequestInfo
+  ) -> None:
+    if self._level not in (
+      LoggerLevel.INFO,
+      LoggerLevel.DEBUG
+    ):
+      return
+    level = "INFO"
+    log = self._build_http_request_log(message, level, None, raw_http_req_info)
+    self._print_log(log, None)
+
+  def http_req_warning(
+    self,
+    message: str,
     error: Exception | None,
-    correlation_id: str | None,
-    endpoint: str | None,
-    request_id: str | None
-  ) -> BaseLog:
-    log: BaseLog
-    if correlation_id and endpoint and request_id:
-      log = self._get_http_log(message, level, error, correlation_id, endpoint, request_id)
-    else:
-      log = self._get_simple_log(message, level, error)
-    return log
+    raw_http_req_info: RawHTTPRequestInfo
+  ) -> None:
+    if self._level not in (
+      LoggerLevel.WARNING,
+      LoggerLevel.INFO,
+      LoggerLevel.DEBUG
+    ):
+      return
+    level = "WARNING"
+    log = self._build_http_request_log(message, level, error, raw_http_req_info)
+    self._print_log(log, error)
+
+  def http_req_error(
+    self,
+    message: str,
+    error: Exception | None,
+    raw_http_req_info: RawHTTPRequestInfo
+  ) -> None:
+    if self._level not in (
+      LoggerLevel.ERROR,
+      LoggerLevel.WARNING,
+      LoggerLevel.INFO,
+      LoggerLevel.DEBUG
+    ):
+      return
+    level = "ERROR"
+    log = self._build_http_request_log(message, level, error, raw_http_req_info)
+    self._print_log(log, error)
+
+  def http_req_critical(
+    self,
+    message: str,
+    error: Exception | None,
+    raw_http_req_info: RawHTTPRequestInfo
+  ) -> None:
+    if self._level not in (
+      LoggerLevel.CRITICAL,
+      LoggerLevel.ERROR,
+      LoggerLevel.WARNING,
+      LoggerLevel.INFO,
+      LoggerLevel.DEBUG
+    ):
+      return
+    level = "CRITICAL"
+    log = self._build_http_request_log(message, level, error, raw_http_req_info)
+    self._print_log(log, error)
+
+####################### HTTP Response Logging Methods #######################
+
+  def http_res_debug(
+    self,
+    message: str,
+    raw_http_res_info: RawHTTPResponseInfo
+  ) -> None:
+    if self._level not in (
+      LoggerLevel.DEBUG
+    ):
+      return
+    level = "DEBUG"
+    log = self._build_http_response_log(message, level, None, raw_http_res_info)
+    self._print_log(log, None)
+
+  def http_res_info(
+    self,
+    message: str,
+    raw_http_res_info: RawHTTPResponseInfo
+  ) -> None:
+    if self._level not in (
+      LoggerLevel.INFO,
+      LoggerLevel.DEBUG
+    ):
+      return
+    level = "INFO"
+    log = self._build_http_response_log(message, level, None, raw_http_res_info)
+    self._print_log(log, None)
+
+  def http_res_warning(
+    self,
+    message: str,
+    error: Exception | None,
+    raw_http_res_info: RawHTTPResponseInfo
+  ) -> None:
+    if self._level not in (
+      LoggerLevel.WARNING,
+      LoggerLevel.INFO,
+      LoggerLevel.DEBUG
+    ):
+      return
+    level = "WARNING"
+    log = self._build_http_response_log(message, level, error, raw_http_res_info)
+    self._print_log(log, error)
+
+  def http_res_error(
+    self,
+    message: str,
+    error: Exception | None,
+    raw_http_res_info: RawHTTPResponseInfo
+  ) -> None:
+    if self._level not in (
+      LoggerLevel.ERROR,
+      LoggerLevel.WARNING,
+      LoggerLevel.INFO,
+      LoggerLevel.DEBUG
+    ):
+      return
+    level = "ERROR"
+    log = self._build_http_response_log(message, level, error, raw_http_res_info)
+    self._print_log(log, error)
+
+  def http_res_critical(
+    self,
+    message: str,
+    error: Exception | None,
+    raw_http_res_info: RawHTTPResponseInfo
+  ) -> None:
+    if self._level not in (
+      LoggerLevel.CRITICAL,
+      LoggerLevel.ERROR,
+      LoggerLevel.WARNING,
+      LoggerLevel.INFO,
+      LoggerLevel.DEBUG
+    ):
+      return
+    level = "CRITICAL"
+    log = self._build_http_response_log(message, level, error, raw_http_res_info)
+    self._print_log(log, error)
+
+####################### Private Methods #######################
 
   def _get_simple_log(self, message: str, level: str, error: Exception | None) -> SimpleLog:
-    timestamps = self._get_log_timestamps()
-    log_error = self._get_log_error(error)
+    timestamps = self._build_timestamps()
+    log_error = self._build_error(error)
     return SimpleLog(
-      timestamps=timestamps,
-      level=level,
       message=message,
+      level=level,
+      timestamps=timestamps,
       error=log_error
     )
 
-  def _get_http_log(
+  def _build_http_request_log(
     self,
     message: str,
     level: str,
     error: Exception | None,
-    correlation_id: str,
-    endpoint: str,
-    request_id: str
-  ) -> HTTPLog:
-    timestamps = self._get_log_timestamps()
-    log_error = self._get_log_error(error)
-    log_ids = self._get_log_ids(correlation_id, request_id)
-    return HTTPLog(
-      timestamps=timestamps,
-      level=level,
+    raw_http_request_info: RawHTTPRequestInfo
+  ) -> HTTPRequestLog:
+    log_error = self._build_error(error)
+    log_ids = self._build_ids(
+      correlation_id=raw_http_request_info.correlation_id,
+      request_id=raw_http_request_info.request_id
+    )
+    timestamps = self._build_timestamps()
+    return HTTPRequestLog(
       message=message,
+      level=level,
+      timestamps=timestamps,
       error=log_error,
       ids=log_ids,
-      endpoint=endpoint
+      client_ip=raw_http_request_info.client_ip,
+      endpoint=raw_http_request_info.endpoint,
+      method=raw_http_request_info.method,
+      route=raw_http_request_info.route,
+      user_agent=raw_http_request_info.user_agent
     )
 
-  def _get_log_ids(self, correlation_id: str, request_id: str) -> LogIDs:
-    return LogIDs(
+  def _build_http_response_log(
+    self,
+    message: str,
+    level: str,
+    error: Exception | None,
+    raw_http_response_info: RawHTTPResponseInfo
+  ) -> HTTPResponseLog:
+    log_error = self._build_error(error)
+    ids = self._build_ids(
+      correlation_id=raw_http_response_info.correlation_id,
+      request_id=raw_http_response_info.request_id
+    )
+    status = self._build_status(raw_http_response_info.status)
+    timestamps = self._build_timestamps()
+    return HTTPResponseLog(
+      message=message,
+      level=level,
+      timestamps=timestamps,
+      error=log_error,
+      ids=ids,
+      status=status,
+      duration_ms=raw_http_response_info.duration_ms
+    )
+
+  def _build_ids(self, correlation_id: str, request_id: str) -> IDs:
+    return IDs(
       correlation_id=correlation_id,
       request_id=request_id
     )
 
-  def _get_log_timestamps(self) -> LogTimestamps:
-    now = datetime.now(self._zoneinfo)
-    human_timestamp = self._get_human_timestamp(now)
-    machine_timestamp = self._get_machine_timestamp(now)
-    return LogTimestamps(
-      human=human_timestamp,
-      machine=machine_timestamp
-    )
-
-  def _get_log_error(self, exception: Exception | None) -> LogError | None:
+  def _build_error(self, exception: Exception | None) -> Error | None:
     if not exception:
       return None
-    return LogError(
+    return Error(
       name=type(exception).__name__,
       message=str(exception),
       stack="".join(traceback.format_exception(exception)).replace("\n", "\\n")
+    )
+
+  def _build_status(self, status: int) -> Status:
+    http_status = HTTPStatus(status)
+    return Status(
+      code=http_status.value,
+      name=http_status.name
+    )
+
+  def _build_timestamps(self) -> Timestamps:
+    now = datetime.now(self._zoneinfo)
+    human_timestamp = self._get_human_timestamp(now)
+    machine_timestamp = self._get_machine_timestamp(now)
+    return Timestamps(
+      human=human_timestamp,
+      machine=machine_timestamp
     )
 
   def _get_human_timestamp(self, now: datetime) -> str:
@@ -208,7 +382,7 @@ class ProjectnameLogger(LoggerInterface):
 
   def _print_log(self, log: BaseLog, err: Exception | None) -> None:
     if self._deployment_environment == DeploymentEnvironment.DEV:
-      self._print_human_readable_log(log, err)
+      self._print_human_log(log, err)
     elif self._deployment_environment == DeploymentEnvironment.PROD:
       print(json.dumps(asdict(log), indent=2))
     elif self._deployment_environment == DeploymentEnvironment.TEST:
@@ -216,11 +390,13 @@ class ProjectnameLogger(LoggerInterface):
     else:
       raise UndocumentedCaseErr()
 
-  def _print_human_readable_log(self, log: BaseLog, err: Exception | None) -> None:
+  def _print_human_log(self, log: BaseLog, err: Exception | None) -> None:
     if isinstance(log, SimpleLog):
       self._print_human_readable_simple_log(log, err)
-    elif isinstance(log, HTTPLog):
-      self._print_human_readable_http_log(log, err)
+    elif isinstance(log, HTTPRequestLog):
+      self._print_human_http_req_log(log, err)
+    elif isinstance(log, HTTPResponseLog):
+      self._print_human_http_res_log(log, err)
     else:
       raise UndocumentedCaseErr()
 
@@ -233,13 +409,30 @@ class ProjectnameLogger(LoggerInterface):
       traceback.print_exception(type(err), err, err.__traceback__)
     print("─" * 120)
 
-  def _print_human_readable_http_log(self, http_log: HTTPLog, err: Exception | None) -> None:
-    print(f"     Timestamp: {http_log.timestamps.human}")
-    print(f"         Level: {http_log.level}")
-    print(f"       Message: {http_log.message}")
-    print(f"    Request ID: {http_log.ids.request_id}")
-    print(f"Correlation ID: {http_log.ids.correlation_id}")
-    print(f"      Endpoint: {http_log.endpoint}")
+  def _print_human_http_req_log(self, http_req_log: HTTPRequestLog, err: Exception | None) -> None:
+    print(f"     Timestamp: {http_req_log.timestamps.human}")
+    print(f"         Level: {http_req_log.level}")
+    print(f"       Message: {http_req_log.message}")
+    print(f"    Request ID: {http_req_log.ids.request_id}")
+    print(f"Correlation ID: {http_req_log.ids.correlation_id}")
+    print(f"     Client IP: {http_req_log.client_ip}")
+    print(f"        Method: {http_req_log.method}")
+    print(f"      Endpoint: {http_req_log.endpoint}")
+    print(f"    User Agent: {http_req_log.user_agent}")
+    if err:
+      print()
+      traceback.print_exception(type(err), err, err.__traceback__)
+    print("─" * 120)
+
+  def _print_human_http_res_log(self, http_res_log: HTTPResponseLog, err: Exception | None) -> None:
+    print(f"     Timestamp: {http_res_log.timestamps.human}")
+    print(f"         Level: {http_res_log.level}")
+    print(f"       Message: {http_res_log.message}")
+    print(f"    Request ID: {http_res_log.ids.request_id}")
+    print(f"Correlation ID: {http_res_log.ids.correlation_id}")
+    print(f"   Status Code: {http_res_log.status.code}")
+    print(f"   Status Name: {http_res_log.status.name}")
+    print(f" Duration (ms): {http_res_log.duration_ms}")
     if err:
       print()
       traceback.print_exception(type(err), err, err.__traceback__)

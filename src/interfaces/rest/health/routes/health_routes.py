@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from interfaces.rest.health.controllers.health_controller import HealthController
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
-from interfaces.rest.types.projectname_request import ProjectnameRequest, get_projectname_request
+from interfaces.rest.models.projectname_request import ProjectnameRequest, get_projectname_request
 
 controller = HealthController()
 router = APIRouter(prefix="/api/health")

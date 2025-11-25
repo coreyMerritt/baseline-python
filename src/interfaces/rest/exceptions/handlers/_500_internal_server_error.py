@@ -1,8 +1,8 @@
 from fastapi import Request
 
 from interfaces.rest.exceptions.projectname_httpexception import ProjectnameHTTPException
-from interfaces.rest.types.projectname_fastapi import ProjectnameFastAPI
-from interfaces.rest.types.projectname_request import ProjectnameRequest
+from interfaces.rest.models.projectname_fastapi import ProjectnameFastAPI
+from interfaces.rest.models.projectname_request import ProjectnameRequest
 from services.exceptions.item_creation_err import ItemCreationErr
 from services.exceptions.service_initialization_err import ServiceInitializationErr
 from services.exceptions.service_unavailable_err import ServiceUnavailableErr
@@ -18,12 +18,9 @@ def register_500_internal_server_error_handlers(app: ProjectnameFastAPI) -> None
       raise e
     req = ProjectnameRequest(r)
     logger = req.infra.logger
-    logger.err(
+    logger.error(
       message="Caught Unhandled Exception",
-      error=e,
-      correlation_id=req.correlation_id,
-      endpoint=req.endpoint,
-      request_id=req.request_id
+      error=e
     )
     raise ProjectnameHTTPException(
       status_code=500,

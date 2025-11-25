@@ -1,5 +1,5 @@
 from interfaces.rest.health.routes import health_routes
-from interfaces.rest.types.projectname_fastapi import ProjectnameFastAPI
+from interfaces.rest.models.projectname_fastapi import ProjectnameFastAPI
 from interfaces.rest.v1.routes import account_routes, blog_routes
 
 

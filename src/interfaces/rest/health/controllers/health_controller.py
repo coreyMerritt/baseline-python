@@ -3,7 +3,7 @@ import asyncio
 from interfaces.rest.health.mappers.get_full_health_report_mapper import GetFullHealthReportMapper
 from interfaces.rest.health.mappers.get_simple_health_report_mapper import GetSimpleHealthReportMapper
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
-from interfaces.rest.types.projectname_request import ProjectnameRequest
+from interfaces.rest.models.projectname_request import ProjectnameRequest
 from services.health_manager import HealthManager
 from services.models.outputs.full_health_report_som import FullHealthReportSOM
 

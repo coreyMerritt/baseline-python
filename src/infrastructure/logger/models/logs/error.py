@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class LogError:
+class Error:
   name: str
   message: str
   stack: str

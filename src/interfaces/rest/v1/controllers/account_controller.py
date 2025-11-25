@@ -1,7 +1,7 @@
 import asyncio
 
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
-from interfaces.rest.types.projectname_request import ProjectnameRequest
+from interfaces.rest.models.projectname_request import ProjectnameRequest
 from interfaces.rest.v1.dto.req.create_account_req import CreateAccountReq
 from interfaces.rest.v1.mappers.create_account_mapper import CreateAccountMapper
 from interfaces.rest.v1.mappers.get_account_mapper import GetAccountMapper

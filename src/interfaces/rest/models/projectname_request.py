@@ -1,10 +1,10 @@
 from fastapi import Request
 from fastapi.datastructures import URL, Headers
 
-from interfaces.rest.types.infrastructure_collection import InfrastructureCollection
-from interfaces.rest.types.projectname_fastapi import ProjectnameFastAPI
-from interfaces.rest.types.projectname_state import ProjectnameState
-from interfaces.rest.types.repository_collection import RepositoryCollection
+from interfaces.rest.models.infrastructure_collection import InfrastructureCollection
+from interfaces.rest.models.projectname_fastapi import ProjectnameFastAPI
+from interfaces.rest.models.projectname_state import ProjectnameState
+from interfaces.rest.models.repository_collection import RepositoryCollection
 
 
 class ProjectnameRequest:
@@ -26,12 +26,18 @@ class ProjectnameRequest:
     return self._req.app
 
   @property
+  def client_ip(self) -> str:
+    client = self._req.client
+    client_ip = client.host if client else ""
+    return str(client_ip)
+
+  @property
   def correlation_id(self) -> str:
     return self._req.state.correlation_id
 
   @property
   def endpoint(self) -> str:
-    return f"{self._req.method} {self._req.url.path}"
+    return self._req.url.path
 
   @property
   def headers(self) -> Headers:
@@ -46,8 +52,19 @@ class ProjectnameRequest:
     return self._req.state.request_id
 
   @property
+  def route(self) -> str:
+    route = self._req.scope.get("route")
+    route_path = route.path if route else ""
+    return route_path if route_path else ""
+
+  @property
   def url(self) -> URL:
     return self._req.url
+
+  @property
+  def user_agent(self) -> str:
+    user_agent = self._req.headers.get("user-agent")
+    return user_agent if user_agent else ""
 
 
 def get_projectname_request(req: Request) -> ProjectnameRequest:

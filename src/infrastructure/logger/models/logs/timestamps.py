@@ -2,6 +2,6 @@ from dataclasses import dataclass
 
 
 @dataclass
-class LogTimestamps:
+class Timestamps:
   human: str
   machine: str

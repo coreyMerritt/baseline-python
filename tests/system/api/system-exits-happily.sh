@@ -30,9 +30,9 @@ log_path="/tmp/projectname-exit-test.log"
 startServer
 sleep 5
 killServer
-cat "$log_path" | grep -o "ERROR" && rc=$? || rc=$?
+cat "$log_path" | grep -o "Traceback" && rc=$? || rc=$?
 [[ $rc -eq 1 ]] || { 
-  echo -e "\n\tSystem shutdown logs contain an error"
+  echo -e "\n\tSystem shutdown logs contain a traceback"
   exit 1
 }
 

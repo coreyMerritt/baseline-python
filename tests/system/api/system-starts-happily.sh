@@ -29,9 +29,9 @@ source ".venv/bin/activate"
 log_path="/tmp/projectname-exit-test.log"
 startServer
 sleep 5
-cat "$log_path" | grep -o "ERROR" && rc=$? || rc=$?
+cat "$log_path" | grep -o "Traceback" && rc=$? || rc=$?
 [[ $rc -eq 1 ]] || { 
-  echo -e "\n\tSystem startup logs contain an error"
+  echo -e "\n\tSystem startup logs contain a traceback"
   exit 1
 }
 

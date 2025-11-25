@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
-from interfaces.rest.types.projectname_request import ProjectnameRequest, get_projectname_request
+from interfaces.rest.models.projectname_request import ProjectnameRequest, get_projectname_request
 from interfaces.rest.v1.controllers.account_controller import AccountController
 from interfaces.rest.v1.dto.req.create_account_req import CreateAccountReq
 

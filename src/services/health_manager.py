@@ -62,5 +62,5 @@ class HealthManager(BaseService):
       memory_health_report=memory_health_report,
       typicode_health_report=typicode_health_report
     )
-    self._logger.debug("System Health:\n%s", json.dumps(asdict(full_health_report), indent=2))
+    self._logger.debug(f"System Health:\n{json.dumps(asdict(full_health_report), indent=2)}")
     return full_health_report

@@ -1,4 +1,4 @@
-from interfaces.rest.types.projectname_fastapi import ProjectnameFastAPI
+from interfaces.rest.models.projectname_fastapi import ProjectnameFastAPI
 
 
 def shutdown(app: ProjectnameFastAPI) -> None:

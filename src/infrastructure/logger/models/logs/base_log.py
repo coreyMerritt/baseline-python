@@ -1,15 +1,15 @@
 from dataclasses import dataclass
 
-from infrastructure.logger.models.logs.log_error import LogError
-from infrastructure.logger.models.logs.log_timestamps import LogTimestamps
+from infrastructure.logger.models.logs.error import Error
+from infrastructure.logger.models.logs.timestamps import Timestamps
 
 
 @dataclass
 class BaseLog:
-  timestamps: LogTimestamps
-  level: str
   message: str
-  error: LogError | None
+  level: str
+  timestamps: Timestamps
+  error: Error | None
 
   def __post_init__(self):
     assert type(self) is not BaseLog, "BaseLog is a base class and should not be instantiated"

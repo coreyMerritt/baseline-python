@@ -23,15 +23,15 @@ class AccountManager(BaseService):
     except Exception as e:
       self._raise_service_exception(e)
     create_account_som = CreateAccountMapper.entity_to_som(created_account)
-    self._logger.debug("Successfully created account for uuid: %s", account.uuid)
+    self._logger.debug(f"Successfully created account for uuid: {account.uuid}")
     return create_account_som
 
   def get_account(self, uuid: str) -> GetAccountSOM:
-    self._logger.debug("Attempting to retrieve account for uuid: %s", uuid)
+    self._logger.debug(f"Attempting to retrieve account for uuid: {uuid}")
     try:
       account = self._account_repository.get(uuid)
     except Exception as e:
       self._raise_service_exception(e)
     get_account_som = GetAccountMapper.account_to_som(account)
-    self._logger.debug("Successfully retrieved account for uuid: %s", uuid)
+    self._logger.debug(f"Successfully retrieved account for uuid: {uuid}")
     return get_account_som

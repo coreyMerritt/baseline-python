@@ -1,9 +1,9 @@
 from composition.infrastructure_instances import (DEPLOYMENT_ENVIRONMENT_STR, account_repository, blog_post_repository,
                                                   config_parser, cpu, database, disk, environment, logger, memory,
                                                   typicode_client)
-from interfaces.rest.types.infrastructure_collection import InfrastructureCollection
-from interfaces.rest.types.projectname_fastapi import ProjectnameFastAPI
-from interfaces.rest.types.repository_collection import RepositoryCollection
+from interfaces.rest.models.infrastructure_collection import InfrastructureCollection
+from interfaces.rest.models.projectname_fastapi import ProjectnameFastAPI
+from interfaces.rest.models.repository_collection import RepositoryCollection
 
 
 def startup(app: ProjectnameFastAPI) -> None:

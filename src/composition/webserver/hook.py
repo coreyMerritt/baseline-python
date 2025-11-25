@@ -6,7 +6,7 @@ from composition.webserver.register_middleware import register_middleware
 from composition.webserver.register_routes import register_routes
 from composition.webserver.shutdown import shutdown
 from composition.webserver.startup import startup
-from interfaces.rest.types.projectname_fastapi import ProjectnameFastAPI
+from interfaces.rest.models.projectname_fastapi import ProjectnameFastAPI
 
 
 def create_app() -> ProjectnameFastAPI:
@@ -16,10 +16,11 @@ def create_app() -> ProjectnameFastAPI:
     yield  # Application runs during this period
     shutdown(app)
 
-  app = ProjectnameFastAPI(lifespan=lifespan)
+  app = ProjectnameFastAPI()
   app = register_exception_handlers(app)
-  app = register_middleware(app)
+  app = register_middleware(app=app)
   app = register_routes(app)
+  app.router.lifespan_context = lifespan
   return app
 
 
