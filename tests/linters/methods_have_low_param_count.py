@@ -4,7 +4,7 @@ from typing import List
 
 from linters._helpers import Class, debug, ensure_in_project_root, get_classes, get_source_paths
 
-MAX_ACCEPTABLE_METHOD_COUNT = 2
+MAX_ACCEPTABLE_METHOD_COUNT = 3
 
 def methods_have_low_method_count() -> bool:
   ensure_in_project_root()

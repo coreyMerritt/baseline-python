@@ -2,9 +2,9 @@ import os
 
 import uvicorn
 
-from composition.enums.deployment_environment import DeploymentEnvironment
 from composition.mappers.deployment_environment_mapper import DeploymentEnvironmentMapper
 from infrastructure.environment.models.env_var import EnvVar
+from shared.enums.deployment_environment import DeploymentEnvironment
 from shared.exceptions.undocumented_case_err import UndocumentedCaseErr
 
 
@@ -28,8 +28,10 @@ def run_webserver(env_str: str, host: str, port: int):
   # Call webserver
   uvicorn.run(
     WEBSERVER_ENTRYPOINT,
+    access_log=False,
     factory=True,
     host=host,
+    log_config="uvicorn.json",
     port=port,
     reload=RELOAD,
     reload_excludes=RELOAD_EXCLUDES

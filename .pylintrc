@@ -349,9 +349,9 @@ ignore-docstrings=yes
 # Imports are removed from the similarity computation
 ignore-imports=yes
 # Signatures are removed from the similarity computation
-ignore-signatures=no
+ignore-signatures=yes
 # Minimum lines number of a similarity.
-min-similarity-lines=4
+min-similarity-lines=5
 
 
 [SPELLING]

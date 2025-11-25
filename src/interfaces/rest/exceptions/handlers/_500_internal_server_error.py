@@ -13,11 +13,19 @@ def register_500_internal_server_error_handlers(app: ProjectnameFastAPI) -> None
   @app.exception_handler(ItemCreationErr)
   @app.exception_handler(ServiceInitializationErr)
   @app.exception_handler(ServiceUnavailableErr)
-  async def handle_500(req: Request, exc: Exception):
-    projectname_request = ProjectnameRequest(req)
-    logger = projectname_request.infra.logger
-    logger.error("Caught Unhandled Exception", exc_info=exc)
+  async def handle_500(r: Request, e: Exception):
+    if "ProjectnameHTTPException" in str(type(e)):
+      raise e
+    req = ProjectnameRequest(r)
+    logger = req.infra.logger
+    logger.err(
+      message="Caught Unhandled Exception",
+      error=e,
+      correlation_id=req.correlation_id,
+      endpoint=req.endpoint,
+      request_id=req.request_id
+    )
     raise ProjectnameHTTPException(
       status_code=500,
       message="Internal server error"
-    ) from exc
+    ) from e

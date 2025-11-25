@@ -30,6 +30,10 @@ class ProjectnameRequest:
     return self._req.state.correlation_id
 
   @property
+  def endpoint(self) -> str:
+    return f"{self._req.method} {self._req.url.path}"
+
+  @property
   def headers(self) -> Headers:
     return self._req.headers
 

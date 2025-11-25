@@ -1,4 +1,4 @@
-from composition.enums.deployment_environment import DeploymentEnvironment
+from shared.enums.deployment_environment import DeploymentEnvironment
 from shared.exceptions.enum_conversion_err import EnumConversionErr
 
 

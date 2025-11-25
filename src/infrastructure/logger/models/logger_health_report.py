@@ -5,4 +5,4 @@ from infrastructure.models.base_health_report import HealthReport
 
 @dataclass
 class LoggerHealthReport(HealthReport):
-  is_configured: bool
+  """ Only contains base health report values """

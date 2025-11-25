@@ -1,6 +1,7 @@
 import yaml
 
 from composition.enums.config_filenames import ConfigFilenames
+from composition.mappers.deployment_environment_mapper import DeploymentEnvironmentMapper
 from infrastructure.config.parser import ConfigParser
 from infrastructure.cpu.cpu import Cpu
 from infrastructure.database.account_repository import AccountRepository
@@ -17,6 +18,7 @@ from infrastructure.memory.memory import Memory
 _environment = Environment()
 _environment.load_env()
 _DEPLOYMENT_ENVIRONMENT_STR = _environment.get_env_var(EnvVar.DEPLOYMENT_ENVIRONMENT.value)
+_DEPLOYMENT_ENVIRONMENT_ENUM = DeploymentEnvironmentMapper.str_to_enum(_DEPLOYMENT_ENVIRONMENT_STR)
 _GLOBAL_CONFIG_DIR = _environment.get_env_var(EnvVar.GLOBAL_CONFIG_DIR.value)
 _CONFIG_DIR = f"{_GLOBAL_CONFIG_DIR}/{_DEPLOYMENT_ENVIRONMENT_STR}"
 _config_parser = ConfigParser()
@@ -50,14 +52,15 @@ _LOGGER_CONFIG = _config_parser.parse_logger_config(_RAW_LOGGER_CONFIG)
 _MEMORY_CONFIG = _config_parser.parse_memory_config(_RAW_MEMORY_CONFIG)
 _TYPICODE_CONFIG = _config_parser.parse_typicode_config(_RAW_TYPICODE_CONFIG)
 
-# Infrastructure --- These should be imported at the composition-level as needed
+# These should be imported at the composition-level as needed
 DEPLOYMENT_ENVIRONMENT_STR = _DEPLOYMENT_ENVIRONMENT_STR
+DEPLOYMENT_ENVIRONMENT_ENUM = _DEPLOYMENT_ENVIRONMENT_ENUM
 config_parser = _config_parser
 cpu = Cpu(_CPU_CONFIG)
 database = Database(_DATABASE_CONFIG)
 disk = _disk
 environment = _environment
-logger = ProjectnameLogger(_LOGGER_CONFIG)
+logger = ProjectnameLogger(_DEPLOYMENT_ENVIRONMENT_ENUM, _LOGGER_CONFIG)
 memory = Memory(_MEMORY_CONFIG)
 typicode_client = TypicodeClient(_EXTERNAL_SERVICES_CONFIG, _TYPICODE_CONFIG)
 account_repository = AccountRepository(database)
