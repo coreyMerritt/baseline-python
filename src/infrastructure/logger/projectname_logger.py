@@ -5,6 +5,8 @@ from datetime import datetime
 from http import HTTPStatus
 from zoneinfo import ZoneInfo
 
+from rich.console import Console
+from rich.traceback import Traceback
 from rich.traceback import install as install_rich_tracebacks
 
 from infrastructure.logger.enums.logger_level import LoggerLevel
@@ -28,6 +30,7 @@ from shared.exceptions.undocumented_case_err import UndocumentedCaseErr
 
 class ProjectnameLogger(LoggerInterface):
   _deployment_environment: DeploymentEnvironment
+  _console: Console
   _level: LoggerLevel
   _zoneinfo: ZoneInfo
 
@@ -35,6 +38,7 @@ class ProjectnameLogger(LoggerInterface):
     try:
       install_rich_tracebacks()
       self._deployment_environment = deployment_environment
+      self._console = Console(force_terminal=True)
       self._level = logger_config.level
       self._zoneinfo = ZoneInfo(logger_config.timezone.value)
       super().__init__()
@@ -392,24 +396,25 @@ class ProjectnameLogger(LoggerInterface):
 
   def _print_human_log(self, log: BaseLog, err: Exception | None) -> None:
     if isinstance(log, SimpleLog):
-      self._print_human_readable_simple_log(log, err)
+      self._print_human_readable_simple_log(log)
     elif isinstance(log, HTTPRequestLog):
-      self._print_human_http_req_log(log, err)
+      self._print_human_http_req_log(log)
     elif isinstance(log, HTTPResponseLog):
-      self._print_human_http_res_log(log, err)
+      self._print_human_http_res_log(log)
     else:
       raise UndocumentedCaseErr()
+    if err:
+      print()
+      self._console.print(Traceback.from_exception(type(err), err, err.__traceback__))
+    print("─" * 120)
 
-  def _print_human_readable_simple_log(self, simple_log: SimpleLog, err: Exception | None) -> None:
+  def _print_human_readable_simple_log(self, simple_log: SimpleLog) -> None:
     print(f"     Timestamp: {simple_log.timestamps.human}")
     print(f"         Level: {simple_log.level}")
     print(f"       Message: {simple_log.message}")
-    if err:
-      print()
-      traceback.print_exception(type(err), err, err.__traceback__)
-    print("─" * 120)
 
-  def _print_human_http_req_log(self, http_req_log: HTTPRequestLog, err: Exception | None) -> None:
+
+  def _print_human_http_req_log(self, http_req_log: HTTPRequestLog) -> None:
     print(f"     Timestamp: {http_req_log.timestamps.human}")
     print(f"         Level: {http_req_log.level}")
     print(f"       Message: {http_req_log.message}")
@@ -419,12 +424,8 @@ class ProjectnameLogger(LoggerInterface):
     print(f"        Method: {http_req_log.method}")
     print(f"      Endpoint: {http_req_log.endpoint}")
     print(f"    User Agent: {http_req_log.user_agent}")
-    if err:
-      print()
-      traceback.print_exception(type(err), err, err.__traceback__)
-    print("─" * 120)
 
-  def _print_human_http_res_log(self, http_res_log: HTTPResponseLog, err: Exception | None) -> None:
+  def _print_human_http_res_log(self, http_res_log: HTTPResponseLog) -> None:
     print(f"     Timestamp: {http_res_log.timestamps.human}")
     print(f"         Level: {http_res_log.level}")
     print(f"       Message: {http_res_log.message}")
@@ -433,7 +434,3 @@ class ProjectnameLogger(LoggerInterface):
     print(f"   Status Code: {http_res_log.status.code}")
     print(f"   Status Name: {http_res_log.status.name}")
     print(f" Duration (ms): {http_res_log.duration_ms}")
-    if err:
-      print()
-      traceback.print_exception(type(err), err, err.__traceback__)
-    print("─" * 120)

@@ -6,8 +6,7 @@ from typing import List
 from linters._helpers import Class, ensure_in_project_root, get_error_classes, get_source_paths
 
 EXCEPTION_LIST = [
-  "ProjectnameException",
-  "ProjectnameHTTPException"
+  "ProjectnameException"
 ]
 
 def errs_dont_inherit_directly_from_exception() -> bool:

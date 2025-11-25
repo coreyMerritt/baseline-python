@@ -1,6 +1,6 @@
 from fastapi import Request
 
-from interfaces.rest.exceptions.projectname_httpexception import ProjectnameHTTPException
+from interfaces.rest.exceptions.handlers._universal_handler_response import universal_handler_response
 from interfaces.rest.models.projectname_fastapi import ProjectnameFastAPI
 from interfaces.rest.models.projectname_request import ProjectnameRequest
 from services.exceptions.item_creation_err import ItemCreationErr
@@ -13,16 +13,13 @@ def register_500_internal_server_error_handlers(app: ProjectnameFastAPI) -> None
   @app.exception_handler(ItemCreationErr)
   @app.exception_handler(ServiceInitializationErr)
   @app.exception_handler(ServiceUnavailableErr)
-  async def handle_500(r: Request, e: Exception):
-    if "ProjectnameHTTPException" in str(type(e)):
-      raise e
-    req = ProjectnameRequest(r)
+  async def handle_500(request: Request, exception: Exception):
+    MESSAGE = "Internal server errorerer"
+    CODE = 500
+    req = ProjectnameRequest(request)
     logger = req.infra.logger
     logger.error(
-      message="Caught Unhandled Exception",
-      error=e
+      message=f"[Caught Unhandled Exception] {MESSAGE}",
+      error=exception
     )
-    raise ProjectnameHTTPException(
-      status_code=500,
-      message="Internal server error"
-    ) from e
+    return universal_handler_response(MESSAGE, CODE)
