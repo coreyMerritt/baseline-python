@@ -6,7 +6,7 @@ from interfaces.rest.models.projectname_http_error import ProjectnameHTTPError
 from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
 
 
-async def universal_handler_response(
+async def universal_exception_response(
   message: str,
   code: int
 ) -> JSONResponse:
