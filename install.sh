@@ -13,7 +13,7 @@ sudo -k && sudo true
 
 # Vars
 config_filenames_path="src/composition/enums/config_filenames.py"
-deployment_environments_path="./src/composition/enums/deployment_environment.py"
+deployment_environments_path="./src/shared/enums/deployment_environment.py"
 project_environment="$1"
 [[ "$project_environment" == "test" ]] || [[ "$project_environment" == "dev" ]] || [[ "$project_environment" == "prod" ]] || {
   echo -e "\n\targ1 must be test|dev|prod\n"
