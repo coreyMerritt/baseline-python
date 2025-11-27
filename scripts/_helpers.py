@@ -63,9 +63,9 @@ def bash(cmd_str: str) -> str:
       text=True
     ).stdout
   except CalledProcessError as e:
-    message = "Bash call failed with:"
-    message += f"\tSTDOUT: {e.stdout}"
-    message += f"\tSTDERR: {e.stderr}"
+    message = "Bash call failed with:\n"
+    message += f"\tSTDOUT: {e.stdout}\n"
+    message += f"\tSTDERR: {e.stderr}\n"
     raise BashError(message) from e
 
 def backup_db(deployment_environment: str) -> None:
