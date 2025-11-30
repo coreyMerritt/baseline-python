@@ -6,6 +6,8 @@ set -o pipefail
 set -u
 set -x
 
+tag="$1"
+
 # Ensure we're in the project root
 while true; do
   if [[ -f "$(pwd)/pyproject.toml" ]]; then
@@ -17,9 +19,9 @@ while true; do
   fi
 done
 
-set -a
-source .env || true
-set +a
-
-.venv/bin/python -u ./src/composition/cli_entrypoint.py $@
-exit 0
+docker rmi "projectname:${tag}" || true
+docker build \
+  --no-cache \
+  --file "Dockerfile" \
+  --tag "projectname:${tag}" \
+  "."

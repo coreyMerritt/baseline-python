@@ -6,12 +6,24 @@
 __pycache__
 
 # Packaging Data
+*.spec
 *.egg-info/
+projectname.spec
 build/
+dist/
 
 # Secrets
 .env
+.env*
+!.env.model
+backups/
+!backups/.gitkeep
+backups/database/
+!backups/database/.gitkeep
 
 # Misc
 .venv
 .vscode
+report
+deploy_db.log
+tests/linters/test.py

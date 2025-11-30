@@ -1,6 +1,5 @@
 from domain.entities.user import User
 from services.exceptions.service_unavailable_err import ServiceUnavailableErr
-from services.models.inputs.create_user_sim import CreateUserSIM
 from services.models.outputs.create_user_som import CreateUserSOM
 
 

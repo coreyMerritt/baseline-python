@@ -1,12 +1,10 @@
 from dataclasses import dataclass
-from typing import List
 
-from infrastructure.enums.timezone import Timezone
 from infrastructure.logger.enums.logger_level import LoggerLevel
+from shared.enums.timezone import Timezone
 
 
 @dataclass(frozen=True)
 class LoggerConfig():
   level: LoggerLevel
-  noisy_loggers: List[str]
   timezone: Timezone

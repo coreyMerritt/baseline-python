@@ -12,7 +12,8 @@ starting_group="$(id -gn)"
 sudo -k && sudo true
 
 # Vars
-config_filenames_path="src/composition/enums/config_filenames.py"
+cli_entrypoint_path="./src/composition/cli_entrypoint.py"
+config_filenames_path="./src/composition/enums/config_filenames.py"
 deployment_environments_path="./src/shared/enums/deployment_environment.py"
 project_environment="$1"
 [[ "$project_environment" == "test" ]] || [[ "$project_environment" == "dev" ]] || [[ "$project_environment" == "prod" ]] || {
@@ -30,6 +31,12 @@ while true; do
     cd ..
   fi
 done
+
+# Package check
+if ! jq --version 1>/dev/null; then
+  echo -e "\n\tPackage needed: jq\n"
+  exit 1
+fi
 
 # venv
 if [[ ! -d ".venv" ]]; then
@@ -92,9 +99,9 @@ installation_path="${installation_dir}/${project_name_as_bin}"
 if [[ "$project_environment" == "prod" ]]; then
   ./.venv/bin/pyinstaller \
     --onefile \
-    --hidden-import=interfaces.rest.webserver_hook \
+    --hidden-import=composition.webserver.hook \
     --name=${project_name_as_bin} \
-    src/interfaces/command_line/entrypoint.py
+    "$cli_entrypoint_path"
   sudo cp "./dist/${project_name_as_bin}" "$installation_path"
   sudo chmod 755 "$installation_path"
 fi

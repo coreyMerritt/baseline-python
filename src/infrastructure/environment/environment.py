@@ -16,8 +16,12 @@ class Environment(BaseInfrastructure):
     super().__init__()
 
   def get_health_report(self) -> EnvironmentHealthReport:
+    REQUIRED_ENV_VARS = [
+      EnvVar.DEPLOYMENT_ENVIRONMENT,
+      EnvVar.GLOBAL_CONFIG_DIR
+    ]
     healthy = True
-    for _, env_var in enumerate(EnvVar):
+    for _, env_var in enumerate(REQUIRED_ENV_VARS):
       try:
         self.get_env_var(env_var.value)
       except Exception:

@@ -13,9 +13,9 @@ class Cpu(BaseInfrastructure):
     super().__init__()
 
   def get_health_report(self) -> CpuHealthReport:
-    maximum_healthy_cpu_usage_percentage = self._cpu_config.maximum_healthy_cpu_usage_percentage
+    maximum_healthy_usage_percentage = self._cpu_config.maximum_healthy_usage_percentage
     usage_percentage = self.get_cpu_usage_percentage()
-    healthy = usage_percentage <= maximum_healthy_cpu_usage_percentage
+    healthy = usage_percentage <= maximum_healthy_usage_percentage
     return CpuHealthReport(
       usage_percentage=usage_percentage,
       healthy=healthy
@@ -23,5 +23,5 @@ class Cpu(BaseInfrastructure):
 
   def get_cpu_usage_percentage(self) -> float:
     return psutil.cpu_percent(
-      interval=self._cpu_config.cpu_check_interval_seconds
+      interval=self._cpu_config.check_interval_seconds
     )

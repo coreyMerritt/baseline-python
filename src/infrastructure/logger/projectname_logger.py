@@ -36,7 +36,8 @@ class ProjectnameLogger(LoggerInterface):
 
   def __init__(self, deployment_environment: DeploymentEnvironment, logger_config: LoggerConfig):
     try:
-      install_rich_tracebacks()
+      if deployment_environment == DeploymentEnvironment.DEV:
+        install_rich_tracebacks()
       self._deployment_environment = deployment_environment
       self._console = Console(force_terminal=True)
       self._level = logger_config.level
@@ -409,14 +410,16 @@ class ProjectnameLogger(LoggerInterface):
     print("─" * 120)
 
   def _print_human_readable_simple_log(self, simple_log: SimpleLog) -> None:
+    level = self._get_colored_logger_tag(simple_log.level)
     print(f"     Timestamp: {simple_log.timestamps.human}")
-    print(f"         Level: {simple_log.level}")
+    print(f"         Level: {level}")
     print(f"       Message: {simple_log.message}")
 
 
   def _print_human_http_req_log(self, http_req_log: HTTPRequestLog) -> None:
+    level = self._get_colored_logger_tag(http_req_log.level)
     print(f"     Timestamp: {http_req_log.timestamps.human}")
-    print(f"         Level: {http_req_log.level}")
+    print(f"         Level: {level}")
     print(f"       Message: {http_req_log.message}")
     print(f"    Request ID: {http_req_log.ids.request_id}")
     print(f"Correlation ID: {http_req_log.ids.correlation_id}")
@@ -426,11 +429,26 @@ class ProjectnameLogger(LoggerInterface):
     print(f"    User Agent: {http_req_log.user_agent}")
 
   def _print_human_http_res_log(self, http_res_log: HTTPResponseLog) -> None:
+    level = self._get_colored_logger_tag(http_res_log.level)
     print(f"     Timestamp: {http_res_log.timestamps.human}")
-    print(f"         Level: {http_res_log.level}")
+    print(f"         Level: {level}")
     print(f"       Message: {http_res_log.message}")
     print(f"    Request ID: {http_res_log.ids.request_id}")
     print(f"Correlation ID: {http_res_log.ids.correlation_id}")
     print(f"   Status Code: {http_res_log.status.code}")
     print(f"   Status Name: {http_res_log.status.name}")
     print(f" Duration (ms): {http_res_log.duration_ms}")
+
+  def _get_colored_logger_tag(self, logger_level: str) -> str:
+    ll = logger_level.lower()
+    if ll == "debug":
+      return logger_level
+    if ll == "info":
+      return f"\033[38;2;91;91;255m{logger_level}\033[0m"
+    if ll == "warning":
+      return f"\033[38;2;255;255;0m{logger_level}\033[0m"
+    if ll == "error":
+      return f"\033[38;2;255;128;0m{logger_level}\033[0m"
+    if ll == "critical":
+      return f"\033[38;2;255;0;0m{logger_level}\033[0m"
+    raise UndocumentedCaseErr()
