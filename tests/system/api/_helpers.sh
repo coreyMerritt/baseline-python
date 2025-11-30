@@ -14,5 +14,5 @@ function killServer() {
 
 function startServer() {
   killServer
-  bash "./start.sh" "run" "server" "--host" "127.0.0.1" "--port" "8000" "test" > "$log_path" 2>&1 &
+  bash "./start-server.sh" "run" "server" "--host" "127.0.0.1" "--port" "8000" "test" > "$log_path" 2>&1 &
 }

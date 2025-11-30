@@ -1,6 +1,5 @@
 import os
 import secrets
-import string
 import sys
 import tomllib
 from dataclasses import dataclass
@@ -122,12 +121,12 @@ def generate_new_database_info(deployment_environment: str) -> PostgresInfo:
   global_config_dir = os.getenv("PROJECTNAME_GLOBAL_CONFIG_DIR")
   assert global_config_dir
   database_config_path = f"{global_config_dir}/{deployment_environment}/database.yml"
-  postgres_username = f"{project_name}-user"
-  postgres_password = _generate_password(16)
-  postgres_dbname = f"{project_name}-{deployment_environment}"
+  postgres_username = f"{project_name.lower()}-user"
+  postgres_password = _generate_password(32)
+  postgres_dbname = f"{project_name.lower()}-{deployment_environment}"
   host_port = _get_host_port(deployment_environment)
   image_version = "18"
-  container_name = f"postgres-{image_version}-{project_name}-{deployment_environment}"
+  container_name = f"postgres-{image_version}-{project_name.lower()}-{deployment_environment}"
   return PostgresInfo(
     config_path=database_config_path,
     container_name=container_name,
@@ -147,7 +146,7 @@ def get_existing_database_info(deployment_environment: str, image_version: str) 
   database_config_path = f"{global_config_dir}/{deployment_environment}/database.yml"
   with open(database_config_path, "r", encoding="utf-8") as database_yaml_file:
     raw_database_config_dict = yaml.safe_load(database_yaml_file)
-  container_name = f"postgres-{image_version}-{project_name}-{deployment_environment}"
+  container_name = f"postgres-{image_version}-{project_name.lower()}-{deployment_environment}"
   return PostgresInfo(
     config_path=database_config_path,
     container_name=container_name,
@@ -181,8 +180,7 @@ def docker_volume_exists(volume_name: str, client: DockerClient) -> bool:
 
 # Private Functions
 def _generate_password(length: int) -> str:
-  alphabet = string.ascii_letters + string.digits
-  return ''.join(secrets.choice(alphabet) for _ in range(length))
+  return secrets.token_urlsafe(length)
 
 def _get_host_port(deployment_environment: str) -> int:
   if deployment_environment == "test":

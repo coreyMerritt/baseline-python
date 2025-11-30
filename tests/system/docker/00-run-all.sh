@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-
 set -e
 set -E
-set -o pipefail
 set -u
+set -o pipefail
 set -x
 
 # Ensure we're in the project root
@@ -17,9 +16,6 @@ while true; do
   fi
 done
 
-set -a
-source .env || true
-set +a
-
-.venv/bin/python -u ./src/composition/cli_entrypoint.py $@
+# Test
+bash "./tests/system/docker/00-run-all.sh"
 exit 0

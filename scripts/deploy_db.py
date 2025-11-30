@@ -3,13 +3,14 @@ import sys
 import time
 
 import docker
+from dotenv import set_key
 import psycopg
 import yaml
 from docker import DockerClient
 from docker.errors import APIError
 from docker.models.containers import Container
 
-from _helpers import (PostgresInfo, backup_db, critical, debug, docker_volume_exists, filesystem_log,
+from _helpers import (PostgresInfo, backup_db, bash, critical, debug, docker_volume_exists, filesystem_log,
                       generate_new_database_info, get_existing_database_info, info, is_docker_container_running,
                       output_seperator, require_sudo, warn)
 
@@ -55,20 +56,25 @@ def _validate() -> None:
 def _deploy_with_existing_volume(volume_name: str, deployment_environment: str, client: DockerClient) -> None:
   postgres_info = get_existing_database_info(deployment_environment, IMAGE_VERSION)
   _deploy_with_defined_volume(
-    volume_name,
-    postgres_info,
-    client
+    volume_name=volume_name,
+    postgres_info=postgres_info,
+    client=client
   )
 
 def _deploy_with_new_volume(volume_name: str, deployment_environment: str, client: DockerClient) -> None:
+  bash(f"./scripts/set-deployment-environment.sh {deployment_environment}")
+  dot_env_path = "./.env"
   postgres_info = generate_new_database_info(deployment_environment)
   _create_new_project_database_config(postgres_info)
+  _overwrite_env_database_vars(dot_env_path, postgres_info)
   _deploy_with_defined_volume(
-    volume_name,
-    postgres_info,
-    client
+    volume_name=volume_name,
+    postgres_info=postgres_info,
+    client=client
   )
   info(f"Created new config with creds at: {postgres_info.config_path}")
+  info(f"Environment variables adjusted at: {dot_env_path}")
+
 
 def _deploy_with_defined_volume(
   volume_name: str,
@@ -99,6 +105,17 @@ def _create_new_project_database_config(postgres_info: PostgresInfo) -> None:
   }
   with open(postgres_info.config_path, "w", encoding='utf-8') as config_file:
     yaml.safe_dump(new_config, config_file)
+
+def _overwrite_env_database_vars(
+  dot_env_path: str,
+  postgres_info: PostgresInfo
+) -> None:
+  set_key(dot_env_path, "PROJECTNAME_DATABASE_ENGINE", "postgresql", quote_mode="never")
+  set_key(dot_env_path, "PROJECTNAME_DATABASE_HOST", "127.0.0.1", quote_mode="never")
+  set_key(dot_env_path, "PROJECTNAME_DATABASE_NAME", postgres_info.db_name, quote_mode="never")
+  set_key(dot_env_path, "PROJECTNAME_DATABASE_PASSWORD", postgres_info.password, quote_mode="never")
+  set_key(dot_env_path, "PROJECTNAME_DATABASE_PORT", str(postgres_info.host_port), quote_mode="never")
+  set_key(dot_env_path, "PROJECTNAME_DATABASE_USERNAME", postgres_info.username, quote_mode="never")
 
 def _stop_and_remove_container(client: DockerClient, container_removal_name: str) -> None:
   for container in client.containers.list(all=True):

@@ -7,12 +7,12 @@ set -x
 
 # Vars
 project_name="projectname"
-docker_compose_env_path="./.env.docker-compose"
+docker_env_path="./.env"
 new_password="$(openssl rand -hex 32)"
 PROJECTNAME_DATABASE_PASSWORD=$new_password
 
 # docker-compose will need these for parse-time vars
-source "$docker_compose_env_path"
+source "$docker_env_path"
 export POSTGRES_DB
 export POSTGRES_USER
 export COMPOSE_PROJECT_NAME
@@ -37,13 +37,13 @@ fi
 docker compose down || true
 
 # Replace PROJECTNAME_DATABASE_PASSWORD
-to_replace="$(cat .env.docker-compose | grep -E "[.+]?PROJECTNAME_DATABASE_PASSWORD.+")"
+to_replace="$(cat "$docker_env_path" | grep -E "[.+]?PROJECTNAME_DATABASE_PASSWORD.+")"
 replacement="PROJECTNAME_DATABASE_PASSWORD=${new_password}"
-sed -i "s/$to_replace/$replacement/g" "$docker_compose_env_path"
+sed -i "s/$to_replace/$replacement/g" "$docker_env_path"
 # Replace POSTGRES_PASSWORD
-to_replace="$(cat .env.docker-compose | grep -E "[.+]?POSTGRES_PASSWORD.+")"
+to_replace="$(cat "$docker_env_path" | grep -E "[.+]?POSTGRES_PASSWORD.+")"
 replacement="POSTGRES_PASSWORD=${new_password}"
-sed -i "s/$to_replace/$replacement/g" "$docker_compose_env_path"
+sed -i "s/$to_replace/$replacement/g" "$docker_env_path"
 # Ensure we're not trying to remount a used volume
 volume_yq_paths=(
   ".volumes.postgres-18-volume.name"

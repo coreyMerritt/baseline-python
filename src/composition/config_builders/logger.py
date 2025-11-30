@@ -9,7 +9,7 @@ from infrastructure.logger.projectname_logger import ProjectnameLogger
 
 def build_final_logger_config(
   config_parser: ConfigParser,
-  logger: ProjectnameLogger,
+  logger: ProjectnameLogger | None,
   logger_config_dict: Dict[str, Any]
 ) -> LoggerConfig:
   _ = config_parser.parse_logger_config(logger_config_dict)

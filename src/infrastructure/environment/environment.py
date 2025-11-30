@@ -1,7 +1,5 @@
 import os
 
-from dotenv import load_dotenv
-
 from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.environment.exceptions.unset_environment_variable_err import UnsetEnvironmentVariableErr
 from infrastructure.environment.models.env_var import EnvVar
@@ -43,6 +41,3 @@ class Environment(BaseInfrastructure):
 
   def set_env_var(self, env_var_name: str, var_value: str) -> None:
     os.environ[env_var_name] = var_value
-
-  def load_env(self) -> None:
-    load_dotenv()

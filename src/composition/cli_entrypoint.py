@@ -1,7 +1,9 @@
 import argparse
+import os
 import sys
 
 from composition.uvicorn_entrypoint import run_webserver
+from infrastructure.environment.models.env_var import EnvVar
 from interfaces.command_line.enums.run_target import RunTarget
 from interfaces.command_line.enums.sub_command import SubCommand
 from interfaces.command_line.exceptions.unknown_command_exception import UnknownCommandException
@@ -14,18 +16,36 @@ def entrypoint():
   _handle_args_routing(args)
 
 def _add_default_commands() -> None:
-  if len(sys.argv) == 2 and not sys.argv[1].startswith("-"):
-    sys.argv = [sys.argv[0], "run", "server", sys.argv[1]]
+  if len(sys.argv) == 1:
+    sys.argv = [sys.argv[0], "run", "server"]
 
 def _build_args() -> argparse.Namespace:
-  parser = argparse.ArgumentParser(prog="PROJECTNAME")
+  parser = argparse.ArgumentParser(prog="projectname")
   subparsers = parser.add_subparsers(dest="command", required=True)
   run_parser = subparsers.add_parser(SubCommand.RUN.value)
   run_subparsers = run_parser.add_subparsers(dest="target", required=True)
   server_parser = run_subparsers.add_parser(RunTarget.SERVER.value)
-  server_parser.add_argument("env", help="Environment: dev|test|prod")
-  server_parser.add_argument("--host", default="0.0.0.0")
-  server_parser.add_argument("--port", type=int, default=8000)
+  server_parser.add_argument(
+    "--env",
+    default=f"{os.getenv(EnvVar.DEPLOYMENT_ENVIRONMENT.value)}",
+    help="Environment: dev|test|prod",
+    required=False,
+    type=str
+  )
+  server_parser.add_argument(
+    "--host",
+    default="0.0.0.0",
+    help="Host address to bind to",
+    required=False,
+    type=str
+  )
+  server_parser.add_argument(
+    "--port",
+    default=8000,
+    help="Host port to bind to",
+    required=False,
+    type=int
+  )
   args = parser.parse_args()
   return args
 

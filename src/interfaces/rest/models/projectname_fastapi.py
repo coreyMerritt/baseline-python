@@ -5,5 +5,6 @@ from interfaces.rest.models.repository_collection import RepositoryCollection
 
 
 class ProjectnameFastAPI(FastAPI):
+  raw_infra: dict
   infra: InfrastructureCollection
   repos: RepositoryCollection

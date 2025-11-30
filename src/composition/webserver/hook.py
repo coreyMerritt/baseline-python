@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import traceback
+
 from fastapi.concurrency import asynccontextmanager
 
 from composition.webserver.register_exception_handlers import register_exception_handlers
@@ -9,12 +11,18 @@ from composition.webserver.startup import startup
 from interfaces.rest.models.projectname_fastapi import ProjectnameFastAPI
 
 
-def create_app() -> ProjectnameFastAPI:
+def create_app( ) -> ProjectnameFastAPI:
+
   @asynccontextmanager
   async def lifespan(app: ProjectnameFastAPI):
-    startup(app)
-    yield  # Application runs during this period
-    shutdown(app)
+    try:
+      await startup(app)
+      yield  # Application runs during this period
+    except Exception as e:
+      traceback.print_exc()
+      raise e
+    finally:
+      shutdown(app)
 
   app = ProjectnameFastAPI()
   app = register_exception_handlers(app)

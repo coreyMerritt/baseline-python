@@ -1,4 +1,5 @@
 import time
+from typing import Callable
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -9,11 +10,14 @@ from interfaces.rest.models.projectname_request import ProjectnameRequest
 
 
 class ResponseLoggingMiddleware(BaseHTTPMiddleware):
-  def __init__(self, app, logger: LoggerInterface):
+  _get_logger: Callable[[], LoggerInterface]
+
+  def __init__(self, app, get_logger: Callable[[], LoggerInterface]):
+    self._get_logger = get_logger
     super().__init__(app)
-    self._logger = logger
 
   async def dispatch(self, request: Request, call_next):
+    logger = self._get_logger()
     start = time.perf_counter()
     try:
       response: Response = await call_next(request)
@@ -31,7 +35,7 @@ class ResponseLoggingMiddleware(BaseHTTPMiddleware):
         req=req,
         status=response.status_code,
         duration_ms=duration_ms)
-      self._logger.http_res_info(
+      logger.http_res_info(
         message="HTTP Response",
         raw_http_res_info=raw_http_res_info
       )

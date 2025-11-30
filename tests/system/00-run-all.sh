@@ -18,4 +18,5 @@ done
 
 # Test
 bash "./tests/system/api/00-run-all.sh"
+bash "./tests/system/docker/00-run-all.sh"
 exit 0

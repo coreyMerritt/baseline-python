@@ -15,8 +15,8 @@ sudo -k && sudo true
 cli_entrypoint_path="./src/composition/cli_entrypoint.py"
 config_filenames_path="./src/composition/enums/config_filenames.py"
 deployment_environments_path="./src/shared/enums/deployment_environment.py"
-project_environment="$1"
-[[ "$project_environment" == "test" ]] || [[ "$project_environment" == "dev" ]] || [[ "$project_environment" == "prod" ]] || {
+deployment_environment="$1"
+[[ "$deployment_environment" == "test" ]] || [[ "$deployment_environment" == "dev" ]] || [[ "$deployment_environment" == "prod" ]] || {
   echo -e "\n\targ1 must be test|dev|prod\n"
   exit 1
 }
@@ -46,23 +46,33 @@ source .venv/bin/activate
 
 # Ensure dependencies are installed
 pip install --upgrade pip setuptools wheel
-if [[ "$project_environment" == "dev" ]]; then
+if [[ "$deployment_environment" == "dev" ]]; then
   pip install -e .[infra,dev]
-elif [[ "$project_environment" == "test" ]]; then
+elif [[ "$deployment_environment" == "test" ]]; then
   pip install -e .[infra,dev]
-elif [[ "$project_environment" == "prod" ]]; then
+elif [[ "$deployment_environment" == "prod" ]]; then
   pip install .[infra]
 fi
 
-# Configs
-if [[ ! -f ".env" ]]; then
-  cp -r .env.model .env
-fi
-source ".env"
+# Dot env
+model_filenames="$(ls -A ./.env.d/models/ || echo "")"
+for model_filename in $model_filenames; do
+  model_path="./.env.d/models/$model_filename"
+  std_path="./.env.d/$model_filename"
+  if [[ ! -f "$std_path" ]]; then
+    cp "$model_path" "$std_path"
+  fi
+done
+
+# Set deployment to prod to get some basic vars for installation
+./scripts/set-deployment-environment.sh "prod" || true
+[[ -f "./.env" ]] && source "./.env" || echo -e "\n\tWARNING: Proceeding without any .env file...\n"
+
+# Config files
 [[ -n "$PROJECTNAME_GLOBAL_CONFIG_DIR" ]]
 [[ -n "$PROJECTNAME_MODEL_CONFIG_DIR" ]]
 config_filenames="$(cat "$config_filenames_path" | grep -v "import" | grep -v "class" | awk '{print $3}' | jq -r)"
-deployment_environments="$(cat "$deployment_environments_path" | grep -v "import" | grep -v "class" | awk '{print $3}' | jq -r .)" 
+deployment_environments="$(cat "$deployment_environments_path" | grep -v "import" | grep -v "class" | awk '{print $3}' | jq -r)" 
 ## Assert all local configs exist
 for config_filename in $config_filenames; do
   local_model_path="${PROJECTNAME_MODEL_CONFIG_DIR}/${config_filename}"
@@ -96,7 +106,7 @@ sudo find "$PROJECTNAME_GLOBAL_CONFIG_DIR" -type f -exec chmod 644 {} +
 project_name_as_bin="projectname"
 installation_dir="/usr/bin"
 installation_path="${installation_dir}/${project_name_as_bin}"
-if [[ "$project_environment" == "prod" ]]; then
+if [[ "$deployment_environment" == "prod" ]]; then
   ./.venv/bin/pyinstaller \
     --onefile \
     --hidden-import=composition.webserver.hook \

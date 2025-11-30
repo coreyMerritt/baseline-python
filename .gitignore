@@ -13,13 +13,14 @@ build/
 dist/
 
 # Secrets
-.env
-.env*
-!.env.model
+.env.d/*
+!.env.d/models
 backups/
 !backups/.gitkeep
 backups/database/
 !backups/database/.gitkeep
+config/*
+!config/models
 
 # Misc
 .venv
