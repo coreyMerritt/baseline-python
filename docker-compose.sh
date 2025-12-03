@@ -5,11 +5,27 @@ set -o pipefail
 set -u
 set -x
 
+# Args
+deployment_environment="$1"
+docker_tag="$2"
+[[ "$1" == "dev" || "$1" == "prod" || "$1" == "test" ]]
+
 # Vars
 project_name="projectname"
 docker_env_path="./.env"
 new_password="$(openssl rand -hex 32)"
 PROJECTNAME_DATABASE_PASSWORD=$new_password
+
+# Functions
+function safeSed() {
+  to_replace="$1"
+  replacement="$2"
+  docker_env_path="$3"
+  tmp=$(mktemp)
+  sed "s/$to_replace/$replacement/g" "$docker_env_path" > "$tmp"
+  cat "$tmp" > "$docker_env_path"   # writes through the symlink, a direct write would break symlinks
+  rm "$tmp"
+}
 
 # docker-compose will need these for parse-time vars
 source "$docker_env_path"
@@ -33,30 +49,44 @@ if ! which yq; then
   echo -e "\n\Install yq and run again.\n"; exit 1
 fi
 
-# Bring everything down before we starting messing with things
-docker compose down || true
+# Ensure everything is down before we starting messing with things
+DOCKER_TAG="silences-a-silly-warning" docker compose down || true
 
 # Replace PROJECTNAME_DATABASE_PASSWORD
 to_replace="$(cat "$docker_env_path" | grep -E "[.+]?PROJECTNAME_DATABASE_PASSWORD.+")"
 replacement="PROJECTNAME_DATABASE_PASSWORD=${new_password}"
-sed -i "s/$to_replace/$replacement/g" "$docker_env_path"
+safeSed "$to_replace" "$replacement" "$docker_env_path"
 # Replace POSTGRES_PASSWORD
 to_replace="$(cat "$docker_env_path" | grep -E "[.+]?POSTGRES_PASSWORD.+")"
 replacement="POSTGRES_PASSWORD=${new_password}"
-sed -i "s/$to_replace/$replacement/g" "$docker_env_path"
+safeSed "$to_replace" "$replacement" "$docker_env_path"
 # Ensure we're not trying to remount a used volume
 volume_yq_paths=(
   ".volumes.postgres-18-volume.name"
-  ".volumes.projectname-configs-volume.name"
+  ".volumes.${project_name}-configs-volume.name"
 )
 for volume_yq_path in ${volume_yq_paths[@]}; do
   volume_name="$(cat docker-compose.yml | yq "$volume_yq_path")"
   if docker volume list | grep -o "$volume_name"; then
-    echo -e "\n\tVolume already exists: $volume_name"
-    echo -e "\tRemove the volume and run again:"
-    echo -e "\t\tdocker volume rm $volume_name"
-    exit 1
+    if [[ ! "$volume_name" =~ "test" ]] && [[ ! "$volume_name" =~ "dev" ]]; then
+      echo -e "\n\tVolume already exists: $volume_name"
+      echo -e "\tRemove the volume and run again:"
+      echo -e "\t\tdocker volume rm $volume_name"
+      exit 1
+    else
+      docker volume rm "$volume_name"
+    fi
   fi
 done
 
-docker compose up --detach
+# Ensure image exists, if not build it
+set +u
+image_exists="$(docker image list | grep "$project_name" | awk '{print $2}' | grep -E "^${docker_tag}$" || true)"
+if [[ ! -n "$image_exists" ]]; then
+  ./docker-build.sh "$deployment_environment" "$docker_tag"
+fi
+set -u
+
+# Do the thing!
+./scripts/set-deployment-environment.sh "$deployment_environment"
+DOCKER_TAG="$docker_tag" docker compose up --detach

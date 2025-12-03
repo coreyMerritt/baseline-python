@@ -110,6 +110,9 @@ def _overwrite_env_database_vars(
   dot_env_path: str,
   postgres_info: PostgresInfo
 ) -> None:
+  set_key(dot_env_path, "POSTGRES_DB", postgres_info.db_name, quote_mode="never")
+  set_key(dot_env_path, "POSTGRES_PASSWORD", postgres_info.password, quote_mode="never")
+  set_key(dot_env_path, "POSTGRES_USER", postgres_info.username, quote_mode="never")
   set_key(dot_env_path, "PROJECTNAME_DATABASE_ENGINE", "postgresql", quote_mode="never")
   set_key(dot_env_path, "PROJECTNAME_DATABASE_HOST", "127.0.0.1", quote_mode="never")
   set_key(dot_env_path, "PROJECTNAME_DATABASE_NAME", postgres_info.db_name, quote_mode="never")

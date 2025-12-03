@@ -21,7 +21,7 @@ done
 # Vars
 deployment_environment="test"
 project_name="projectname"
-image_tag="test-pipelines-image"
+image_tag="test-pipelines"
 dot_env_path="./.env"
 instance_name="${project_name}-test-pipelines-instance"
 volume_name="${project_name}-test-pipelines-volume"

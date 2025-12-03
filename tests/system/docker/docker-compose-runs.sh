@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 set -e
 set -E
 set -u
@@ -17,6 +18,9 @@ while true; do
 done
 
 # Test
-bash "./tests/system/docker/image-runs.sh"
-bash "./tests/system/docker/docker-compose-runs.sh"
+./docker-compose.sh "test" "test-pipelines"
+
+# Cleanup
+DOCKER_TAG="silences-a-silly-warning" docker compose down
+
 exit 0

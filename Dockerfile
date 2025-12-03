@@ -47,4 +47,6 @@ RUN ln -sf /usr/bin/python3.11 /usr/bin/python3 &&\
 
 RUN ./install.sh ${PROJECTNAME_DEPLOYMENT_ENVIRONMENT}
 
-ENTRYPOINT ["./start-server.sh", "test"]
+ENTRYPOINT ["./start-server.sh"]
+
+CMD ["test"]

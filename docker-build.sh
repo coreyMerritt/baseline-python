@@ -6,8 +6,9 @@ set -o pipefail
 set -u
 set -x
 
+# Args
 deployment_environment="$1"
-tag="$2"
+docker_tag="$2"
 
 source ".env"
 
@@ -25,12 +26,15 @@ done
 # Copy our actual configs over
 cp -r "$PROJECTNAME_GLOBAL_CONFIG_DIR/test" "./config/" 
 
-docker rmi "projectname:${tag}" || true
+# If there's an old image with this name:tag, remove it
+docker rmi "projectname:${docker_tag}" || true
+
+# Do the thing!
 docker build \
   --no-cache \
   --build-arg "PROJECTNAME_DEPLOYMENT_ENVIRONMENT=${deployment_environment}" \
   --build-arg "PROJECTNAME_GLOBAL_CONFIG_DIR=${PROJECTNAME_GLOBAL_CONFIG_DIR}" \
   --build-arg "PROJECTNAME_MODEL_CONFIG_DIR=${PROJECTNAME_MODEL_CONFIG_DIR}" \
   --file "Dockerfile" \
-  --tag "projectname:${tag}" \
+  --tag "projectname:${docker_tag}" \
   "."

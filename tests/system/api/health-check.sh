@@ -46,16 +46,16 @@ while (( current_time - start_time < timeout )); do
   current_time=$(date +%s)
 done
 error="$(echo "$response" | jq -r .error)"
-[[ "$error" == "null" ]] || {
-  echo -e "\n\t\"error\" is not null"
-  exit 1
-}
 [[ "$health_check_hit" == "true" ]] || {
   echo -e "\n\tFailed to hit health endpoint"
   exit 1
 }
 [[ "$health_check_healthy" == "true" ]] || {
   echo -e "\n\tHealth endpoint did not return healthy"
+  exit 1
+}
+[[ "$error" == "null" ]] || {
+  echo -e "\n\t\"error\" is not null"
   exit 1
 }
 

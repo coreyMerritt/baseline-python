@@ -275,10 +275,12 @@ def _build_database(
   start_time = time.time()
   while time.time() - start_time < TIMEOUT:
     try:
-      return Database(database_config)
+      db = Database(database_config)
+      logger.info("Successfully connected to database.")
+      return db
     except DatabaseInitializationErr as e:
       last_err = e
-      logger.error("Failed to connect to database. Trying again...", error=e)
+      logger.debug("Failed to connect to database. Trying again...")
       time.sleep(RETRY_TIME)
   if time.time() - start_time >= TIMEOUT:
     logger.critical("Timed our waiting for database initialization", error=last_err)
