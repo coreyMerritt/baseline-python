@@ -14,8 +14,7 @@ dist/
 
 # Secrets
 .env
-.env*
-.env.d/
+!.env.model
 backups/
 !backups/.gitkeep
 backups/database/

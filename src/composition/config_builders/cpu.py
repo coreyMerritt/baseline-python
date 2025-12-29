@@ -13,15 +13,11 @@ def build_final_cpu_config(
   cpu_config_dict: Dict[str, Any]
 ) -> CpuConfig:
   _ = config_parser.parse_cpu_config(cpu_config_dict)
-  assert cpu_config_dict["check_interval_seconds"], "check_interval_seconds not in cpu configuration file"
   cpu_config_dict["check_interval_seconds"] = get_final_config_var(
     logger=logger,
     config_var=cpu_config_dict["check_interval_seconds"],
     env_var=EnvVar.CPU_CHECK_INTERVAL_SECONDS
   )
-  assert cpu_config_dict["maximum_healthy_usage_percentage"], {
-    "maximum_healthy_usage_percentage not in cpu configuration file"
-  }
   cpu_config_dict["maximum_healthy_usage_percentage"] = get_final_config_var(
     logger=logger,
     config_var=cpu_config_dict["maximum_healthy_usage_percentage"],

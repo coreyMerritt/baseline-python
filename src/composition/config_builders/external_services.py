@@ -13,7 +13,6 @@ def build_final_external_services_config(
   external_services_config_dict: Dict[str, Any]
 ) -> ExternalServicesConfig:
   _ = config_parser.parse_external_services_config(external_services_config_dict)
-  assert external_services_config_dict["request_timeout"], "request_timeout not in external_services configuration file"
   external_services_config_dict["request_timeout"] = get_final_config_var(
     logger=logger,
     config_var=external_services_config_dict["request_timeout"],

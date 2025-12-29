@@ -13,16 +13,19 @@ def build_final_logger_config(
   logger_config_dict: Dict[str, Any]
 ) -> LoggerConfig:
   _ = config_parser.parse_logger_config(logger_config_dict)
-  assert logger_config_dict["level"], "level not in logger configuration file"
   logger_config_dict["level"] = get_final_config_var(
     logger=logger,
     config_var=logger_config_dict["level"],
     env_var=EnvVar.LOGGER_LEVEL
   )
-  assert logger_config_dict["timezone"], "timezone not in logger configuration file"
   logger_config_dict["timezone"] = get_final_config_var(
     logger=logger,
     config_var=logger_config_dict["timezone"],
     env_var=EnvVar.LOGGER_TIMEZONE
+  )
+  logger_config_dict["json"] = get_final_config_var(
+    logger=logger,
+    config_var=logger_config_dict["json"],
+    env_var=EnvVar.LOGGER_JSON
   )
   return config_parser.parse_logger_config(logger_config_dict)

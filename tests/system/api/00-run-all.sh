@@ -15,11 +15,22 @@ while true; do
     cd ..
   fi
 done
+source "./tests/system/api/_helpers.sh"
+
+# venv
+if [[ ! -d ".venv" ]]; then
+  python3 -m venv ".venv"
+fi
+source ".venv/bin/activate"
+
+# Ensure test resources exist
+startServer
 
 # Test
-bash "./tests/system/api/system-starts-happily.sh"
-bash "./tests/system/api/system-exits-happily.sh"
 bash "./tests/system/api/health-check.sh"
 bash "./tests/system/api/get-blog-post.sh"
 bash "./tests/system/api/post-and-get-account.sh"
+
+# Cleanup
+cleanup
 exit 0

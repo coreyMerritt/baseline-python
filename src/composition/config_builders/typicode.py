@@ -13,7 +13,6 @@ def build_final_typicode_config(
   typicode_config_dict: Dict[str, Any]
 ) -> TypicodeConfig:
   _ = config_parser.parse_typicode_config(typicode_config_dict)
-  assert typicode_config_dict["placeholder"], "placeholder not in typicode configuration file"
   typicode_config_dict["placeholder"] = get_final_config_var(
     logger=logger,
     config_var=typicode_config_dict["placeholder"],

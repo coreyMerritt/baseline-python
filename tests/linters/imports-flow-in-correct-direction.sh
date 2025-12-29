@@ -4,7 +4,7 @@ set -o pipefail
 set -u
 set -x
 
-function importCheck() {
+function doesNotImport() {
   layer="$1"    # ex) infrastructure
   import="$2"   # ex) domain
   exception="${3-}"   # ex) mapper
@@ -23,18 +23,18 @@ function importCheck() {
 }
 
 # Tests
-importCheck "interfaces/rest/health/controllers" "infrastructure"
-importCheck "interfaces/rest/health/dtos" "infrastructure"
-importCheck "interfaces/rest/health/routes" "infrastructure"
-importCheck "interfaces/rest/v1/controllers" "infrastructure"
-importCheck "interfaces/rest/v1/dtos" "infrastructure"
-importCheck "interfaces/rest/v1/routes" "infrastructure"
-importCheck "interfaces/command_line" "infrastructure"
-importCheck "services" "interfaces"
-importCheck "infrastructure" "services"
-importCheck "infrastructure" "interfaces"
-importCheck "domain" "infrastructure"
-importCheck "domain" "services"
-importCheck "domain" "interfaces"
+doesNotImport "interfaces/rest/health/controllers" "infrastructure"
+doesNotImport "interfaces/rest/health/dtos" "infrastructure"
+doesNotImport "interfaces/rest/health/routes" "infrastructure"
+doesNotImport "interfaces/rest/v1/controllers" "infrastructure"
+doesNotImport "interfaces/rest/v1/dtos" "infrastructure"
+doesNotImport "interfaces/rest/v1/routes" "infrastructure"
+doesNotImport "interfaces/command_line" "infrastructure"
+doesNotImport "services" "interfaces"
+doesNotImport "infrastructure" "services"
+doesNotImport "infrastructure" "interfaces"
+doesNotImport "domain" "infrastructure"
+doesNotImport "domain" "services"
+doesNotImport "domain" "interfaces"
 
 exit 0

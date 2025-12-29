@@ -1,70 +1,63 @@
 #!/usr/bin/env python3
 import sys
 import time
+import yaml
+from dotenv import set_key
+
+import psycopg
+
+from _helpers import (PostgresInfo, backup_db, critical, debug, docker_volume_exists, filesystem_log,
+                      generate_new_database_info, get_existing_database_info, info, is_docker_container_running,
+                      output_seperator, require_sudo, warn)
 
 import docker
-from dotenv import set_key
-import psycopg
-import yaml
 from docker import DockerClient
 from docker.errors import APIError
 from docker.models.containers import Container
 
-from _helpers import (PostgresInfo, backup_db, bash, critical, debug, docker_volume_exists, filesystem_log,
-                      generate_new_database_info, get_existing_database_info, info, is_docker_container_running,
-                      output_seperator, require_sudo, warn)
-
-LOG_PATH = "./deploy_db.log"
+LOG_PATH = "./logs/deploy_db.log"
 IMAGE_VERSION = "18"
+ALLOW_VOLUME_REMOVAL = True
 
 def deploy_db() -> None:
   _validate()
-  DEPLOYMENT_ENVIRONMENT = sys.argv[1]
-  debug(f"Environment: {DEPLOYMENT_ENVIRONMENT}")
   client = docker.from_env()
-  container_name = generate_new_database_info(DEPLOYMENT_ENVIRONMENT).container_name
+  container_name = generate_new_database_info().container_name
   volume_name = f"{container_name}-volume"
   if is_docker_container_running(container_name, client):
-    backup_db(DEPLOYMENT_ENVIRONMENT)
+    backup_db()
   else:
     warn(f"Couldn't find database to backup: {container_name}")
     warn("Waiting 15s to allow user to abort, then proceeding without a backup...")
     time.sleep(15)
-  if DEPLOYMENT_ENVIRONMENT == "prod":
+  if ALLOW_VOLUME_REMOVAL:
     if docker_volume_exists(volume_name, client):
-      _deploy_with_existing_volume(volume_name, DEPLOYMENT_ENVIRONMENT, client)
-    else:
-      _deploy_with_new_volume(volume_name, DEPLOYMENT_ENVIRONMENT, client)
-  else:
-    if docker_volume_exists(volume_name, client):
-      assert "prod" not in DEPLOYMENT_ENVIRONMENT, "TRYING TO REMOVE PROD VOLUME. ABORTING."
-      assert "prod" not in volume_name, "TRYING TO REMOVE PROD VOLUME. ABORTING."
-      container_name = generate_new_database_info(DEPLOYMENT_ENVIRONMENT).container_name
+      container_name = generate_new_database_info().container_name
       _stop_and_remove_container(client, container_name)
       _remove_docker_volume(volume_name, client)
-    _deploy_with_new_volume(volume_name, DEPLOYMENT_ENVIRONMENT, client)
+    _deploy_with_new_volume(volume_name, client)
+  else:
+    if docker_volume_exists(volume_name, client):
+      _deploy_with_existing_volume(volume_name, client)
+    else:
+      _deploy_with_new_volume(volume_name, client)
 
 def _validate() -> None:
   require_sudo()
-  if len(sys.argv) < 2:
-    critical("arg1 must be dev|prod|test")
-  if len(sys.argv) > 2:
-    critical("script does not accept 2nd arg")
-  if sys.argv[1] not in ("dev", "prod", "test"):
-    critical("arg1 must be dev|prod|test")
+  if len(sys.argv) > 1:
+    critical("script does not accept args")
 
-def _deploy_with_existing_volume(volume_name: str, deployment_environment: str, client: DockerClient) -> None:
-  postgres_info = get_existing_database_info(deployment_environment, IMAGE_VERSION)
+def _deploy_with_existing_volume(volume_name: str, client: DockerClient) -> None:
+  postgres_info = get_existing_database_info(IMAGE_VERSION)
   _deploy_with_defined_volume(
     volume_name=volume_name,
     postgres_info=postgres_info,
     client=client
   )
 
-def _deploy_with_new_volume(volume_name: str, deployment_environment: str, client: DockerClient) -> None:
-  bash(f"./scripts/set-deployment-environment.sh {deployment_environment}")
+def _deploy_with_new_volume(volume_name: str, client: DockerClient) -> None:
   dot_env_path = "./.env"
-  postgres_info = generate_new_database_info(deployment_environment)
+  postgres_info = generate_new_database_info()
   _create_new_project_database_config(postgres_info)
   _overwrite_env_database_vars(dot_env_path, postgres_info)
   _deploy_with_defined_volume(

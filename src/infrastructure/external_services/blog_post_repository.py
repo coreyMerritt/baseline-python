@@ -1,4 +1,4 @@
-from domain.entities.blog_post import BlogPost
+from domain.core.blog_post import BlogPost
 from domain.exceptions.repository_data_integrity_err import RepositoryDataIntegrityErr
 from domain.exceptions.repository_unavailable_err import RepositoryUnavailableErr
 from domain.interfaces.repositories.blog_post_repository_interface import BlogPostRepositoryInterface

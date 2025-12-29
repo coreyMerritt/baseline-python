@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from domain.entities.blog_post import BlogPost
+from domain.core.blog_post import BlogPost
 
 
 class BlogPostRepositoryInterface(Protocol):

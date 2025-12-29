@@ -13,9 +13,6 @@ def build_final_memory_config(
   memory_config_dict: Dict[str, Any]
 ) -> MemoryConfig:
   _ = config_parser.parse_memory_config(memory_config_dict)
-  assert memory_config_dict["maximum_healthy_usage_percentage"], {
-    "maximum_healthy_usage_percentage not in memory configuration file"
-  }
   memory_config_dict["maximum_healthy_usage_percentage"] = get_final_config_var(
     logger=logger,
     config_var=memory_config_dict["maximum_healthy_usage_percentage"],

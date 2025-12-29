@@ -13,10 +13,27 @@ from infrastructure.external_services.models.typicode_config import TypicodeConf
 from infrastructure.logger.enums.logger_level import LoggerLevel
 from infrastructure.logger.models.logger_config import LoggerConfig
 from infrastructure.memory.models.memory_config import MemoryConfig
+from infrastructure.uvicorn.models.uvicorn_config import UvicornConfig
 from shared.enums.timezone import Timezone
 
 
 class ConfigParser(BaseInfrastructure):
+  _default_config: Config
+
+  def __init__(self):
+    self._default_config = Config(
+      strict=True,
+      type_hooks={
+        bool: self._parse_bool,
+        float: self._parse_float,
+        int: self._parse_int,
+        str: self._parse_str,
+        LoggerLevel: LoggerLevel,
+        Timezone: Timezone,
+      }
+    )
+    super().__init__()
+
   def get_health_report(self) -> ConfigParserHealthReport:
     return ConfigParserHealthReport(
       healthy=True
@@ -27,9 +44,7 @@ class ConfigParser(BaseInfrastructure):
       return from_dict(
         data_class=CpuConfig,
         data=some_data,
-        config=Config(
-          strict=True
-        )
+        config=self._default_config
       )
     except Exception as e:
       raise ConfigParserErr(
@@ -41,9 +56,7 @@ class ConfigParser(BaseInfrastructure):
       return from_dict(
         data_class=DatabaseConfig,
         data=some_data,
-        config=Config(
-          strict=True
-        )
+        config=self._default_config
       )
     except Exception as e:
       raise ConfigParserErr(
@@ -55,9 +68,7 @@ class ConfigParser(BaseInfrastructure):
       return from_dict(
         data_class=DiskConfig,
         data=some_data,
-        config=Config(
-          strict=True
-        )
+        config=self._default_config
       )
     except Exception as e:
       raise ConfigParserErr(
@@ -69,9 +80,7 @@ class ConfigParser(BaseInfrastructure):
       return from_dict(
         data_class=ExternalServicesConfig,
         data=some_data,
-        config=Config(
-          strict=True
-        )
+        config=self._default_config
       )
     except Exception as e:
       raise ConfigParserErr(
@@ -83,13 +92,7 @@ class ConfigParser(BaseInfrastructure):
       return from_dict(
         data_class=LoggerConfig,
         data=some_data,
-        config=Config(
-          strict=True,
-          type_hooks={
-            LoggerLevel: LoggerLevel,
-            Timezone: Timezone,
-          }
-        ),
+        config=self._default_config
       )
     except Exception as e:
       raise ConfigParserErr(
@@ -101,9 +104,7 @@ class ConfigParser(BaseInfrastructure):
       return from_dict(
         data_class=MemoryConfig,
         data=some_data,
-        config=Config(
-          strict=True
-        ),
+        config=self._default_config
       )
     except Exception as e:
       raise ConfigParserErr(
@@ -115,11 +116,47 @@ class ConfigParser(BaseInfrastructure):
       return from_dict(
         data_class=TypicodeConfig,
         data=some_data,
-        config=Config(
-          strict=True
-        ),
+        config=self._default_config
       )
     except Exception as e:
       raise ConfigParserErr(
         config_name="Typicode Config"
       ) from e
+
+  def parse_uvicorn_config(self, some_data: Any) -> UvicornConfig:
+    try:
+      return from_dict(
+        data_class=UvicornConfig,
+        data=some_data,
+        config=self._default_config
+      )
+    except Exception as e:
+      raise ConfigParserErr(
+        config_name="Uvicorn Config"
+      ) from e
+
+  def _parse_bool(self, some_value: bool | float | int | str) -> bool:
+    if isinstance(some_value, bool):
+      return some_value
+    if isinstance(some_value, int):
+      if some_value == 1:
+        return True
+      if some_value == 0:
+        return False
+      raise ValueError(f"Unable to parse int to bool: {some_value}")
+    if isinstance(some_value, str):
+      if some_value.lower().strip() in ("true", "t", "1", "on", "yes", "y"):
+        return True
+      if some_value.lower().strip() in ("false", "f", "0", "off", "no", "n"):
+        return False
+      raise ValueError(f"Unable to parse string to bool: {some_value}")
+    raise ValueError("Was given non-str, non-int and non-bool")
+
+  def _parse_float(self, some_value: bool | float | int | str) -> float:
+    return float(some_value)
+
+  def _parse_int(self, some_value: bool | float | int | str) -> int:
+    return int(some_value)
+
+  def _parse_str(self, some_value: bool | float | int | str) -> str:
+    return str(some_value)

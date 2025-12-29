@@ -67,10 +67,9 @@ def bash(cmd_str: str) -> str:
     message += f"\tSTDERR: {e.stderr}\n"
     raise BashError(message) from e
 
-def backup_db(deployment_environment: str) -> None:
-  debug(f"Environment: {deployment_environment}")
+def backup_db() -> None:
   IMAGE_VERSION = "18"
-  POSTGRES_INFO: PostgresInfo = get_existing_database_info(deployment_environment, IMAGE_VERSION)
+  POSTGRES_INFO: PostgresInfo = get_existing_database_info(IMAGE_VERSION)
   BACKUP_DIR = "./backups/database"
   TIMESTAMP = get_now_formatted_fs_safe_str()
   BACKUP_NAME = f"{TIMESTAMP}__{POSTGRES_INFO.container_name}.sql"
@@ -113,20 +112,18 @@ def is_docker_container_running(container_name: str, client: DockerClient) -> bo
   except NotFound:
     return False
 
-def generate_new_database_info(deployment_environment: str) -> PostgresInfo:
+def generate_new_database_info() -> PostgresInfo:
   load_dotenv()
-  if deployment_environment not in ["dev", "prod", "test"]:
-    raise AttributeError("deployment_environment must be dev|prod|test")
   project_name = get_project_name()
   global_config_dir = os.getenv("PROJECTNAME_GLOBAL_CONFIG_DIR")
   assert global_config_dir
-  database_config_path = f"{global_config_dir}/{deployment_environment}/database.yml"
+  database_config_path = f"{global_config_dir}/database.yml"
   postgres_username = f"{project_name.lower()}-user"
   postgres_password = _generate_password(32)
-  postgres_dbname = f"{project_name.lower()}-{deployment_environment}"
-  host_port = _get_host_port(deployment_environment)
+  postgres_dbname = f"{project_name.lower()}"
+  host_port = 5434  # FIXME
   image_version = "18"
-  container_name = f"postgres-{image_version}-{project_name.lower()}-{deployment_environment}"
+  container_name = f"postgres-{image_version}-{project_name.lower()}"
   return PostgresInfo(
     config_path=database_config_path,
     container_name=container_name,
@@ -137,16 +134,14 @@ def generate_new_database_info(deployment_environment: str) -> PostgresInfo:
     username=postgres_username
   )
 
-def get_existing_database_info(deployment_environment: str, image_version: str) -> PostgresInfo:
-  if deployment_environment not in ["dev", "prod", "test"]:
-    raise AttributeError("deployment_environment must be dev|prod|test")
+def get_existing_database_info(image_version: str) -> PostgresInfo:
   project_name = get_project_name()
   global_config_dir = os.getenv("PROJECTNAME_GLOBAL_CONFIG_DIR")
   assert global_config_dir
-  database_config_path = f"{global_config_dir}/{deployment_environment}/database.yml"
+  database_config_path = f"{global_config_dir}/database.yml"
   with open(database_config_path, "r", encoding="utf-8") as database_yaml_file:
     raw_database_config_dict = yaml.safe_load(database_yaml_file)
-  container_name = f"postgres-{image_version}-{project_name.lower()}-{deployment_environment}"
+  container_name = f"postgres-{image_version}-{project_name.lower()}"
   return PostgresInfo(
     config_path=database_config_path,
     container_name=container_name,
@@ -181,12 +176,3 @@ def docker_volume_exists(volume_name: str, client: DockerClient) -> bool:
 # Private Functions
 def _generate_password(length: int) -> str:
   return secrets.token_urlsafe(length)
-
-def _get_host_port(deployment_environment: str) -> int:
-  if deployment_environment == "test":
-    return 5434
-  if deployment_environment == "dev":
-    return 5433
-  if deployment_environment == "prod":
-    return 5432
-  raise AttributeError(f"Unknown deployment_environment: {deployment_environment}")

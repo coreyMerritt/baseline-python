@@ -1,60 +1,64 @@
-# from domain.entities.user import User
-# from domain.interfaces.repositories.user_repository_interface import UserRepositoryInterface
-# from domain.validators.email_address import EmailValidator
-# from infrastructure.external_services.models.external_services_config import ExternalServicesConfig
-# from infrastructure.types.logger_interface import LoggerInterface
-# from services.base_service import BaseService
-# from services.mappers.create_user_mapper import CreateUserMapper
-# from services.mappers.get_user_mapper import GetUserMapper
-# from services.models.inputs.create_user_sim import CreateUserSIM
-# from services.models.outputs.create_user_som import CreateUserSOM
-# from services.models.outputs.delete_user_som import DeleteUserSOM
-# from services.models.outputs.get_user_som import GetUserSOM
-# from services.models.outputs.update_user_som import UpdateUserSOM
+from domain.interfaces.repositories.user_repository_interface import UserRepositoryInterface
+from infrastructure.types.logger_interface import LoggerInterface
+from services.base_service import BaseService
+from services.mappers.user.create_user_mapper import CreateUserMapper
+from services.mappers.user.delete_user_mapper import DeleteUserMapper
+from services.mappers.user.get_user_mapper import GetUserMapper
+from services.mappers.user.update_user_mapper import UpdateUserMapper
+from services.models.inputs.user.create_user_sim import CreateUserSIM
+from services.models.inputs.user.update_user_sim import UpdateUserSIM
+from services.models.outputs.user.create_user_som import CreateUserSOM
+from services.models.outputs.user.delete_user_som import DeleteUserSOM
+from services.models.outputs.user.get_user_som import GetUserSOM
+from services.models.outputs.user.update_user_som import UpdateUserSOM
 
 
-# class UserManager(BaseService):
-#   _user_repository: UserRepositoryInterface
+class UserManager(BaseService):
+  _user_repository: UserRepositoryInterface
 
-#   def __init__(self,
-#     logger: LoggerInterface,
-#     user_repository: UserRepositoryInterface,
-#     external_services_config: ExternalServicesConfig
-#   ):
-#     self._user_repository = user_repository
-#     super().__init__(logger)
+  def __init__(self, logger: LoggerInterface, user_repository: UserRepositoryInterface):
+    self._user_repository = user_repository
+    super().__init__(logger)
 
-#   def create_user(self, create_user_sim: CreateUserSIM) -> CreateUserSOM:
-#     self._logger.debug("Attempting to create user...")
-#     EmailValidator.validate(create_user_sim.email_address)
-#     external_mapping_id = self._entra_id_client.create_user(
-#       username=create_user_sim.username,
-#       password=create_user_sim.password,
-#       token=None
-#     )
-#     user = User(
-#       uuid=None,
-#       external_mapping_id=external_mapping_id,
-#       email_address=create_user_sim.email_address,
-#       username=create_user_sim.username
-#     )
-#     created_user = self._user_repository.create(user)
-#     create_user_som = CreateUserMapper.entity_to_som(created_user)
-#     self._logger.debug(f"Successfully created user for uuid: {user.uuid}")
-#     return create_user_som
+  def create_user(self, create_user_sim: CreateUserSIM) -> CreateUserSOM:
+    self._logger.debug("Attempting to create user...")
+    user = CreateUserMapper.sim_to_entity(create_user_sim)
+    try:
+      created_user = self._user_repository.create(user)
+    except Exception as e:
+      self._raise_service_exception(e)
+    create_user_som = CreateUserMapper.entity_to_som(created_user)
+    self._logger.debug(f"Successfully created user for ulid: {user.ulid}")
+    return create_user_som
 
-#   def get_user(self, uuid: str) -> GetUserSOM:
-#     self._logger.debug(f"Attempting to retrieve user for uuid: {uuid}")
-#     try:
-#       user = self._user_repository.get(uuid)
-#     except Exception as e:
-#       self._raise_service_exception(e)
-#     get_user_som = GetUserMapper.user_to_som(user)
-#     self._logger.debug(f"Successfully retrieved user for uuid: {uuid}")
-#     return get_user_som
+  def get_user(self, ulid: str) -> GetUserSOM:
+    self._logger.debug(f"Attempting to retrieve user for ulid: {ulid}")
+    try:
+      user = self._user_repository.get(ulid)
+    except Exception as e:
+      self._raise_service_exception(e)
+    get_user_som = GetUserMapper.entity_to_som(user)
+    self._logger.debug(f"Successfully retrieved user for ulid: {ulid}")
+    return get_user_som
 
-#   def update_user(self, update_user_sim: UpdateUserSIM) -> UpdateUserSOM:
-#     ...
+  def update_user(self, update_user_sim: UpdateUserSIM) -> UpdateUserSOM:
+    self._logger.debug("Attempting to update user...")
+    pre_changes_user = self._user_repository.get(update_user_sim.ulid)
+    user = UpdateUserMapper.sim_to_entity(pre_changes_user, update_user_sim)
+    try:
+      user = self._user_repository.update(user)
+    except Exception as e:
+      self._raise_service_exception(e)
+    get_user_som = UpdateUserMapper.entity_to_som(user)
+    self._logger.debug(f"Successfully retrieved user for ulid: {user.ulid}")
+    return get_user_som
 
-#   def delete_user(self, uuid: str) -> DeleteUserSOM:
-#     ...
+  def delete_user(self, ulid: str) -> DeleteUserSOM:
+    self._logger.debug(f"Attempting to retrieve user for ulid: {ulid}")
+    try:
+      user = self._user_repository.delete(ulid)
+    except Exception as e:
+      self._raise_service_exception(e)
+    delete_user_som = DeleteUserMapper.entity_to_som(user)
+    self._logger.debug(f"Successfully retrieved user for ulid: {ulid}")
+    return delete_user_som

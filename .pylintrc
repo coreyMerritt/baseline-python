@@ -78,7 +78,7 @@ unsafe-load-any-extension=no
 # UNDEFINED.
 confidence=
 
-# Disable the message, report, category or checker with the given uuid(s). You
+# Disable the message, report, category or checker with the given ulid(s). You
 # can either give multiple identifiers separated by comma (,) or put this
 # option multiple times (only on the command line, not in the configuration
 # file where it should appear only once). You can also use "--disable=all" to
@@ -104,7 +104,7 @@ disable=bad-inline-option,raw-checker-failed,
         useless-suppression,
         unidiomatic-typecheck
 
-# Enable the message, report, category or checker with the given uuid(s). You can
+# Enable the message, report, category or checker with the given ulid(s). You can
 # either give multiple identifier separated by comma (,) or put this option
 # multiple time (only on the command line, not in the configuration file where
 # it should appear only once). See also the "--disable" option for examples.
@@ -333,8 +333,8 @@ logging-modules=logging
 [MISCELLANEOUS]
 
 # List of note tags to take in consideration, separated by a comma.
-notes=FIXME,
-      XXX,
+notes=DEBUG,
+      FIXME,
       TODO
 
 # Regular expression of note tags to take in consideration.
@@ -529,7 +529,7 @@ ignored-parents=
 max-args=10
 
 # Maximum number of attributes for a class (see R0902).
-max-attributes=10
+max-attributes=20
 
 # Maximum number of boolean expressions in an if statement (see R0916).
 max-bool-expr=5

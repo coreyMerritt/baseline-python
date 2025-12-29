@@ -1,38 +1,20 @@
 from datetime import datetime, timezone
+from typing import ClassVar, Optional
 
 from sqlmodel import Field, SQLModel
 
 
 class AccountORM(SQLModel, table=True):
-  id: int = Field(
+  __tablename__: ClassVar[str] = "account"
+  ulid: str = Field(primary_key=True, max_length=26)
+  name: str = Field(nullable=False, max_length=128)
+  status: str = Field(
     nullable=False,
-    unique=True,
-    primary_key=True,
-    default=None
+    max_length=16
   )
-  uuid: str = Field(
-    nullable=False,
-    unique=True,
-    primary_key=False
+  created_at: datetime = Field(
+    default_factory=lambda: datetime.now(tz=timezone.utc),
+    nullable=False
   )
-  name: str = Field(
-    nullable=False,
-    unique=False,
-    primary_key=False
-  )
-  age: int = Field(
-    nullable=False,
-    unique=False,
-    primary_key=False
-  )
-  account_type: str = Field(
-    nullable=False,
-    unique=False,
-    primary_key=False
-  )
-  timestamp: datetime = Field(
-    nullable=False,
-    unique=False,
-    primary_key=False,
-    default_factory=lambda: datetime.now(timezone.utc)
-  )
+  suspended_at: Optional[datetime] = Field(default=None)
+  deleted_at: Optional[datetime] = Field(default=None)

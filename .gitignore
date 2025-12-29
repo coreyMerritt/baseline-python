@@ -13,17 +13,18 @@ build/
 dist/
 
 # Secrets
-.env.d/*
-!.env.d/models
+.env
+!.env.model
 backups/
 !backups/.gitkeep
 backups/database/
 !backups/database/.gitkeep
 config/*
 !config/models
+logs/*
+!logs/.gitkeep
 
 # Misc
 .venv
 report
-deploy_db.log
 tests/linters/test.py

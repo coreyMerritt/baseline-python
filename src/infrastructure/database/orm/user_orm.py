@@ -1,38 +1,27 @@
 from datetime import datetime, timezone
+from typing import ClassVar, Optional
 
 from sqlmodel import Field, SQLModel
 
 
 class UserORM(SQLModel, table=True):
-  id: int = Field(
+  __tablename__: ClassVar[str] = "user"
+  ulid: str = Field(primary_key=True, max_length=26)
+  username: str = Field(
     nullable=False,
     unique=True,
-    primary_key=True,
-    default=None
-  )
-  uuid: str = Field(
-    nullable=False,
-    unique=True,
-    primary_key=False
-  )
-  external_mapping_id: str = Field(
-    nullable=False,
-    unique=True,
-    primary_key=False
+    index=True,
+    max_length=64
   )
   email_address: str = Field(
     nullable=False,
     unique=True,
-    primary_key=False
+    index=True,
+    max_length=255
   )
-  username: str = Field(
-    nullable=False,
-    unique=True,
-    primary_key=False
+  email_verified: bool = Field(nullable=False)
+  created_at: datetime = Field(
+    default_factory=lambda: datetime.now(tz=timezone.utc),
+    nullable=False
   )
-  timestamp: datetime = Field(
-    nullable=False,
-    unique=False,
-    primary_key=False,
-    default_factory=lambda: datetime.now(timezone.utc)
-  )
+  disabled_at: Optional[datetime] = Field(default=None)

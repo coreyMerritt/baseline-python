@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 set -e
 set -u
 set -E
@@ -14,7 +13,6 @@ sudo -k && sudo true
 # Vars
 cli_entrypoint_path="./src/composition/cli_entrypoint.py"
 config_filenames_path="./src/composition/enums/config_filenames.py"
-deployment_environments_path="./src/shared/enums/deployment_environment.py"
 deployment_environment="$1"
 [[ "$deployment_environment" == "test" ]] || [[ "$deployment_environment" == "dev" ]] || [[ "$deployment_environment" == "prod" ]] || {
   echo -e "\n\targ1 must be test|dev|prod\n"
@@ -37,6 +35,7 @@ if ! jq --version 1>/dev/null; then
   echo -e "\n\tPackage needed: jq\n"
   exit 1
 fi
+sudo dnf install -y postgresql-libs postgresql-devel || sudo apt install -y libpq5 libpq-dev || true
 
 # venv
 if [[ ! -d ".venv" ]]; then
@@ -55,14 +54,9 @@ elif [[ "$deployment_environment" == "prod" ]]; then
 fi
 
 # Dot env
-model_filenames="$(ls -A ./.env.d/models/ || echo "")"
-for model_filename in $model_filenames; do
-  model_path="./.env.d/models/$model_filename"
-  std_path="./.env.d/$model_filename"
-  if [[ ! -f "$std_path" ]]; then
-    cp "$model_path" "$std_path"
-  fi
-done
+if [[ ! -f "./.env" ]]; then
+  cp -r "./.env.model" "./.env"
+fi
 
 # Set deployment to prod to get some basic vars for installation
 ./scripts/set-deployment-environment.sh "prod" || true
@@ -72,8 +66,7 @@ done
 [[ -n "$PROJECTNAME_GLOBAL_CONFIG_DIR" ]]
 [[ -n "$PROJECTNAME_MODEL_CONFIG_DIR" ]]
 config_filenames="$(cat "$config_filenames_path" | grep -v "import" | grep -v "class" | awk '{print $3}' | jq -r)"
-deployment_environments="$(cat "$deployment_environments_path" | grep -v "import" | grep -v "class" | awk '{print $3}' | jq -r)" 
-## Assert all local configs exist
+## Assert all local config models exist
 for config_filename in $config_filenames; do
   local_model_path="${PROJECTNAME_MODEL_CONFIG_DIR}/${config_filename}"
   [[ -f "$local_model_path" ]] || {
@@ -81,23 +74,18 @@ for config_filename in $config_filenames; do
     exit 1
   }
 done
-## Ensure all global config base dirs exist
-for environment in $deployment_environments; do
-  global_config_dir="${PROJECTNAME_GLOBAL_CONFIG_DIR}/${environment}"
-  [[ -d "$global_config_dir" ]] || {
-    sudo mkdir -p "$global_config_dir"
-  }
-done
-sudo find "$PROJECTNAME_GLOBAL_CONFIG_DIR" -type d -exec chmod 755 {} +
+## Ensure global config dir exists and has reasonable permissions
+[[ -d "$PROJECTNAME_GLOBAL_CONFIG_DIR" ]] || {
+  sudo mkdir "$PROJECTNAME_GLOBAL_CONFIG_DIR"
+  sudo chown "$starting_user:$starting_group" "$PROJECTNAME_GLOBAL_CONFIG_DIR"
+}
 ## Copy any missing global configs to their respective global dir
-for environment in $deployment_environments; do
-  for config_filename in $config_filenames; do
-    local_model_path="${PROJECTNAME_MODEL_CONFIG_DIR}/${config_filename}"
-    global_config_path="${PROJECTNAME_GLOBAL_CONFIG_DIR}/${environment}/${config_filename}"
-    [[ -f "$global_config_path" ]] || {
-      sudo cp -r "$local_model_path" "$global_config_path"
-    }
-  done
+for config_filename in $config_filenames; do
+  local_model_path="${PROJECTNAME_MODEL_CONFIG_DIR}/${config_filename}"
+  global_config_path="${PROJECTNAME_GLOBAL_CONFIG_DIR}/${config_filename}"
+  [[ -f "$global_config_path" ]] || {
+    sudo cp -r "$local_model_path" "$global_config_path"
+  }
 done
 sudo chown -R "$starting_user:$starting_group" "$PROJECTNAME_GLOBAL_CONFIG_DIR"
 sudo find "$PROJECTNAME_GLOBAL_CONFIG_DIR" -type f -exec chmod 644 {} +

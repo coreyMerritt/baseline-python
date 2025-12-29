@@ -1,0 +1,47 @@
+services:
+  projectname:
+    container_name: projectname-compose-instance
+    depends_on:
+      - postgres-18
+    env_file:
+      - ../.env
+    environment:
+      - PROJECTNAME_DATABASE_HOST=postgres-18
+      - PROJECTNAME_DATABASE_PORT=5432
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 10s
+      timeout: 300s
+      retries: 30
+      start_period: 5s
+    image: projectname:${docker_image_tag}
+    networks:
+      - projectname-network
+    ports:
+      - 8080:8000
+    volumes:
+      - projectname-configs-volume:/etc/projectname
+  postgres-18:
+    container_name: projectname-postgres-18-compose-instance
+    env_file:
+      - ../.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 300s
+      retries: 30
+      start_period: 5s
+    image: postgres:18
+    networks:
+      - projectname-network
+    volumes:
+      - postgres-18-volume:/var/lib/postgresql
+networks:
+  projectname-network:
+    name: projectname-compose-network
+    driver: bridge
+volumes:
+  projectname-configs-volume:
+    name: projectname-configs-compose-volume
+  postgres-18-volume:
+    name: projectname-postgres-18-data-compose-volume

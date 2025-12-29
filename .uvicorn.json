@@ -22,8 +22,8 @@
       "propagate": false
     },
     "uvicorn.error": {
-      "handlers": ["null"],
-      "level": "CRITICAL",
+      "handlers": ["console"],
+      "level": "ERROR",
       "propagate": false
     },
     "uvicorn.access": {

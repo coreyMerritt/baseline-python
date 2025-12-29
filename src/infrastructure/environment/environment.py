@@ -15,7 +15,6 @@ class Environment(BaseInfrastructure):
 
   def get_health_report(self) -> EnvironmentHealthReport:
     REQUIRED_ENV_VARS = [
-      EnvVar.DEPLOYMENT_ENVIRONMENT,
       EnvVar.GLOBAL_CONFIG_DIR
     ]
     healthy = True

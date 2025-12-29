@@ -36,5 +36,6 @@ def __assert_all_methods_declare_return_type(classes: List[Class]) -> None:
 """
       assert class_method.return_type != "Undefined", fail_msg
 
+
 if __name__ == "__main__":
   methods_declare_return_type()

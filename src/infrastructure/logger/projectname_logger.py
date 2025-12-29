@@ -24,22 +24,21 @@ from infrastructure.logger.models.logs.simple_log import SimpleLog
 from infrastructure.logger.models.logs.status import Status
 from infrastructure.logger.models.logs.timestamps import Timestamps
 from infrastructure.types.logger_interface import LoggerInterface
-from shared.enums.deployment_environment import DeploymentEnvironment
 from shared.exceptions.undocumented_case_err import UndocumentedCaseErr
 
 
 class ProjectnameLogger(LoggerInterface):
-  _deployment_environment: DeploymentEnvironment
   _console: Console
+  _json: bool
   _level: LoggerLevel
   _zoneinfo: ZoneInfo
 
-  def __init__(self, deployment_environment: DeploymentEnvironment, logger_config: LoggerConfig):
+  def __init__(self, logger_config: LoggerConfig):
     try:
-      if deployment_environment == DeploymentEnvironment.DEV:
+      if not logger_config.json:
         install_rich_tracebacks()
-      self._deployment_environment = deployment_environment
       self._console = Console(force_terminal=True)
+      self._json = logger_config.json
       self._level = logger_config.level
       self._zoneinfo = ZoneInfo(logger_config.timezone.value)
       super().__init__()
@@ -386,18 +385,14 @@ class ProjectnameLogger(LoggerInterface):
     return now.isoformat()
 
   def _print_log(self, log: BaseLog, err: Exception | None) -> None:
-    if self._deployment_environment == DeploymentEnvironment.DEV:
-      self._print_human_log(log, err)
-    elif self._deployment_environment == DeploymentEnvironment.PROD:
-      print(json.dumps(asdict(log), indent=2))
-    elif self._deployment_environment == DeploymentEnvironment.TEST:
+    if self._json:
       print(json.dumps(asdict(log), indent=2))
     else:
-      raise UndocumentedCaseErr()
+      self._print_human_log(log, err)
 
   def _print_human_log(self, log: BaseLog, err: Exception | None) -> None:
     if isinstance(log, SimpleLog):
-      self._print_human_readable_simple_log(log)
+      self._print_human_simple_log(log)
     elif isinstance(log, HTTPRequestLog):
       self._print_human_http_req_log(log)
     elif isinstance(log, HTTPResponseLog):
@@ -409,15 +404,15 @@ class ProjectnameLogger(LoggerInterface):
       self._console.print(Traceback.from_exception(type(err), err, err.__traceback__))
     print("─" * 120)
 
-  def _print_human_readable_simple_log(self, simple_log: SimpleLog) -> None:
-    level = self._get_colored_logger_tag(simple_log.level)
+  def _print_human_simple_log(self, simple_log: SimpleLog) -> None:
+    level = self._get_colored_logger_level_tag(simple_log.level)
     print(f"     Timestamp: {simple_log.timestamps.human}")
     print(f"         Level: {level}")
     print(f"       Message: {simple_log.message}")
 
 
   def _print_human_http_req_log(self, http_req_log: HTTPRequestLog) -> None:
-    level = self._get_colored_logger_tag(http_req_log.level)
+    level = self._get_colored_logger_level_tag(http_req_log.level)
     print(f"     Timestamp: {http_req_log.timestamps.human}")
     print(f"         Level: {level}")
     print(f"       Message: {http_req_log.message}")
@@ -429,7 +424,7 @@ class ProjectnameLogger(LoggerInterface):
     print(f"    User Agent: {http_req_log.user_agent}")
 
   def _print_human_http_res_log(self, http_res_log: HTTPResponseLog) -> None:
-    level = self._get_colored_logger_tag(http_res_log.level)
+    level = self._get_colored_logger_level_tag(http_res_log.level)
     print(f"     Timestamp: {http_res_log.timestamps.human}")
     print(f"         Level: {level}")
     print(f"       Message: {http_res_log.message}")
@@ -439,7 +434,7 @@ class ProjectnameLogger(LoggerInterface):
     print(f"   Status Name: {http_res_log.status.name}")
     print(f" Duration (ms): {http_res_log.duration_ms}")
 
-  def _get_colored_logger_tag(self, logger_level: str) -> str:
+  def _get_colored_logger_level_tag(self, logger_level: str) -> str:
     ll = logger_level.lower()
     if ll == "debug":
       return logger_level

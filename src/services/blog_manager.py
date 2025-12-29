@@ -1,7 +1,7 @@
 from domain.interfaces.repositories.blog_post_repository_interface import BlogPostRepositoryInterface
 from infrastructure.types.logger_interface import LoggerInterface
 from services.base_service import BaseService
-from services.mappers.get_blog_post_mapper import GetBlogPostMapper
+from services.mappers.blog.get_blog_post_mapper import GetBlogPostMapper
 from services.models.outputs.get_blog_post_som import GetBlogPostSOM
 
 
@@ -21,5 +21,5 @@ class BlogManager(BaseService):
       blog_post = self._blog_post_repository.get(user_id, post_number)
     except Exception as e:
       self._raise_service_exception(e)
-    blog_post_som = GetBlogPostMapper.blog_post_to_som(blog_post)
+    blog_post_som = GetBlogPostMapper.entity_to_som(blog_post)
     return blog_post_som

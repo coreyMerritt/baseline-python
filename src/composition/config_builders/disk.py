@@ -13,9 +13,6 @@ def build_final_disk_config(
   disk_config_dict: Dict[str, Any]
 ) -> DiskConfig:
   _ = config_parser.parse_disk_config(disk_config_dict)
-  assert disk_config_dict["maximum_healthy_usage_percentage"], {
-    "maximum_healthy_usage_percentage not in disk configuration file"
-  }
   disk_config_dict["maximum_healthy_usage_percentage"] = get_final_config_var(
     logger=logger,
     config_var=disk_config_dict["maximum_healthy_usage_percentage"],

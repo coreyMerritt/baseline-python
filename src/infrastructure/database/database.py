@@ -1,3 +1,5 @@
+import sys
+import time
 from urllib.parse import quote_plus
 
 from sqlalchemy import Engine
@@ -26,13 +28,15 @@ class Database(BaseInfrastructure):
       host = database_config.host
       port = database_config.port
       name = database_config.name
-      self._engine = create_engine(f"{engine_str}://{username}:{password}@{host}:{port}/{name}")
+      self._engine = create_engine(
+        f"{engine_str}://{username}:{password}@{host}:{port}/{name}",
+        connect_args={"connect_timeout": 5}
+      )
       self._session_factory = sessionmaker(bind=self._engine, future=True, expire_on_commit=False)
       if not getattr(self._engine, "_schema_initialized", False):
         self.create_schema()
         setattr(self._engine, "_schema_initialized", True)
-      self._engine.connect().close()
-      self.can_perform_basic_select()
+      assert self.can_perform_basic_select()
       super().__init__()
     except Exception as e:
       raise DatabaseInitializationErr() from e

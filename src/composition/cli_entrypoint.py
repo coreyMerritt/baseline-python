@@ -1,9 +1,7 @@
 import argparse
-import os
 import sys
 
-from composition.uvicorn_entrypoint import run_webserver
-from infrastructure.environment.models.env_var import EnvVar
+from composition.webserver.uvicorn_entrypoint import run_webserver
 from interfaces.command_line.enums.run_target import RunTarget
 from interfaces.command_line.enums.sub_command import SubCommand
 from interfaces.command_line.exceptions.unknown_command_exception import UnknownCommandException
@@ -26,22 +24,15 @@ def _build_args() -> argparse.Namespace:
   run_subparsers = run_parser.add_subparsers(dest="target", required=True)
   server_parser = run_subparsers.add_parser(RunTarget.SERVER.value)
   server_parser.add_argument(
-    "--env",
-    default=f"{os.getenv(EnvVar.DEPLOYMENT_ENVIRONMENT.value)}",
-    help="Environment: dev|test|prod",
-    required=False,
-    type=str
-  )
-  server_parser.add_argument(
     "--host",
-    default="0.0.0.0",
+    default=None,
     help="Host address to bind to",
     required=False,
     type=str
   )
   server_parser.add_argument(
     "--port",
-    default=8000,
+    default=None,
     help="Host port to bind to",
     required=False,
     type=int
@@ -52,7 +43,7 @@ def _build_args() -> argparse.Namespace:
 def _handle_args_routing(args: argparse.Namespace) -> None:
   if args.command.lower() == SubCommand.RUN.value:
     if args.target.lower() == RunTarget.SERVER.value:
-      run_webserver(args.env, args.host, args.port)
+      run_webserver(args.host, args.port)
     else:
       raise UnknownRunTargetException()
   else:

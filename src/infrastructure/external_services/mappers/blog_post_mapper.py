@@ -1,4 +1,4 @@
-from domain.entities.blog_post import BlogPost
+from domain.core.blog_post import BlogPost
 from infrastructure.external_services.dto.res.blog_post_ext_res import BlogPostExtRes
 
 
