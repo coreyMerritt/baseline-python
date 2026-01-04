@@ -16,6 +16,6 @@ while true; do
   fi
 done
 
-# Run server
+# Run cli entrypoint, pass args
 .venv/bin/python -u ./src/composition/cli_entrypoint.py $@
 exit 0
