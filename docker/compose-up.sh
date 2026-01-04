@@ -11,7 +11,7 @@ docker_image_tag="test-pipelines" && [[ -n "$1" ]] && docker_image_tag="$1"
 set -u
 
 # Vars
-project_name="projectname"
+project_name="foo-project-name"
 docker_env_path="./.env"
 docker_compose_path="./docker/docker-compose.yml"
 
@@ -30,7 +30,7 @@ function safeSed() {
 source "$docker_env_path"
 export POSTGRES_DB
 export POSTGRES_USER
-export COMPOSE_PROJECT_NAME
+export COMPOSE_FOO_PROJECT_NAME
 
 # Ensure we're in the project root
 while true; do
@@ -55,14 +55,14 @@ fi
 # Ensure everything is down before we starting messing with things
 DOCKER_TAG="silences-a-silly-warning" docker compose down || true
 
-is_password="$(cat "$docker_env_path" | grep -oE "PROJECTNAME_DATABASE_PASSWORD=.+")"
+is_password="$(cat "$docker_env_path" | grep -oE "FOO_PROJECT_NAME_DATABASE_PASSWORD=.+")"
 if [[ ! -n "$is_password" ]]; then
   new_password="$(openssl rand -hex 32)"
   POSTGRES_PASSWORD="$new_password"
-  PROJECTNAME_DATABASE_PASSWORD="$new_password"
-  # Replace PROJECTNAME_DATABASE_PASSWORD
-  to_replace="$(cat "$docker_env_path" | grep -E "[.+]?PROJECTNAME_DATABASE_PASSWORD.+")"
-  replacement="PROJECTNAME_DATABASE_PASSWORD=${new_password}"
+  FOO_PROJECT_NAME_DATABASE_PASSWORD="$new_password"
+  # Replace FOO_PROJECT_NAME_DATABASE_PASSWORD
+  to_replace="$(cat "$docker_env_path" | grep -E "[.+]?FOO_PROJECT_NAME_DATABASE_PASSWORD.+")"
+  replacement="FOO_PROJECT_NAME_DATABASE_PASSWORD=${new_password}"
   safeSed "$to_replace" "$replacement" "$docker_env_path"
   # Replace POSTGRES_PASSWORD
   to_replace="$(cat "$docker_env_path" | grep -E "[.+]?POSTGRES_PASSWORD.+")"

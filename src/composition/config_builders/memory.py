@@ -4,12 +4,12 @@ from composition.config_builders._helpers import get_final_config_var
 from infrastructure.config.parser import ConfigParser
 from infrastructure.memory.models.memory_config import MemoryConfig
 from infrastructure.environment.models.env_var import EnvVar
-from infrastructure.logger.projectname_logger import ProjectnameLogger
+from infrastructure.logger.foo_project_name_logger import FooProjectNameLogger
 
 
 def build_final_memory_config(
   config_parser: ConfigParser,
-  logger: ProjectnameLogger,
+  logger: FooProjectNameLogger,
   memory_config_dict: Dict[str, Any]
 ) -> MemoryConfig:
   _ = config_parser.parse_memory_config(memory_config_dict)

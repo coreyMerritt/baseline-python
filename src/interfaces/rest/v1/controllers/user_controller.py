@@ -1,7 +1,7 @@
 import asyncio
 
-from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
-from interfaces.rest.models.projectname_request import ProjectnameRequest
+from interfaces.rest.models.foo_project_name_http_response import FooProjectNameHTTPResponse
+from interfaces.rest.models.foo_project_name_request import FooProjectNameRequest
 from interfaces.rest.v1.dto.req.user.create_user_req import CreateUserReq
 from interfaces.rest.v1.dto.req.user.update_user_req import UpdateUserReq
 from interfaces.rest.v1.mappers.user.create_user_mapper import CreateUserMapper
@@ -13,18 +13,18 @@ from services.exceptions.item_creation_err import ItemCreationErr
 
 
 class UserController:
-  async def get_user(self, req: ProjectnameRequest, ulid: str) -> ProjectnameHTTPResponse:
+  async def get_user(self, req: FooProjectNameRequest, ulid: str) -> FooProjectNameHTTPResponse:
     user_manager = UserManager(
       logger=req.infra.logger,
       user_repository=req.repos.user
     )
     user_som = await asyncio.to_thread(user_manager.get_user, ulid)
     get_user_res = GetUserMapper.som_to_res(user_som)
-    return ProjectnameHTTPResponse(
+    return FooProjectNameHTTPResponse(
       data=get_user_res
     )
 
-  async def create_user(self, req: ProjectnameRequest, body: CreateUserReq) -> ProjectnameHTTPResponse:
+  async def create_user(self, req: FooProjectNameRequest, body: CreateUserReq) -> FooProjectNameHTTPResponse:
     user_manager = UserManager(
       logger=req.infra.logger,
       user_repository=req.repos.user
@@ -34,11 +34,11 @@ class UserController:
     if not create_user_som:
       raise ItemCreationErr()
     create_user_res = CreateUserMapper.som_to_res(create_user_som)
-    return ProjectnameHTTPResponse(
+    return FooProjectNameHTTPResponse(
       data=create_user_res
     )
 
-  async def update_user(self, req: ProjectnameRequest, body: UpdateUserReq) -> ProjectnameHTTPResponse:
+  async def update_user(self, req: FooProjectNameRequest, body: UpdateUserReq) -> FooProjectNameHTTPResponse:
     user_manager = UserManager(
       logger=req.infra.logger,
       user_repository=req.repos.user
@@ -48,17 +48,17 @@ class UserController:
     if not update_user_som:
       raise ItemCreationErr()
     update_user_res = UpdateUserMapper.som_to_res(update_user_som)
-    return ProjectnameHTTPResponse(
+    return FooProjectNameHTTPResponse(
       data=update_user_res
     )
 
-  async def delete_user(self, req: ProjectnameRequest, ulid: str) -> ProjectnameHTTPResponse:
+  async def delete_user(self, req: FooProjectNameRequest, ulid: str) -> FooProjectNameHTTPResponse:
     user_manager = UserManager(
       logger=req.infra.logger,
       user_repository=req.repos.user
     )
     user_som = await asyncio.to_thread(user_manager.delete_user, ulid)
     delete_user_res = DeleteUserMapper.som_to_res(user_som)
-    return ProjectnameHTTPResponse(
+    return FooProjectNameHTTPResponse(
       data=delete_user_res
     )

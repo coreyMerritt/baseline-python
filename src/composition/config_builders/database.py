@@ -4,12 +4,12 @@ from composition.config_builders._helpers import get_final_config_var
 from infrastructure.config.parser import ConfigParser
 from infrastructure.database.models.database_config import DatabaseConfig
 from infrastructure.environment.models.env_var import EnvVar
-from infrastructure.logger.projectname_logger import ProjectnameLogger
+from infrastructure.logger.foo_project_name_logger import FooProjectNameLogger
 
 
 def build_final_database_config(
   config_parser: ConfigParser,
-  logger: ProjectnameLogger,
+  logger: FooProjectNameLogger,
   database_config_dict: Dict[str, Any]
 ) -> DatabaseConfig:
   _ = config_parser.parse_database_config(database_config_dict)

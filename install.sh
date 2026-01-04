@@ -63,35 +63,35 @@ fi
 [[ -f "./.env" ]] && source "./.env" || echo -e "\n\tWARNING: Proceeding without any .env file...\n"
 
 # Config files
-[[ -n "$PROJECTNAME_GLOBAL_CONFIG_DIR" ]]
-[[ -n "$PROJECTNAME_MODEL_CONFIG_DIR" ]]
+[[ -n "$FOO_PROJECT_NAME_GLOBAL_CONFIG_DIR" ]]
+[[ -n "$FOO_PROJECT_NAME_MODEL_CONFIG_DIR" ]]
 config_filenames="$(cat "$config_filenames_path" | grep -v "import" | grep -v "class" | awk '{print $3}' | jq -r)"
 ## Assert all local config models exist
 for config_filename in $config_filenames; do
-  local_model_path="${PROJECTNAME_MODEL_CONFIG_DIR}/${config_filename}"
+  local_model_path="${FOO_PROJECT_NAME_MODEL_CONFIG_DIR}/${config_filename}"
   [[ -f "$local_model_path" ]] || {
     echo -e "\n\tFatal error: $local_model_path does not exist"
     exit 1
   }
 done
 ## Ensure global config dir exists and has reasonable permissions
-[[ -d "$PROJECTNAME_GLOBAL_CONFIG_DIR" ]] || {
-  sudo mkdir "$PROJECTNAME_GLOBAL_CONFIG_DIR"
-  sudo chown "$starting_user:$starting_group" "$PROJECTNAME_GLOBAL_CONFIG_DIR"
+[[ -d "$FOO_PROJECT_NAME_GLOBAL_CONFIG_DIR" ]] || {
+  sudo mkdir "$FOO_PROJECT_NAME_GLOBAL_CONFIG_DIR"
+  sudo chown "$starting_user:$starting_group" "$FOO_PROJECT_NAME_GLOBAL_CONFIG_DIR"
 }
 ## Copy any missing global configs to their respective global dir
 for config_filename in $config_filenames; do
-  local_model_path="${PROJECTNAME_MODEL_CONFIG_DIR}/${config_filename}"
-  global_config_path="${PROJECTNAME_GLOBAL_CONFIG_DIR}/${config_filename}"
+  local_model_path="${FOO_PROJECT_NAME_MODEL_CONFIG_DIR}/${config_filename}"
+  global_config_path="${FOO_PROJECT_NAME_GLOBAL_CONFIG_DIR}/${config_filename}"
   [[ -f "$global_config_path" ]] || {
     sudo cp -r "$local_model_path" "$global_config_path"
   }
 done
-sudo chown -R "$starting_user:$starting_group" "$PROJECTNAME_GLOBAL_CONFIG_DIR"
-sudo find "$PROJECTNAME_GLOBAL_CONFIG_DIR" -type f -exec chmod 644 {} +
+sudo chown -R "$starting_user:$starting_group" "$FOO_PROJECT_NAME_GLOBAL_CONFIG_DIR"
+sudo find "$FOO_PROJECT_NAME_GLOBAL_CONFIG_DIR" -type f -exec chmod 644 {} +
 
 # If is prod install, make binary and toss into /usr/bin
-project_name_as_bin="projectname"
+project_name_as_bin="foo-project-name"
 installation_dir="/usr/bin"
 installation_path="${installation_dir}/${project_name_as_bin}"
 if [[ "$deployment_environment" == "prod" ]]; then

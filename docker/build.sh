@@ -29,14 +29,14 @@ while true; do
 done
 
 # If there's an old image with this name:tag, remove it
-docker rmi "projectname:${docker_image_tag}" 2>/dev/null || true
+docker rmi "foo-project-name:${docker_image_tag}" 2>/dev/null || true
 
 # Do the thing!
 docker build \
   --no-cache \
-  --build-arg "PROJECTNAME_DEPLOYMENT_ENVIRONMENT=${deployment_environment}" \
-  --build-arg "PROJECTNAME_GLOBAL_CONFIG_DIR=${PROJECTNAME_GLOBAL_CONFIG_DIR}" \
-  --build-arg "PROJECTNAME_MODEL_CONFIG_DIR=${PROJECTNAME_MODEL_CONFIG_DIR}" \
+  --build-arg "FOO_PROJECT_NAME_DEPLOYMENT_ENVIRONMENT=${deployment_environment}" \
+  --build-arg "FOO_PROJECT_NAME_GLOBAL_CONFIG_DIR=${FOO_PROJECT_NAME_GLOBAL_CONFIG_DIR}" \
+  --build-arg "FOO_PROJECT_NAME_MODEL_CONFIG_DIR=${FOO_PROJECT_NAME_MODEL_CONFIG_DIR}" \
   --file "$dockerfile_path" \
-  --tag "projectname:${docker_image_tag}" \
+  --tag "foo-project-name:${docker_image_tag}" \
   "."

@@ -8,7 +8,6 @@ __pycache__
 # Packaging Data
 *.spec
 *.egg-info/
-projectname.spec
 build/
 dist/
 

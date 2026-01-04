@@ -1,5 +1,5 @@
-from interfaces.rest.models.projectname_http_data import ProjectnameHTTPData
+from interfaces.rest.models.foo_project_name_http_data import FooProjectNameHTTPData
 
 
-class GetHealthReportRes(ProjectnameHTTPData):
+class GetHealthReportRes(FooProjectNameHTTPData):
   healthy: bool

@@ -12,10 +12,10 @@ database_host="172.17.0.1" && [[ -n "$2" ]] && database_host="$2"
 set -u
 
 # Vars
-project_name="projectname"
+project_name="foo-project-name"
 dot_env_path="./.env"
 volume_name="${project_name}-test-pipelines-volume"
-project_name="projectname"
+project_name="foo-project-name"
 dot_env_path="./.env"
 docker_image_tag="${tag}"
 instance_name="${project_name}-${docker_image_tag}"
@@ -36,16 +36,16 @@ done
 
 # Get global config dir
 source "$dot_env_path"
-[[ -n "$PROJECTNAME_GLOBAL_CONFIG_DIR" ]]
+[[ -n "$FOO_PROJECT_NAME_GLOBAL_CONFIG_DIR" ]]
 
 # Do the thing!
 docker stop $instance_name || true
 docker rm $instance_name || true
 docker run \
   --detach \
-  --env "PROJECTNAME_DATABASE_HOST=${database_host}" \
+  --env "FOO_PROJECT_NAME_DATABASE_HOST=${database_host}" \
   --env-file "$dot_env_path" \
   --name "$instance_name" \
   --publish "8080:8000" \
-  --volume "${volume_name}:${PROJECTNAME_GLOBAL_CONFIG_DIR}" \
+  --volume "${volume_name}:${FOO_PROJECT_NAME_GLOBAL_CONFIG_DIR}" \
   "$project_name:$docker_image_tag"

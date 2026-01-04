@@ -4,12 +4,12 @@ from composition.config_builders._helpers import get_final_config_var
 from infrastructure.config.parser import ConfigParser
 from infrastructure.environment.models.env_var import EnvVar
 from infrastructure.external_services.models.typicode_config import TypicodeConfig
-from infrastructure.logger.projectname_logger import ProjectnameLogger
+from infrastructure.logger.foo_project_name_logger import FooProjectNameLogger
 
 
 def build_final_typicode_config(
   config_parser: ConfigParser,
-  logger: ProjectnameLogger,
+  logger: FooProjectNameLogger,
   typicode_config_dict: Dict[str, Any]
 ) -> TypicodeConfig:
   _ = config_parser.parse_typicode_config(typicode_config_dict)

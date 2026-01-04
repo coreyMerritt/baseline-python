@@ -7,7 +7,7 @@ set -x
 
 # Vars
 deployment_environment="test"
-project_name="projectname"
+project_name="foo-project-name"
 docker_image_tag="test-pipelines"
 instance_name="${project_name}-${docker_image_tag}"
 volume_name="${project_name}-${docker_image_tag}"

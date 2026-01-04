@@ -32,7 +32,7 @@ from infrastructure.external_services.models.external_services_config import Ext
 from infrastructure.external_services.models.typicode_config import TypicodeConfig
 from infrastructure.external_services.typicode_client import TypicodeClient
 from infrastructure.logger.models.logger_config import LoggerConfig
-from infrastructure.logger.projectname_logger import ProjectnameLogger
+from infrastructure.logger.foo_project_name_logger import FooProjectNameLogger
 from infrastructure.memory.memory import Memory
 from infrastructure.memory.models.memory_config import MemoryConfig
 from infrastructure.uvicorn.models.uvicorn_config import UvicornConfig
@@ -63,7 +63,7 @@ def get_uvicorn_config() -> UvicornConfig:
   )
 
 
-def get_instances_dict() -> Dict[str, Any]:
+def get_resources_dict() -> Dict[str, Any]:
   load_dotenv()
   _temp_environment = Environment()
   _temp_config_parser = ConfigParser()
@@ -108,7 +108,7 @@ def _build_configs_dict(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  logger: ProjectnameLogger
+  logger: FooProjectNameLogger
 ) -> Dict[str, Any]:
   cpu_config = _build_cpu_config(
     config_dir=config_dir,
@@ -236,7 +236,7 @@ def _build_cpu_config(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  logger:ProjectnameLogger
+  logger:FooProjectNameLogger
 ) -> CpuConfig:
   cpu_config_path = f"{config_dir}/{ConfigFilenames.CPU.value}"
   cpu_config_dict = disk.read_yaml(cpu_config_path)
@@ -251,7 +251,7 @@ def _build_database_config(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  logger: ProjectnameLogger
+  logger: FooProjectNameLogger
 ) -> DatabaseConfig:
   database_config_path = f"{config_dir}/{ConfigFilenames.DATABASE.value}"
   database_config_dict = disk.read_yaml(database_config_path)
@@ -266,7 +266,7 @@ def _build_disk_config(
   config_dir: str,
   config_parser: ConfigParser,
   temp_disk: Disk,
-  logger: ProjectnameLogger
+  logger: FooProjectNameLogger
 ) -> DiskConfig:
   disk_config_path = f"{config_dir}/{ConfigFilenames.DISK.value}"
   disk_config_dict = temp_disk.read_yaml(disk_config_path)
@@ -281,7 +281,7 @@ def _build_external_services_config(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  logger: ProjectnameLogger
+  logger: FooProjectNameLogger
 ) -> ExternalServicesConfig:
   external_service_config_path = f"{config_dir}/{ConfigFilenames.EXTERNAL_SERVICES.value}"
   external_services_config_dict = disk.read_yaml(external_service_config_path)
@@ -296,7 +296,7 @@ def _build_logger_config(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  temp_logger: ProjectnameLogger | None
+  temp_logger: FooProjectNameLogger | None
 ) -> LoggerConfig:
   logger_config_path = f"{config_dir}/{ConfigFilenames.LOGGER.value}"
   logger_config_dict = disk.read_yaml(logger_config_path)
@@ -311,7 +311,7 @@ def _build_memory_config(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  logger: ProjectnameLogger
+  logger: FooProjectNameLogger
 ) -> MemoryConfig:
   memory_config_path = f"{config_dir}/{ConfigFilenames.MEMORY.value}"
   memory_config_dict = disk.read_yaml(memory_config_path)
@@ -326,7 +326,7 @@ def _build_typicode_config(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  logger: ProjectnameLogger
+  logger: FooProjectNameLogger
 ) -> TypicodeConfig:
   typicode_config_path = f"{config_dir}/{ConfigFilenames.TYPICODE.value}"
   typicode_config_dict = disk.read_yaml(typicode_config_path)
@@ -341,7 +341,7 @@ def _build_uvicorn_config(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  logger: ProjectnameLogger
+  logger: FooProjectNameLogger
 ) -> UvicornConfig:
   uvicorn_config_path = f"{config_dir}/{ConfigFilenames.UVICORN.value}"
   uvicorn_config_dict = disk.read_yaml(uvicorn_config_path)
@@ -368,7 +368,7 @@ def _build_cpu(cpu_config: CpuConfig) -> Cpu:
 
 def _build_database(
   database_config: DatabaseConfig,
-  logger: ProjectnameLogger
+  logger: FooProjectNameLogger
 ) -> Database:
   def _interruptible_sleep(seconds: float) -> None:
     end = time.time() + seconds
@@ -401,8 +401,8 @@ def _build_disk(disk_config: DiskConfig) -> Disk:
 
 def _build_logger(
   logger_config: LoggerConfig
-) -> ProjectnameLogger:
-  return ProjectnameLogger(
+) -> FooProjectNameLogger:
+  return FooProjectNameLogger(
     logger_config=logger_config
   )
 

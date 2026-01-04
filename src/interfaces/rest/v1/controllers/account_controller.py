@@ -1,7 +1,7 @@
 import asyncio
 
-from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
-from interfaces.rest.models.projectname_request import ProjectnameRequest
+from interfaces.rest.models.foo_project_name_http_response import FooProjectNameHTTPResponse
+from interfaces.rest.models.foo_project_name_request import FooProjectNameRequest
 from interfaces.rest.v1.dto.req.account.create_account_req import CreateAccountReq
 from interfaces.rest.v1.dto.req.account.update_account_req import UpdateAccountReq
 from interfaces.rest.v1.mappers.account.create_account_mapper import CreateAccountMapper
@@ -13,7 +13,7 @@ from services.exceptions.item_creation_err import ItemCreationErr
 
 
 class AccountController:
-  async def get_account(self, req: ProjectnameRequest, ulid: str) -> ProjectnameHTTPResponse:
+  async def get_account(self, req: FooProjectNameRequest, ulid: str) -> FooProjectNameHTTPResponse:
     account_manager = AccountManager(
       logger=req.infra.logger,
       account_repository=req.repos.account,
@@ -22,11 +22,11 @@ class AccountController:
     )
     account_som = await asyncio.to_thread(account_manager.get_account, ulid)
     get_account_res = GetAccountMapper.som_to_res(account_som)
-    return ProjectnameHTTPResponse(
+    return FooProjectNameHTTPResponse(
       data=get_account_res
     )
 
-  async def create_account(self, req: ProjectnameRequest, body: CreateAccountReq) -> ProjectnameHTTPResponse:
+  async def create_account(self, req: FooProjectNameRequest, body: CreateAccountReq) -> FooProjectNameHTTPResponse:
     account_manager = AccountManager(
       logger=req.infra.logger,
       account_repository=req.repos.account,
@@ -38,11 +38,11 @@ class AccountController:
     if not create_account_som:
       raise ItemCreationErr()
     create_account_res = CreateAccountMapper.som_to_res(create_account_som)
-    return ProjectnameHTTPResponse(
+    return FooProjectNameHTTPResponse(
       data=create_account_res
     )
 
-  async def update_account(self, req: ProjectnameRequest, body: UpdateAccountReq) -> ProjectnameHTTPResponse:
+  async def update_account(self, req: FooProjectNameRequest, body: UpdateAccountReq) -> FooProjectNameHTTPResponse:
     account_manager = AccountManager(
       logger=req.infra.logger,
       account_repository=req.repos.account,
@@ -54,11 +54,11 @@ class AccountController:
     if not update_account_som:
       raise ItemCreationErr()
     update_account_res = UpdateAccountMapper.som_to_res(update_account_som)
-    return ProjectnameHTTPResponse(
+    return FooProjectNameHTTPResponse(
       data=update_account_res
     )
 
-  async def delete_account(self, req: ProjectnameRequest, ulid: str) -> ProjectnameHTTPResponse:
+  async def delete_account(self, req: FooProjectNameRequest, ulid: str) -> FooProjectNameHTTPResponse:
     account_manager = AccountManager(
       logger=req.infra.logger,
       account_repository=req.repos.account,
@@ -67,6 +67,6 @@ class AccountController:
     )
     account_som = await asyncio.to_thread(account_manager.delete_account, ulid)
     delete_account_res = DeleteAccountMapper.som_to_res(account_som)
-    return ProjectnameHTTPResponse(
+    return FooProjectNameHTTPResponse(
       data=delete_account_res
     )

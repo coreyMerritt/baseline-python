@@ -4,12 +4,12 @@ from composition.config_builders._helpers import get_final_config_var
 from infrastructure.config.parser import ConfigParser
 from infrastructure.logger.models.logger_config import LoggerConfig
 from infrastructure.environment.models.env_var import EnvVar
-from infrastructure.logger.projectname_logger import ProjectnameLogger
+from infrastructure.logger.foo_project_name_logger import FooProjectNameLogger
 
 
 def build_final_logger_config(
   config_parser: ConfigParser,
-  logger: ProjectnameLogger | None,
+  logger: FooProjectNameLogger | None,
   logger_config_dict: Dict[str, Any]
 ) -> LoggerConfig:
   _ = config_parser.parse_logger_config(logger_config_dict)

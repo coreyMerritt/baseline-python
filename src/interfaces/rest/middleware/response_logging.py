@@ -5,8 +5,8 @@ from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from infrastructure.types.logger_interface import LoggerInterface
-from interfaces.rest.mappers.projectname_request_mapper import ProjectnameRequestMapper
-from interfaces.rest.models.projectname_request import ProjectnameRequest
+from interfaces.rest.mappers.foo_project_name_request_mapper import FooProjectNameRequestMapper
+from interfaces.rest.models.foo_project_name_request import FooProjectNameRequest
 
 
 class ResponseLoggingMiddleware(BaseHTTPMiddleware):
@@ -30,8 +30,8 @@ class ResponseLoggingMiddleware(BaseHTTPMiddleware):
         response = await app.exception_handlers[Exception](request, e)
     finally:
       duration_ms = (time.perf_counter() - start) * 1000.0
-      req = ProjectnameRequest(request)
-      raw_http_res_info = ProjectnameRequestMapper.to_raw_http_res_info(
+      req = FooProjectNameRequest(request)
+      raw_http_res_info = FooProjectNameRequestMapper.to_raw_http_res_info(
         req=req,
         status=response.status_code,
         duration_ms=duration_ms)

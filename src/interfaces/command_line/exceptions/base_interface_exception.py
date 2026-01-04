@@ -1,6 +1,6 @@
 from shared.enums.exception_type import ExceptionType
-from shared.exceptions.projectname_exception import ProjectnameException
+from shared.exceptions.foo_project_name_exception import FooProjectNameException
 
 
-class BaseInterfaceException(ProjectnameException):
+class BaseInterfaceException(FooProjectNameException):
   exception_type = ExceptionType.INTERFACE

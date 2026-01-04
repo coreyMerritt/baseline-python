@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from interfaces.rest.models.projectname_http_data import ProjectnameHTTPData
+from interfaces.rest.models.foo_project_name_http_data import FooProjectNameHTTPData
 
 
-class DeleteAccountRes(ProjectnameHTTPData):
+class DeleteAccountRes(FooProjectNameHTTPData):
   ulid: str
   name: str
   status: str

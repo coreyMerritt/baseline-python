@@ -27,7 +27,7 @@ from infrastructure.types.logger_interface import LoggerInterface
 from shared.exceptions.undocumented_case_err import UndocumentedCaseErr
 
 
-class ProjectnameLogger(LoggerInterface):
+class FooProjectNameLogger(LoggerInterface):
   _console: Console
   _json: bool
   _level: LoggerLevel
@@ -44,6 +44,12 @@ class ProjectnameLogger(LoggerInterface):
       super().__init__()
     except Exception as e:
       raise LoggerInitializationErr() from e
+
+  def set_json(self, is_json: bool) -> None:
+    self._json = is_json
+
+  def set_level(self, level: LoggerLevel) -> None:
+    self._level = level
 
   def get_health_report(self) -> LoggerHealthReport:
     return LoggerHealthReport(

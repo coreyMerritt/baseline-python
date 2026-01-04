@@ -2,28 +2,28 @@ import asyncio
 
 from interfaces.rest.health.mappers.get_full_health_report_mapper import GetFullHealthReportMapper
 from interfaces.rest.health.mappers.get_simple_health_report_mapper import GetSimpleHealthReportMapper
-from interfaces.rest.models.projectname_http_response import ProjectnameHTTPResponse
-from interfaces.rest.models.projectname_request import ProjectnameRequest
+from interfaces.rest.models.foo_project_name_http_response import FooProjectNameHTTPResponse
+from interfaces.rest.models.foo_project_name_request import FooProjectNameRequest
 from services.health_manager import HealthManager
 from services.models.outputs.full_health_report_som import FullHealthReportSOM
 
 
 class HealthController:
-  async def get_simple_health_report(self, req: ProjectnameRequest) -> ProjectnameHTTPResponse:
+  async def get_simple_health_report(self, req: FooProjectNameRequest) -> FooProjectNameHTTPResponse:
     health_report_som = await self._get_health_report_som(req)
     get_simple_health_report_res = GetSimpleHealthReportMapper.som_to_res(health_report_som)
-    return ProjectnameHTTPResponse(
+    return FooProjectNameHTTPResponse(
       data=get_simple_health_report_res
     )
 
-  async def get_full_health_report(self, req: ProjectnameRequest) -> ProjectnameHTTPResponse:
+  async def get_full_health_report(self, req: FooProjectNameRequest) -> FooProjectNameHTTPResponse:
     health_report_som = await self._get_health_report_som(req)
     get_full_health_report_res = GetFullHealthReportMapper.som_to_res(health_report_som)
-    return ProjectnameHTTPResponse(
+    return FooProjectNameHTTPResponse(
       data=get_full_health_report_res
     )
 
-  async def _get_health_report_som(self, req: ProjectnameRequest) -> FullHealthReportSOM:
+  async def _get_health_report_som(self, req: FooProjectNameRequest) -> FullHealthReportSOM:
     health_manager = HealthManager(
       logger=req.infra.logger,
       config_parser=req.infra.config_parser,

@@ -1,5 +1,5 @@
 [project]
-name = "PROJECTNAME"
+name = "FOO_PROJECT_NAME"
 version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [
@@ -38,7 +38,7 @@ infra = [
 ]
 
 [project.scripts]
-projectname = "interfaces.command_line.entrypoint:entrypoint"
+foo-project-name = "interfaces.command_line.entrypoint:entrypoint"
 
 [build-system]
 requires = [

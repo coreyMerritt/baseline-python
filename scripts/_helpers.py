@@ -115,7 +115,7 @@ def is_docker_container_running(container_name: str, client: DockerClient) -> bo
 def generate_new_database_info() -> PostgresInfo:
   load_dotenv()
   project_name = get_project_name()
-  global_config_dir = os.getenv("PROJECTNAME_GLOBAL_CONFIG_DIR")
+  global_config_dir = os.getenv("FOO_PROJECT_NAME_GLOBAL_CONFIG_DIR")
   assert global_config_dir
   database_config_path = f"{global_config_dir}/database.yml"
   postgres_username = f"{project_name.lower()}-user"
@@ -136,7 +136,7 @@ def generate_new_database_info() -> PostgresInfo:
 
 def get_existing_database_info(image_version: str) -> PostgresInfo:
   project_name = get_project_name()
-  global_config_dir = os.getenv("PROJECTNAME_GLOBAL_CONFIG_DIR")
+  global_config_dir = os.getenv("FOO_PROJECT_NAME_GLOBAL_CONFIG_DIR")
   assert global_config_dir
   database_config_path = f"{global_config_dir}/database.yml"
   with open(database_config_path, "r", encoding="utf-8") as database_yaml_file:

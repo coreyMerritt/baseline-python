@@ -1,4 +1,4 @@
-export log_path="/tmp/projectname-exit-test.log"
+export log_path="/tmp/foo-project-name-exit-test.log"
 
 function cleanup(){
   killServer

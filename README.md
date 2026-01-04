@@ -3,7 +3,7 @@ This is a foundation project designed to be cloned and used as a starting point 
 Everything in `src` is fully functional, but should be treated as an example, as it is an actual implementation of a simple hypothetical domain.
 
 To adjust this project to your needs:
-1. Run `./scripts/get-projectname-locations.sh` and replace all findings with your project's name. Use your judgement for the context regarding casing/spacing/etc. This script should be removed after this has been addressed.
+1. Run `./scripts/get-foo-project-name-locations.sh` and replace all findings with your project's name. Use your judgement for the context regarding casing/spacing/etc. This script should be removed after this has been addressed.
 2. Hack off any limbs you don't like/need.
     - Don't need a rest api for your tool? Remove `interfaces/rest` and add your own.
     - Don't need a database? Remove `infrastructure/database` and any database references in `src/services`

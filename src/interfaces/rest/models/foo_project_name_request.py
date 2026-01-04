@@ -1,28 +1,28 @@
 from fastapi import Request
 from fastapi.datastructures import URL, Headers
 
-from interfaces.rest.models.infrastructure_collection import InfrastructureCollection
-from interfaces.rest.models.projectname_fastapi import ProjectnameFastAPI
-from interfaces.rest.models.projectname_state import ProjectnameState
-from interfaces.rest.models.repository_collection import RepositoryCollection
+from composition.models.infrastructure_collection import InfrastructureCollection
+from composition.models.repository_collection import RepositoryCollection
+from interfaces.rest.models.foo_project_name_fastapi import FooProjectNameFastAPI
+from interfaces.rest.models.foo_project_name_state import FooProjectNameState
 
 
-class ProjectnameRequest:
+class FooProjectNameRequest:
   def __init__(self, req: Request):
     self._req = req
 
   @property
   def infra(self) -> InfrastructureCollection:
-    state: ProjectnameState = self._req.app.state
-    return state.infra
+    state: FooProjectNameState = self._req.app.state
+    return state.resources.infra
 
   @property
   def repos(self) -> RepositoryCollection:
-    state: ProjectnameState = self._req.app.state
-    return state.repos
+    state: FooProjectNameState = self._req.app.state
+    return state.resources.repos
 
   @property
-  def app(self) -> ProjectnameFastAPI:
+  def app(self) -> FooProjectNameFastAPI:
     return self._req.app
 
   @property
@@ -67,5 +67,5 @@ class ProjectnameRequest:
     return user_agent if user_agent else ""
 
 
-def get_projectname_request(req: Request) -> ProjectnameRequest:
-  return ProjectnameRequest(req)
+def get_foo_project_name_request(req: Request) -> FooProjectNameRequest:
+  return FooProjectNameRequest(req)

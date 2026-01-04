@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
 
-class ProjectnameHTTPData(BaseModel):
+class FooProjectNameHTTPData(BaseModel):
   model_config = {"extra": "allow"}

@@ -2,10 +2,10 @@ from interfaces.rest.exceptions.handlers._400_bad_request import register_400_ba
 from interfaces.rest.exceptions.handlers._404_not_found import register_404_not_found_handlers
 from interfaces.rest.exceptions.handlers._500_internal_server_error import register_500_internal_server_error_handlers
 from interfaces.rest.exceptions.handlers.starlette_override import register_starlette_override
-from interfaces.rest.models.projectname_fastapi import ProjectnameFastAPI
+from interfaces.rest.models.foo_project_name_fastapi import FooProjectNameFastAPI
 
 
-def register_exception_handlers(app: ProjectnameFastAPI) -> ProjectnameFastAPI:
+def register_exception_handlers(app: FooProjectNameFastAPI) -> FooProjectNameFastAPI:
   register_400_bad_request_handlers(app)
   register_404_not_found_handlers(app)
   register_500_internal_server_error_handlers(app)

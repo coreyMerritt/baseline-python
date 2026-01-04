@@ -9,12 +9,12 @@ from composition.webserver.register_routes import register_routes
 from composition.webserver.register_signals import register_signals
 from composition.webserver.shutdown import shutdown
 from composition.webserver.startup import startup
-from interfaces.rest.models.projectname_fastapi import ProjectnameFastAPI
+from interfaces.rest.models.foo_project_name_fastapi import FooProjectNameFastAPI
 
 
-def create_app() -> ProjectnameFastAPI:
+def create_app() -> FooProjectNameFastAPI:
   @asynccontextmanager
-  async def lifespan(app: ProjectnameFastAPI):
+  async def lifespan(app: FooProjectNameFastAPI):
     try:
       await startup(app)
       yield  # Application runs during this period
@@ -24,7 +24,7 @@ def create_app() -> ProjectnameFastAPI:
     finally:
       shutdown(app)
 
-  app = ProjectnameFastAPI()
+  app = FooProjectNameFastAPI()
   app = register_exception_handlers(app)
   app = register_middleware(app=app)
   app = register_routes(app)

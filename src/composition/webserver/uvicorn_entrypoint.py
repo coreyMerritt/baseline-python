@@ -1,6 +1,6 @@
 import uvicorn
 
-from composition.infrastructure_instances import get_uvicorn_config
+from composition.resources import get_uvicorn_config
 
 
 def run_webserver(

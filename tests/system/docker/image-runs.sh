@@ -17,7 +17,7 @@ while true; do
 done
 
 # Vars
-project_name="projectname"
+project_name="foo-project-name"
 docker_image_tag="test-pipelines"
 instance_name="${project_name}-${docker_image_tag}"
 

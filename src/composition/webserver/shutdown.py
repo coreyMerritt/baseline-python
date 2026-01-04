@@ -1,7 +1,7 @@
-from interfaces.rest.models.projectname_fastapi import ProjectnameFastAPI
+from interfaces.rest.models.foo_project_name_fastapi import FooProjectNameFastAPI
 
 
-def shutdown(app: ProjectnameFastAPI) -> None:
-  logger = app.infra.logger
+def shutdown(app: FooProjectNameFastAPI) -> None:
+  logger = app.resources.infra.logger
   logger.info("Shutting down...")
-  app.infra.database.dispose()
+  app.resources.infra.database.dispose()

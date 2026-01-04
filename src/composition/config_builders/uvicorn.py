@@ -4,12 +4,12 @@ from composition.config_builders._helpers import get_final_config_var
 from infrastructure.config.parser import ConfigParser
 from infrastructure.uvicorn.models.uvicorn_config import UvicornConfig
 from infrastructure.environment.models.env_var import EnvVar
-from infrastructure.logger.projectname_logger import ProjectnameLogger
+from infrastructure.logger.foo_project_name_logger import FooProjectNameLogger
 
 
 def build_final_uvicorn_config(
   config_parser: ConfigParser,
-  logger: ProjectnameLogger,
+  logger: FooProjectNameLogger,
   uvicorn_config_dict: Dict[str, Any]
 ) -> UvicornConfig:
   _ = config_parser.parse_uvicorn_config(uvicorn_config_dict)

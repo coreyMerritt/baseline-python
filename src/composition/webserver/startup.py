@@ -1,39 +1,42 @@
 import asyncio
 
-from composition.infrastructure_instances import get_instances_dict
-from interfaces.rest.models.infrastructure_collection import InfrastructureCollection
-from interfaces.rest.models.projectname_fastapi import ProjectnameFastAPI
-from interfaces.rest.models.repository_collection import RepositoryCollection
+from composition.models.app_resources import AppResources
+from composition.models.infrastructure_collection import InfrastructureCollection
+from composition.models.repository_collection import RepositoryCollection
+from composition.resources import get_resources_dict
+from interfaces.rest.models.foo_project_name_fastapi import FooProjectNameFastAPI
 
 
-async def startup(app: ProjectnameFastAPI) -> None:
-  instances = await _get_instances(app)
+async def startup(app: FooProjectNameFastAPI) -> None:
+  resources_dict = await _get_resources_dict(app)
   infra = InfrastructureCollection(
-    config_parser=instances["infra"]["config_parser"],
-    cpu=instances["infra"]["cpu"],
-    database=instances["infra"]["database"],
-    disk=instances["infra"]["disk"],
-    environment=instances["infra"]["environment"],
-    logger=instances["infra"]["logger"],
-    memory=instances["infra"]["memory"],
-    typicode_client=instances["infra"]["typicode_client"]
+    config_parser=resources_dict["infra"]["config_parser"],
+    cpu=resources_dict["infra"]["cpu"],
+    database=resources_dict["infra"]["database"],
+    disk=resources_dict["infra"]["disk"],
+    environment=resources_dict["infra"]["environment"],
+    logger=resources_dict["infra"]["logger"],
+    memory=resources_dict["infra"]["memory"],
+    typicode_client=resources_dict["infra"]["typicode_client"]
   )
   repos = RepositoryCollection(
-    account=instances["repos"]["account"],
-    blog_post=instances["repos"]["blog_post"],
-    membership=instances["repos"]["membership"],
-    role=instances["repos"]["role"],
-    user=instances["repos"]["user"]
+    account=resources_dict["repos"]["account"],
+    blog_post=resources_dict["repos"]["blog_post"],
+    membership=resources_dict["repos"]["membership"],
+    role=resources_dict["repos"]["role"],
+    user=resources_dict["repos"]["user"]
   )
-  app.state.infra = infra
-  app.state.repos = repos
-  app.infra = infra
-  app.repos = repos
-  app.infra.logger.info("Startup successful")
+  resources = AppResources(
+    infra=infra,
+    repos=repos
+  )
+  app.state.resources = resources
+  app.resources = resources
+  app.resources.infra.logger.info("Startup successful")
 
-async def _get_instances(app: ProjectnameFastAPI) -> dict:
+async def _get_resources_dict(app: FooProjectNameFastAPI) -> dict:
   stop_event = app.state.stop_event
-  blocking_task = asyncio.create_task(asyncio.to_thread(get_instances_dict))
+  blocking_task = asyncio.create_task(asyncio.to_thread(get_resources_dict))
   signal_task = asyncio.create_task(stop_event.wait())
   done, _ = await asyncio.wait(
     {blocking_task, signal_task},
@@ -42,5 +45,5 @@ async def _get_instances(app: ProjectnameFastAPI) -> dict:
   if signal_task in done:
     blocking_task.cancel()
     raise KeyboardInterrupt("Startup interrupted by user.")
-  instances = blocking_task.result()
-  return instances
+  resources = blocking_task.result()
+  return resources
