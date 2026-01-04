@@ -10,14 +10,14 @@ from infrastructure.disk.models.disk_health_report import DiskHealthReport
 
 
 class Disk(BaseInfrastructure):
-  _disk_config: DiskConfig
+  _maximum_healthy_usage_percentage: float
 
   def __init__(self, disk_config: DiskConfig):
-    self._disk_config = disk_config
+    self._maximum_healthy_usage_percentage = disk_config.maximum_healthy_usage_percentage
     super().__init__()
 
   def get_health_report(self) -> DiskHealthReport:
-    maximum_healthy_usage_percentage = self._disk_config.maximum_healthy_usage_percentage
+    maximum_healthy_usage_percentage = self._maximum_healthy_usage_percentage
     usage_percentage = self._get_disk_usage_percentage()
     healthy = usage_percentage <= maximum_healthy_usage_percentage
     return DiskHealthReport(

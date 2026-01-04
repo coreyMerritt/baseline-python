@@ -11,12 +11,12 @@ from infrastructure.external_services.models.typicode_health_report import Typic
 
 
 class TypicodeClient(BaseInfrastructure):
-  _external_services_config: ExternalServicesConfig
-  _typicode_config: TypicodeConfig
+  _request_timeout: float
+  _placeholder: str
 
   def __init__(self, external_services_config: ExternalServicesConfig, typicode_config: TypicodeConfig):
-    self._external_services_config = external_services_config
-    self._typicode_config = typicode_config
+    self._request_timeout = external_services_config.request_timeout
+    self._placeholder = typicode_config.placeholder
     super().__init__()
 
   def get_health_report(self) -> TypicodeHealthReport:
@@ -33,7 +33,7 @@ class TypicodeClient(BaseInfrastructure):
     _ = user_id   # This mock-service doesnt actually ask for user_id, but its thematic to ask for it in this fn
     response = requests.get(
       url=f"https://jsonplaceholder.typicode.com/posts/{post_number}",
-      timeout=self._external_services_config.request_timeout
+      timeout=self._request_timeout
     )
     try:
       response.raise_for_status()
