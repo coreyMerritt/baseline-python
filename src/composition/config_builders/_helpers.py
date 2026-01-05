@@ -26,5 +26,5 @@ def get_final_config_var(
       return cast(T, str(override))
     raise UndocumentedCaseErr()
   if logger:
-    logger.warning(f"No override found, using config file for: {env_var.value}", error=None)
+    logger.debug(f"No override found, using config file for: {env_var.value}")
   return config_var

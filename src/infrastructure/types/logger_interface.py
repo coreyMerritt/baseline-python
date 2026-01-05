@@ -1,5 +1,6 @@
 from typing import Protocol
 
+from infrastructure.logger.enums.logger_level import LoggerLevel
 from infrastructure.logger.models.logger_health_report import LoggerHealthReport
 from infrastructure.logger.models.logs.raw_http_request_info import RawHTTPRequestInfo
 from infrastructure.logger.models.logs.raw_http_response_info import RawHTTPResponseInfo
@@ -86,3 +87,5 @@ class LoggerInterface(Protocol):
     error: Exception | None,
     raw_http_res_info: RawHTTPResponseInfo
   ) -> None: ...
+  def set_json(self, is_json: bool) -> None: ...
+  def set_level(self, level: LoggerLevel) -> None: ...
