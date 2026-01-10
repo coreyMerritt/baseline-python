@@ -26,6 +26,7 @@ def entrypoint():
 def build_resources() -> AppResources:
   resources_dict = get_resources_dict()
   infra = InfrastructureCollection(
+    authenticator=resources_dict["infra"]["authenticator"],
     config_parser=resources_dict["infra"]["config_parser"],
     cpu=resources_dict["infra"]["cpu"],
     database=resources_dict["infra"]["database"],

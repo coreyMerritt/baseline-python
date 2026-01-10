@@ -4,6 +4,7 @@ from typing import Any, Dict
 from dotenv import load_dotenv
 import yaml
 
+from composition.config_builders.authenticator import build_final_authenticator_config
 from composition.config_builders.cpu import build_final_cpu_config
 from composition.config_builders.database import build_final_database_config
 from composition.config_builders.disk import build_final_disk_config
@@ -13,6 +14,8 @@ from composition.config_builders.memory import build_final_memory_config
 from composition.config_builders.typicode import build_final_typicode_config
 from composition.config_builders.uvicorn import build_final_uvicorn_config
 from composition.enums.config_filenames import ConfigFilenames
+from infrastructure.auth.authenticator import Authenticator
+from infrastructure.auth.models.authenticator_config import AuthenticatorConfig
 from infrastructure.config.parser import ConfigParser
 from infrastructure.cpu.cpu import Cpu
 from infrastructure.cpu.models.cpu_config import CpuConfig
@@ -110,6 +113,9 @@ def _build_configs_dict(
   disk: Disk,
   logger: FooProjectNameLogger
 ) -> Dict[str, Any]:
+  authenticator_config = _build_authenticator_config(
+    config_parser=config_parser
+  )
   cpu_config = _build_cpu_config(
     config_dir=config_dir,
     config_parser=config_parser,
@@ -159,6 +165,7 @@ def _build_configs_dict(
     logger=logger
   )
   return {
+    "authenticator": authenticator_config,
     "cpu": cpu_config,
     "database": database_config,
     "disk": disk_config,
@@ -172,20 +179,24 @@ def _build_configs_dict(
 def _build_infra_dict(configs_dict: Dict[str, Any]) -> Dict[str, Any]:
   config_parser = ConfigParser()
   environment = Environment()
-  # Logger and Disk first because they're dependencies
+  # Logger, Disk, and Database first because they're dependencies
   logger = _build_logger(
     logger_config=configs_dict["logger"]
   )
   disk = _build_disk(
     disk_config=configs_dict["disk"]
   )
-  # All other Infra
-  cpu = _build_cpu(
-    cpu_config=configs_dict["cpu"]
-  )
   database = _build_database(
     database_config=configs_dict["database"],
     logger=logger
+  )
+  # All other Infra
+  authenticator = _build_authenticator(
+    authenticator_config=configs_dict["authenticator"],
+    database=database
+  )
+  cpu = _build_cpu(
+    cpu_config=configs_dict["cpu"]
   )
   memory = _build_memory(
     memory_config=configs_dict["memory"]
@@ -195,6 +206,7 @@ def _build_infra_dict(configs_dict: Dict[str, Any]) -> Dict[str, Any]:
     typicode_config=configs_dict["typicode"]
   )
   return {
+    "authenticator": authenticator,
     "config_parser": config_parser,
     "cpu": cpu,
     "database": database,
@@ -231,6 +243,12 @@ def _build_repos_dict(configs_dict: Dict[str, Any], database: Database) -> Dict[
   }
 
 #################### Config Builders ####################
+def _build_authenticator_config(
+  config_parser: ConfigParser
+) -> AuthenticatorConfig:
+  return build_final_authenticator_config(
+    config_parser=config_parser
+  )
 
 def _build_cpu_config(
   config_dir: str,
@@ -360,6 +378,12 @@ def _build_temp_disk(config_dir: str, config_parser: ConfigParser) -> Disk:
     raw_disk_config = yaml.safe_load(yaml_file)
     disk_config = config_parser.parse_disk_config(raw_disk_config)
     return Disk(disk_config)
+
+def _build_authenticator(database: Database, authenticator_config: AuthenticatorConfig) -> Authenticator:
+  return Authenticator(
+    database=database,
+    authenticator_config=authenticator_config
+  )
 
 def _build_cpu(cpu_config: CpuConfig) -> Cpu:
   return Cpu(

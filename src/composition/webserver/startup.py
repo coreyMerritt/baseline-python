@@ -10,6 +10,7 @@ from interfaces.rest.models.foo_project_name_fastapi import FooProjectNameFastAP
 async def startup(app: FooProjectNameFastAPI) -> None:
   resources_dict = await _get_resources_dict(app)
   infra = InfrastructureCollection(
+    authenticator=resources_dict["infra"]["authenticator"],
     config_parser=resources_dict["infra"]["config_parser"],
     cpu=resources_dict["infra"]["cpu"],
     database=resources_dict["infra"]["database"],
