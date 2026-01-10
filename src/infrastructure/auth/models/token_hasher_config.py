@@ -2,6 +2,5 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class CreateUserSIM:
-  username: str
-  email_address: str
+class TokenHasherConfig():
+  secret: str

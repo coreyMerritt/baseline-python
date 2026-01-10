@@ -44,6 +44,20 @@ class MembershipRepository(MembershipRepositoryInterface):
     membership_match = MembershipMapper.orm_to_domain(first_membership_orm_match)
     return membership_match
 
+  def get_by_user_ulid(self, user_ulid: str) -> Membership:
+    try:
+      with self._database.get_session() as session:
+        select_statement = select(MembershipORM).where(
+          col(MembershipORM.user_ulid) == user_ulid
+        )
+        first_membership_orm_match = session.exec(select_statement).first()
+    except SQLAlchemyError as e:
+      raise RepositoryUnavailableErr() from e
+    if first_membership_orm_match is None:
+      raise RepositoryNotFoundErr()
+    membership_match = MembershipMapper.orm_to_domain(first_membership_orm_match)
+    return membership_match
+
   def update(self, membership: Membership) -> Membership:
     try:
       with self._database.get_session() as session:

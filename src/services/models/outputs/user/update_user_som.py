@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 
-@dataclass
+@dataclass(frozen=True)
 class UpdateUserSOM:
   ulid: str
   email_address: str

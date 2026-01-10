@@ -2,5 +2,5 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class AuthenticatorConfig():
-  secret: str
+class CreateTokenSOM:
+  token: str

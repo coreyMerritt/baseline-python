@@ -44,6 +44,20 @@ class UserRepository(UserRepositoryInterface):
     user_match = UserMapper.orm_to_domain(first_user_orm_match)
     return user_match
 
+  def get_by_username(self, username: str) -> User:
+    try:
+      with self._database.get_session() as session:
+        select_statement = select(UserORM).where(
+          col(UserORM.username) == username
+        )
+        first_user_orm_match = session.exec(select_statement).first()
+    except SQLAlchemyError as e:
+      raise RepositoryUnavailableErr() from e
+    if first_user_orm_match is None:
+      raise RepositoryNotFoundErr()
+    user_match = UserMapper.orm_to_domain(first_user_orm_match)
+    return user_match
+
   def update(self, user: User) -> User:
     try:
       with self._database.get_session() as session:

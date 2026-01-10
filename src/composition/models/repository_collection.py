@@ -1,16 +1,17 @@
 from dataclasses import dataclass
 
-from infrastructure.database.repositories.account_repository import AccountRepository
-from infrastructure.database.repositories.membership_repository import MembershipRepository
-from infrastructure.database.repositories.role_repository import RoleRepository
-from infrastructure.database.repositories.user_repository import UserRepository
-from infrastructure.external_services.blog_post_repository import BlogPostRepository
-
+from domain.interfaces.repositories.account_repository_interface import AccountRepositoryInterface
+from domain.interfaces.repositories.blog_post_repository_interface import BlogPostRepositoryInterface
+from domain.interfaces.repositories.membership_repository_interface import MembershipRepositoryInterface
+from domain.interfaces.repositories.role_repository_interface import RoleRepositoryInterface
+from domain.interfaces.repositories.user_credential_repository_interface import UserCredentialRepositoryInterface
+from domain.interfaces.repositories.user_repository_interface import UserRepositoryInterface
 
 @dataclass
 class RepositoryCollection:
-  account: AccountRepository
-  blog_post: BlogPostRepository
-  membership: MembershipRepository
-  role: RoleRepository
-  user: UserRepository
+  account: AccountRepositoryInterface
+  blog_post: BlogPostRepositoryInterface
+  membership: MembershipRepositoryInterface
+  role: RoleRepositoryInterface
+  user: UserRepositoryInterface
+  user_credential: UserCredentialRepositoryInterface

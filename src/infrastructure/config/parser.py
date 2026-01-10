@@ -2,7 +2,8 @@ from typing import Any
 
 from dacite import Config, from_dict
 
-from infrastructure.auth.models.authenticator_config import AuthenticatorConfig
+from infrastructure.auth.models.token_hasher_config import TokenHasherConfig
+from infrastructure.auth.models.token_issuer_config import TokenIssuerConfig
 from infrastructure.base_infrastructure import BaseInfrastructure
 from infrastructure.config.exceptions.config_parser_err import ConfigParserErr
 from infrastructure.config.models.config_parser_health_report import ConfigParserHealthReport
@@ -39,18 +40,6 @@ class ConfigParser(BaseInfrastructure):
     return ConfigParserHealthReport(
       healthy=True
     )
-
-  def parse_authenticator_config(self, some_data: Any) -> AuthenticatorConfig:
-    try:
-      return from_dict(
-        data_class=AuthenticatorConfig,
-        data=some_data,
-        config=self._default_config
-      )
-    except Exception as e:
-      raise ConfigParserErr(
-        config_name="Authenticator Config"
-      ) from e
 
   def parse_cpu_config(self, some_data: Any) -> CpuConfig:
     try:
@@ -122,6 +111,30 @@ class ConfigParser(BaseInfrastructure):
     except Exception as e:
       raise ConfigParserErr(
         config_name="Memory Config"
+      ) from e
+
+  def parse_token_hasher_config(self, some_data: Any) -> TokenHasherConfig:
+    try:
+      return from_dict(
+        data_class=TokenHasherConfig,
+        data=some_data,
+        config=self._default_config
+      )
+    except Exception as e:
+      raise ConfigParserErr(
+        config_name="TokenHasher Config"
+      ) from e
+
+  def parse_token_issuer_config(self, some_data: Any) -> TokenIssuerConfig:
+    try:
+      return from_dict(
+        data_class=TokenIssuerConfig,
+        data=some_data,
+        config=self._default_config
+      )
+    except Exception as e:
+      raise ConfigParserErr(
+        config_name="TokenIssuer Config"
       ) from e
 
   def parse_typicode_config(self, some_data: Any) -> TypicodeConfig:

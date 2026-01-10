@@ -2,6 +2,6 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class CreateUserSIM:
+class CreateTokenSIM:
   username: str
-  email_address: str
+  password: str

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from domain.enums.account_status import AccountStatus
 
 
-@dataclass
+@dataclass(frozen=True)
 class UpdateAccountSIM:
   ulid: str
   name: str

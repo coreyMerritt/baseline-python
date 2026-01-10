@@ -4,7 +4,7 @@ from datetime import datetime
 from domain.enums.account_status import AccountStatus
 
 
-@dataclass
+@dataclass(frozen=True)
 class DeleteAccountSOM:
   ulid: str
   name: str

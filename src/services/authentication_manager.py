@@ -1,0 +1,58 @@
+from domain.interfaces.repositories.membership_repository_interface import MembershipRepositoryInterface
+from domain.interfaces.repositories.user_credential_repository_interface import UserCredentialRepositoryInterface
+from domain.interfaces.repositories.user_repository_interface import UserRepositoryInterface
+from infrastructure.auth.password_verifier import PasswordVerifier
+from infrastructure.auth.token_issuer import TokenIssuer
+from infrastructure.types.logger_interface import LoggerInterface
+from services.base_service import BaseService
+from services.exceptions.invalid_credentials_err import InvalidCredentialsErr
+from services.mappers.auth.create_token_mapper import CreateTokenMapper
+from services.models.inputs.auth.create_token_sim import CreateTokenSIM
+from services.models.outputs.auth.create_token_som import CreateTokenSOM
+
+
+class AuthenticationManager(BaseService):
+  _membership_repository: MembershipRepositoryInterface
+  _user_repository: UserRepositoryInterface
+  _user_credential_repository: UserCredentialRepositoryInterface
+  _password_verifier: PasswordVerifier
+  _token_issuer: TokenIssuer
+
+  def __init__(
+    self,
+    logger: LoggerInterface,
+    membership_repository: MembershipRepositoryInterface,
+    user_repository: UserRepositoryInterface,
+    user_credential_repository: UserCredentialRepositoryInterface,
+    password_verifier: PasswordVerifier,
+    token_issuer: TokenIssuer,
+  ):
+    self._membership_repository = membership_repository
+    self._user_repository = user_repository
+    self._user_credential_repository = user_credential_repository
+    self._password_verifier = password_verifier
+    self._token_issuer = token_issuer
+    super().__init__(logger)
+
+  def create_token(self, sim: CreateTokenSIM) -> CreateTokenSOM:
+    self._logger.debug("Attempting authentication")
+
+    try:
+      user = self._user_repository.get_by_username(sim.username)
+      credentials = self._user_credential_repository.get(user.ulid)
+    except Exception as e:
+      self._raise_service_exception(e)
+
+    if not self._password_verifier.verify(
+      plaintext=sim.password,
+      hashed=credentials.password_hash,
+    ):
+      self._logger.warning("Authentication failed: invalid credentials", error=None)
+      raise InvalidCredentialsErr()
+    membership = self._membership_repository.get(user.ulid)
+    token = self._token_issuer.issue(
+      user_ulid=user.ulid,
+      account_ulid=membership.account_ulid,
+    )
+    self._logger.debug(f"Issued auth token for user {user.ulid}")
+    return CreateTokenMapper.token_to_som(token)

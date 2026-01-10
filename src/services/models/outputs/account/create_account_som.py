@@ -4,7 +4,7 @@ from datetime import datetime
 from domain.enums.account_status import AccountStatus
 
 
-@dataclass
+@dataclass(frozen=True)
 class CreateAccountSOM:
   ulid: str
   name: str

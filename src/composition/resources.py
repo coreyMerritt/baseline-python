@@ -4,18 +4,23 @@ from typing import Any, Dict
 from dotenv import load_dotenv
 import yaml
 
-from composition.config_builders.authenticator import build_final_authenticator_config
+from composition.config_builders.token_hasher import build_final_token_hasher_config
 from composition.config_builders.cpu import build_final_cpu_config
 from composition.config_builders.database import build_final_database_config
 from composition.config_builders.disk import build_final_disk_config
 from composition.config_builders.external_services import build_final_external_services_config
 from composition.config_builders.logger import build_final_logger_config
 from composition.config_builders.memory import build_final_memory_config
+from composition.config_builders.token_issuer import build_final_token_issuer_config
 from composition.config_builders.typicode import build_final_typicode_config
 from composition.config_builders.uvicorn import build_final_uvicorn_config
 from composition.enums.config_filenames import ConfigFilenames
 from infrastructure.auth.authenticator import Authenticator
-from infrastructure.auth.models.authenticator_config import AuthenticatorConfig
+from infrastructure.auth.models.token_issuer_config import TokenIssuerConfig
+from infrastructure.auth.password_verifier import PasswordVerifier
+from infrastructure.auth.token_hasher import TokenHasher
+from infrastructure.auth.models.token_hasher_config import TokenHasherConfig
+from infrastructure.auth.token_issuer import TokenIssuer
 from infrastructure.config.parser import ConfigParser
 from infrastructure.cpu.cpu import Cpu
 from infrastructure.cpu.models.cpu_config import CpuConfig
@@ -25,6 +30,7 @@ from infrastructure.database.models.database_config import DatabaseConfig
 from infrastructure.database.repositories.account_repository import AccountRepository
 from infrastructure.database.repositories.membership_repository import MembershipRepository
 from infrastructure.database.repositories.role_repository import RoleRepository
+from infrastructure.database.repositories.user_credential_repository import UserCredentialRepository
 from infrastructure.database.repositories.user_repository import UserRepository
 from infrastructure.disk.disk import Disk
 from infrastructure.disk.models.disk_config import DiskConfig
@@ -113,7 +119,7 @@ def _build_configs_dict(
   disk: Disk,
   logger: FooProjectNameLogger
 ) -> Dict[str, Any]:
-  authenticator_config = _build_authenticator_config(
+  token_hasher_config = _build_token_hasher_config(
     config_parser=config_parser
   )
   cpu_config = _build_cpu_config(
@@ -152,6 +158,15 @@ def _build_configs_dict(
     disk=disk,
     logger=logger
   )
+  token_hasher_config = _build_token_hasher_config(
+    config_parser=config_parser
+  )
+  token_issuer_config = _build_token_issuer_config(
+    config_dir=config_dir,
+    config_parser=config_parser,
+    disk=disk,
+    logger=logger
+  )
   typicode_config = _build_typicode_config(
     config_dir=config_dir,
     config_parser=config_parser,
@@ -165,13 +180,14 @@ def _build_configs_dict(
     logger=logger
   )
   return {
-    "authenticator": authenticator_config,
     "cpu": cpu_config,
     "database": database_config,
     "disk": disk_config,
     "external_services": external_services_config,
     "logger": logger_config,
     "memory": memory_config,
+    "token_hasher": token_hasher_config,
+    "token_issuer": token_issuer_config,
     "typicode": typicode_config,
     "uvicorn": uvicorn_config
   }
@@ -179,7 +195,7 @@ def _build_configs_dict(
 def _build_infra_dict(configs_dict: Dict[str, Any]) -> Dict[str, Any]:
   config_parser = ConfigParser()
   environment = Environment()
-  # Logger, Disk, and Database first because they're dependencies
+  # Build these first because they're dependencies
   logger = _build_logger(
     logger_config=configs_dict["logger"]
   )
@@ -190,16 +206,25 @@ def _build_infra_dict(configs_dict: Dict[str, Any]) -> Dict[str, Any]:
     database_config=configs_dict["database"],
     logger=logger
   )
+  token_hasher = _build_token_hasher(
+    token_hasher_config=configs_dict["token_hasher"]
+  )
   # All other Infra
   authenticator = _build_authenticator(
-    authenticator_config=configs_dict["authenticator"],
-    database=database
+    database=database,
+    token_hasher=token_hasher
   )
   cpu = _build_cpu(
     cpu_config=configs_dict["cpu"]
   )
   memory = _build_memory(
     memory_config=configs_dict["memory"]
+  )
+  password_verifier = _build_password_verifier()
+  token_issuer = _build_token_issuer(
+    token_issuer_config=configs_dict["token_issuer"],
+    database=database,
+    token_hasher=token_hasher
   )
   typicode_client = _build_typicode_client(
     external_services_config=configs_dict["external_services"],
@@ -214,6 +239,9 @@ def _build_infra_dict(configs_dict: Dict[str, Any]) -> Dict[str, Any]:
     "environment": environment,
     "logger": logger,
     "memory": memory,
+    "password_verifier": password_verifier,
+    "token_hasher": token_hasher,
+    "token_issuer": token_issuer,
     "typicode_client": typicode_client
   }
 
@@ -234,22 +262,19 @@ def _build_repos_dict(configs_dict: Dict[str, Any], database: Database) -> Dict[
   user_repository = UserRepository(
     database=database
   )
+  user_credential_repository = UserCredentialRepository(
+    database=database
+  )
   return {
     "account": account_repository,
     "blog_post": blog_post_repository,
     "membership": membership_repository,
     "role": role_repository,
-    "user": user_repository
+    "user": user_repository,
+    "user_credential": user_credential_repository
   }
 
 #################### Config Builders ####################
-def _build_authenticator_config(
-  config_parser: ConfigParser
-) -> AuthenticatorConfig:
-  return build_final_authenticator_config(
-    config_parser=config_parser
-  )
-
 def _build_cpu_config(
   config_dir: str,
   config_parser: ConfigParser,
@@ -340,6 +365,27 @@ def _build_memory_config(
     memory_config_dict=memory_config_dict
   )
 
+def _build_token_hasher_config(
+  config_parser: ConfigParser
+) -> TokenHasherConfig:
+  return build_final_token_hasher_config(
+    config_parser=config_parser
+  )
+
+def _build_token_issuer_config(
+  config_dir: str,
+  config_parser: ConfigParser,
+  disk: Disk,
+  logger: FooProjectNameLogger
+) -> TokenIssuerConfig:
+  token_issuer_config_path = f"{config_dir}/{ConfigFilenames.TOKEN_ISSUER.value}"
+  token_issuer_config_dict = disk.read_yaml(token_issuer_config_path)
+  assert isinstance(token_issuer_config_dict, dict)
+  return build_final_token_issuer_config(
+    config_parser=config_parser,
+    logger=logger,
+    token_issuer_config_dict=token_issuer_config_dict
+  )
 def _build_typicode_config(
   config_dir: str,
   config_parser: ConfigParser,
@@ -379,10 +425,13 @@ def _build_temp_disk(config_dir: str, config_parser: ConfigParser) -> Disk:
     disk_config = config_parser.parse_disk_config(raw_disk_config)
     return Disk(disk_config)
 
-def _build_authenticator(database: Database, authenticator_config: AuthenticatorConfig) -> Authenticator:
+def _build_authenticator(
+  database: Database,
+  token_hasher: TokenHasher
+) -> Authenticator:
   return Authenticator(
     database=database,
-    authenticator_config=authenticator_config
+    token_hasher=token_hasher
   )
 
 def _build_cpu(cpu_config: CpuConfig) -> Cpu:
@@ -433,6 +482,25 @@ def _build_logger(
 def _build_memory(memory_config: MemoryConfig) -> Memory:
   return Memory(
     memory_config=memory_config
+  )
+
+def _build_password_verifier() -> PasswordVerifier:
+  return PasswordVerifier()
+
+def _build_token_hasher(token_hasher_config: TokenHasherConfig) -> TokenHasher:
+  return TokenHasher(
+    token_hasher_config=token_hasher_config
+  )
+
+def _build_token_issuer(
+  token_issuer_config: TokenIssuerConfig,
+  database: Database,
+  token_hasher: TokenHasher
+) -> TokenIssuer:
+  return TokenIssuer(
+    token_issuer_config=token_issuer_config,
+    database=database,
+    token_hasher=token_hasher
   )
 
 def _build_typicode_client(

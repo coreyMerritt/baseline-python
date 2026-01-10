@@ -18,6 +18,9 @@ async def startup(app: FooProjectNameFastAPI) -> None:
     environment=resources_dict["infra"]["environment"],
     logger=resources_dict["infra"]["logger"],
     memory=resources_dict["infra"]["memory"],
+    password_verifier=resources_dict["infra"]["password_verifier"],
+    token_hasher=resources_dict["infra"]["token_hasher"],
+    token_issuer=resources_dict["infra"]["token_issuer"],
     typicode_client=resources_dict["infra"]["typicode_client"]
   )
   repos = RepositoryCollection(
@@ -25,7 +28,8 @@ async def startup(app: FooProjectNameFastAPI) -> None:
     blog_post=resources_dict["repos"]["blog_post"],
     membership=resources_dict["repos"]["membership"],
     role=resources_dict["repos"]["role"],
-    user=resources_dict["repos"]["user"]
+    user=resources_dict["repos"]["user"],
+    user_credential=resources_dict["repos"]["user_credential"]
   )
   resources = AppResources(
     infra=infra,

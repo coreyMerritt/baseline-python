@@ -1,11 +1,8 @@
-from domain.enums.membership_status import MembershipStatus
 from domain.interfaces.repositories.account_repository_interface import AccountRepositoryInterface
-from infrastructure.database.repositories.membership_repository import MembershipRepository
-from infrastructure.database.repositories.role_repository import RoleRepository
+from domain.interfaces.repositories.membership_repository_interface import MembershipRepositoryInterface
+from domain.interfaces.repositories.role_repository_interface import RoleRepositoryInterface
 from infrastructure.types.logger_interface import LoggerInterface
 from services.base_service import BaseService
-from services.exceptions.account_deleted_err import AccountDeletedErr
-from services.exceptions.account_suspended_err import AccountSuspendedErr
 from services.mappers.account.create_account_mapper import CreateAccountMapper
 from services.mappers.account.delete_account_mapper import DeleteAccountMapper
 from services.mappers.account.get_account_mapper import GetAccountMapper
@@ -20,15 +17,15 @@ from services.models.outputs.account.update_account_som import UpdateAccountSOM
 
 class AccountManager(BaseService):
   _account_repository: AccountRepositoryInterface
-  _membership_repository: MembershipRepository
-  _role_repository: RoleRepository
+  _membership_repository: MembershipRepositoryInterface
+  _role_repository: RoleRepositoryInterface
 
   def __init__(
     self,
     logger: LoggerInterface,
     account_repository: AccountRepositoryInterface,
-    membership_repository: MembershipRepository,
-    role_repository: RoleRepository
+    membership_repository: MembershipRepositoryInterface,
+    role_repository: RoleRepositoryInterface
   ):
     self._account_repository = account_repository
     self._membership_repository = membership_repository

@@ -8,5 +8,6 @@ class ConfigFilenames(str, Enum):
   EXTERNAL_SERVICES = "external_services.yml"
   LOGGER = "logger.yml"
   MEMORY = "memory.yml"
+  TOKEN_ISSUER = "token_issuer.yml"
   TYPICODE = "typicode.yml"
   UVICORN = "uvicorn.yml"
