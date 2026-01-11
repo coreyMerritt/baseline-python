@@ -1,6 +1,6 @@
 services:
-  foo-project-name:
-    container_name: foo-project-name-compose-instance
+  foo_project_name:
+    container_name: foo_project_name
     depends_on:
       - postgres-18
     env_file:
@@ -14,15 +14,15 @@ services:
       timeout: 300s
       retries: 30
       start_period: 5s
-    image: foo-project-name:${docker_image_tag}
+    image: foo_project_name:${docker_image_tag}
     networks:
-      - foo-project-name-network
+      - foo_project_name_network
     ports:
       - 8080:8000
     volumes:
-      - foo-project-name-configs-volume:/etc/foo-project-name
+      - foo_project_name_configs:/etc/foo_project_name
   postgres-18:
-    container_name: foo-project-name-postgres-18-compose-instance
+    container_name: foo_project_name_postgres_18
     env_file:
       - ../.env
     healthcheck:
@@ -33,15 +33,15 @@ services:
       start_period: 5s
     image: postgres:18
     networks:
-      - foo-project-name-network
+      - foo_project_name_network
     volumes:
       - postgres-18-volume:/var/lib/postgresql
 networks:
-  foo-project-name-network:
-    name: foo-project-name-compose-network
+  foo_project_name_network:
+    name: foo_project_name_network
     driver: bridge
 volumes:
-  foo-project-name-configs-volume:
-    name: foo-project-name-configs-compose-volume
+  foo_project_name_configs:
+    name: foo_project_name_configs
   postgres-18-volume:
-    name: foo-project-name-postgres-18-data-compose-volume
+    name: foo_project_name_postgres_18_data

@@ -1,6 +1,6 @@
 import argparse
 import sys
-from typing import Any, Callable
+from typing import Callable
 
 from infrastructure.config.parser import ConfigParser
 from infrastructure.cpu.cpu import Cpu
@@ -22,7 +22,7 @@ def add_default_command() -> None:
     sys.argv = [sys.argv[0], "run", "server"]
 
 def build_args() -> argparse.Namespace:
-  parser = argparse.ArgumentParser(prog="foo-project-name")
+  parser = argparse.ArgumentParser(prog="foo_project_name")
   subparsers = parser.add_subparsers(dest="command", required=True)
   get_parser = subparsers.add_parser(SubCommand.GET.value)
   get_subparsers = get_parser.add_subparsers(dest="target", required=True)

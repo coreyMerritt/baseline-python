@@ -121,7 +121,7 @@ def generate_new_database_info() -> PostgresInfo:
   postgres_username = f"{project_name.lower()}-user"
   postgres_password = _generate_password(32)
   postgres_dbname = f"{project_name.lower()}"
-  host_port = 5434  # FIXME
+  host_port = 5432
   image_version = "18"
   container_name = f"postgres-{image_version}-{project_name.lower()}"
   return PostgresInfo(

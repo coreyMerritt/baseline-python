@@ -6,11 +6,12 @@ set -o pipefail
 set -x
 
 # Vars
+source ./.env
 deployment_environment="test"
-project_name="foo-project-name"
-docker_image_tag="test-pipelines"
-instance_name="${project_name}-${docker_image_tag}"
-volume_name="${project_name}-${docker_image_tag}"
+project_name="$FOO_PROJECT_NAME_PROJECT_NAME"
+docker_image_tag="test_pipelines"
+instance_name="${project_name}_${docker_image_tag}"
+volume_name="${project_name}_${docker_image_tag}"
 
 # Ensure we're in the project root
 while true; do
@@ -25,7 +26,7 @@ done
 source "./tests/system/docker/_helpers.sh"
 
 # Ensure test resources exist
-fullCleanup
+fullCleanup "$docker_image_tag"
 set +u
 if ! docker images --format "{{.Repository}}:{{.Tag}}" | grep "$project_name" | grep "$docker_image_tag"; then
   ./docker/build.sh "test" "$docker_image_tag"
@@ -38,5 +39,5 @@ softCleanup
 bash "./tests/system/docker/docker-compose-runs.sh"
 
 # Cleanup
-fullCleanup
+fullCleanup "$docker_image_tag"
 exit 0

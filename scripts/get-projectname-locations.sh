@@ -31,6 +31,21 @@ grep \
   --exclude-dir "backups" \
   --exclude-dir ".git" \
   --exclude-dir ".venv" \
+  "foo_project_name" \
+  "." \
+  2>/dev/null
+
+grep \
+  --color \
+  --recursive \
+  --line-number \
+  --ignore-case \
+  --exclude "deploy_db.log" \
+  --exclude-dir "*cache*" \
+  --exclude-dir "*egg-info*" \
+  --exclude-dir "backups" \
+  --exclude-dir ".git" \
+  --exclude-dir ".venv" \
   "project_name" \
   "." \
   2>/dev/null

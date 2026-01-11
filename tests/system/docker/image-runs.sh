@@ -17,9 +17,10 @@ while true; do
 done
 
 # Vars
-project_name="foo-project-name"
-docker_image_tag="test-pipelines"
-instance_name="${project_name}-${docker_image_tag}"
+source ./.env
+project_name="$FOO_PROJECT_NAME_PROJECT_NAME"
+docker_image_tag="test_pipelines"
+instance_name="${project_name}_${docker_image_tag}"
 
 # Test
 ./docker/run.sh "$docker_image_tag"
@@ -28,7 +29,7 @@ container_is_healthy=0
 didnt_time_out=0
 start_time=$(date +%s)
 while (( $(date +%s) - start_time < timeout )); do
-  if res="$(docker exec -it "$instance_name" curl --silent http://localhost:8000/api/health/full | jq)"; then
+  if res="$(docker exec -it "$instance_name" curl --silent http://localhost:8000/api/health | jq)"; then
     healthy="$(echo "$res" | jq .data.healthy)"
     if [[ "$healthy" == "true" ]]; then
       didnt_time_out=1

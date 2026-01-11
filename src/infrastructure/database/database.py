@@ -1,5 +1,3 @@
-import sys
-import time
 from urllib.parse import quote_plus
 
 from sqlalchemy import Engine

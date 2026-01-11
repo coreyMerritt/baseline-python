@@ -14,5 +14,5 @@ function killServer() {
 
 function startServer() {
   killServer
-  bash "./start-server.sh" > "$log_path" 2>&1 &
+  bash "./run-server.sh" > "$log_path" 2>&1 &
 }

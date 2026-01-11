@@ -90,6 +90,7 @@ confidence=
 disable=bad-inline-option,raw-checker-failed,
         broad-exception-caught,
         deprecated-pragma,
+        duplicate-code,
         file-ignored,
         global-statement,
         locally-disabled,
@@ -102,7 +103,8 @@ disable=bad-inline-option,raw-checker-failed,
         too-many-positional-arguments,
         use-symbolic-message-instead,
         useless-suppression,
-        unidiomatic-typecheck
+        unidiomatic-typecheck,
+        wrong-import-order
 
 # Enable the message, report, category or checker with the given ulid(s). You can
 # either give multiple identifier separated by comma (,) or put this option

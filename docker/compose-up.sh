@@ -7,30 +7,27 @@ set -x
 
 # Args
 set +u
-docker_image_tag="test-pipelines" && [[ -n "$1" ]] && docker_image_tag="$1"
+docker_image_tag="test_pipelines" && [[ -n "$1" ]] && docker_image_tag="$1"
 set -u
 
 # Vars
-project_name="foo-project-name"
-docker_env_path="./.env"
+source "./.env"
+export POSTGRES_DB
+export POSTGRES_USER
+export COMPOSE_FOO_PROJECT_NAME
+project_name="$FOO_PROJECT_NAME_PROJECT_NAME"
 docker_compose_path="./docker/docker-compose.yml"
 
 # Functions
 function safeSed() {
   to_replace="$1"
   replacement="$2"
-  docker_env_path="$3"
   tmp=$(mktemp)
-  sed "s/$to_replace/$replacement/g" "$docker_env_path" > "$tmp"
-  cat "$tmp" > "$docker_env_path"   # writes through the symlink, a direct write would break symlinks
+  sed "s/$to_replace/$replacement/g" "./.env" > "$tmp"
+  cat "$tmp" > "./.env"   # writes through the symlink, a direct write would break symlinks
   rm "$tmp"
 }
 
-# docker-compose will need these for parse-time vars
-source "$docker_env_path"
-export POSTGRES_DB
-export POSTGRES_USER
-export COMPOSE_FOO_PROJECT_NAME
 
 # Ensure we're in the project root
 while true; do
@@ -53,21 +50,21 @@ if ! which yq; then
 fi
 
 # Ensure everything is down before we starting messing with things
-DOCKER_TAG="silences-a-silly-warning" docker compose down || true
+DOCKER_TAG="silences-a-silly-warning" docker compose --file "./docker/docker-compose.yml" down || true
 
-is_password="$(cat "$docker_env_path" | grep -oE "FOO_PROJECT_NAME_DATABASE_PASSWORD=.+")"
+is_password="$(cat "./.env" | grep -oE "FOO_PROJECT_NAME_DATABASE_PASSWORD=.+")"
 if [[ ! -n "$is_password" ]]; then
   new_password="$(openssl rand -hex 32)"
   POSTGRES_PASSWORD="$new_password"
   FOO_PROJECT_NAME_DATABASE_PASSWORD="$new_password"
   # Replace FOO_PROJECT_NAME_DATABASE_PASSWORD
-  to_replace="$(cat "$docker_env_path" | grep -E "[.+]?FOO_PROJECT_NAME_DATABASE_PASSWORD.+")"
+  to_replace="$(cat "./.env" | grep -E "[.+]?FOO_PROJECT_NAME_DATABASE_PASSWORD.+")"
   replacement="FOO_PROJECT_NAME_DATABASE_PASSWORD=${new_password}"
-  safeSed "$to_replace" "$replacement" "$docker_env_path"
+  safeSed "$to_replace" "$replacement" "./.env"
   # Replace POSTGRES_PASSWORD
-  to_replace="$(cat "$docker_env_path" | grep -E "[.+]?POSTGRES_PASSWORD.+")"
+  to_replace="$(cat "./.env" | grep -E "[.+]?POSTGRES_PASSWORD.+")"
   replacement="POSTGRES_PASSWORD=${new_password}"
-  safeSed "$to_replace" "$replacement" "$docker_env_path"
+  safeSed "$to_replace" "$replacement" "./.env"
 fi
 # Ensure we're not trying to remount a used volume
 docker_compose_path="./docker/docker-compose.yml"
