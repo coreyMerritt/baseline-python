@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import sys
 import time
 
@@ -56,6 +57,7 @@ def _deploy_with_existing_volume(volume_name: str, client: DockerClient) -> None
 
 def _deploy_with_new_volume(volume_name: str, client: DockerClient) -> None:
   dot_env_path = "./.env"
+  original_owner = get_file_owner(dot_env_path)
   postgres_info = generate_new_database_info()
   _create_new_project_database_config(postgres_info)
   _overwrite_env_database_vars(dot_env_path, postgres_info)
@@ -64,6 +66,7 @@ def _deploy_with_new_volume(volume_name: str, client: DockerClient) -> None:
     postgres_info=postgres_info,
     client=client
   )
+  restore_file_owner(dot_env_path, original_owner)
   info(f"Created new config with creds at: {postgres_info.config_path}")
   info(f"Environment variables adjusted at: {dot_env_path}")
 
@@ -97,6 +100,14 @@ def _create_new_project_database_config(postgres_info: PostgresInfo) -> None:
   }
   with open(postgres_info.config_path, "w", encoding='utf-8') as config_file:
     yaml.safe_dump(new_config, config_file)
+
+def get_file_owner(path: str) -> tuple[int, int]:
+  st = os.stat(path)
+  return st.st_uid, st.st_gid
+
+def restore_file_owner(path: str, owner: tuple[int, int]) -> None:
+  os.chown(path, owner[0], owner[1])
+  os.chmod(path, 0o644)  # Ensure readable
 
 def _overwrite_env_database_vars(
   dot_env_path: str,
