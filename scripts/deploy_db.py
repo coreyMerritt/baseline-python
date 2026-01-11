@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
 import sys
 import time
-import yaml
-from dotenv import set_key
 
+import docker
 import psycopg
+import yaml
+from docker import DockerClient
+from docker.errors import APIError
+from docker.models.containers import Container
+from dotenv import set_key
 
 from _helpers import (PostgresInfo, backup_db, critical, debug, docker_volume_exists, filesystem_log,
                       generate_new_database_info, get_existing_database_info, info, is_docker_container_running,
                       output_seperator, require_sudo, warn)
-
-import docker
-from docker import DockerClient
-from docker.errors import APIError
-from docker.models.containers import Container
 
 LOG_PATH = "./logs/deploy_db.log"
 IMAGE_VERSION = "18"

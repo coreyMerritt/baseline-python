@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from interfaces.rest.exceptions.handlers._400_bad_request import register_400_bad_request_handlers
 from interfaces.rest.exceptions.handlers._401_unauthorized import register_401_unauthorized_handlers
 from interfaces.rest.exceptions.handlers._404_not_found import register_404_not_found_handlers

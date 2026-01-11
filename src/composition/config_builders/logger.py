@@ -2,8 +2,8 @@ from typing import Any, Dict
 
 from composition.config_builders._helpers import get_final_config_var
 from infrastructure.config.parser import ConfigParser
-from infrastructure.logger.models.logger_config import LoggerConfig
 from infrastructure.environment.models.env_var import EnvVar
+from infrastructure.logger.models.logger_config import LoggerConfig
 from infrastructure.types.logger_interface import LoggerInterface
 
 

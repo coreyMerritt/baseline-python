@@ -1,6 +1,5 @@
-import sys
-
 import argparse
+import sys
 from typing import Any, Callable
 
 from infrastructure.config.parser import ConfigParser
@@ -16,6 +15,7 @@ from interfaces.command_line.enums.run_target import RunTarget
 from interfaces.command_line.enums.sub_command import SubCommand
 from interfaces.command_line.exceptions.unknown_command_exception import UnknownCommandException
 from interfaces.command_line.exceptions.unknown_run_target_exception import UnknownRunTargetException
+
 
 def add_default_command() -> None:
   if len(sys.argv) == 1:

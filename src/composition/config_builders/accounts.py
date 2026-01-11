@@ -1,8 +1,8 @@
 import os
 import sys
 
-from infrastructure.config.parser import ConfigParser
 from infrastructure.auth.models.accounts_config import AccountsConfig
+from infrastructure.config.parser import ConfigParser
 from infrastructure.environment.models.env_var import EnvVar
 from infrastructure.types.logger_interface import LoggerInterface
 

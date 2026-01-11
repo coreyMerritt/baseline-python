@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from interfaces.rest.middleware.auth import AuthMiddleware
 from interfaces.rest.middleware.request_id import RequestIDMiddleware
 from interfaces.rest.middleware.request_logging import RequestLoggingMiddleware

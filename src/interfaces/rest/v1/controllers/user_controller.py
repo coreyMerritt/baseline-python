@@ -10,8 +10,8 @@ from interfaces.rest.v1.mappers.user.create_user_mapper import CreateUserMapper
 from interfaces.rest.v1.mappers.user.delete_user_mapper import DeleteUserMapper
 from interfaces.rest.v1.mappers.user.get_user_mapper import GetUserMapper
 from interfaces.rest.v1.mappers.user.update_user_mapper import UpdateUserMapper
-from services.user_manager import UserManager
 from services.exceptions.item_creation_err import ItemCreationErr
+from services.user_manager import UserManager
 
 
 class UserController:

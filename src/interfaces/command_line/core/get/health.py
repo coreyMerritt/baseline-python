@@ -1,6 +1,5 @@
-from dataclasses import asdict
-
 import json
+from dataclasses import asdict
 
 from infrastructure.config.parser import ConfigParser
 from infrastructure.cpu.cpu import Cpu

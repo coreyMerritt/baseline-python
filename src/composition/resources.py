@@ -1,25 +1,25 @@
 import time
 from typing import Any, Dict
 
-from dotenv import load_dotenv
 import yaml
+from dotenv import load_dotenv
 
-from composition.config_builders.token_hasher import build_final_token_hasher_config
 from composition.config_builders.cpu import build_final_cpu_config
 from composition.config_builders.database import build_final_database_config
 from composition.config_builders.disk import build_final_disk_config
 from composition.config_builders.external_services import build_final_external_services_config
 from composition.config_builders.logger import build_final_logger_config
 from composition.config_builders.memory import build_final_memory_config
+from composition.config_builders.token_hasher import build_final_token_hasher_config
 from composition.config_builders.token_issuer import build_final_token_issuer_config
 from composition.config_builders.uvicorn import build_final_uvicorn_config
 from composition.enums.config_filenames import ConfigFilenames
 from infrastructure.auth.authenticator import Authenticator
+from infrastructure.auth.models.token_hasher_config import TokenHasherConfig
 from infrastructure.auth.models.token_issuer_config import TokenIssuerConfig
 from infrastructure.auth.password_hasher import PasswordHasher
 from infrastructure.auth.password_verifier import PasswordVerifier
 from infrastructure.auth.token_hasher import TokenHasher
-from infrastructure.auth.models.token_hasher_config import TokenHasherConfig
 from infrastructure.auth.token_issuer import TokenIssuer
 from infrastructure.config.parser import ConfigParser
 from infrastructure.cpu.cpu import Cpu
@@ -33,8 +33,8 @@ from infrastructure.disk.models.disk_config import DiskConfig
 from infrastructure.environment.environment import Environment
 from infrastructure.environment.models.env_var import EnvVar
 from infrastructure.external_services.models.external_services_config import ExternalServicesConfig
-from infrastructure.logger.models.logger_config import LoggerConfig
 from infrastructure.logger.foo_project_name_logger import FooProjectNameLogger
+from infrastructure.logger.models.logger_config import LoggerConfig
 from infrastructure.memory.memory import Memory
 from infrastructure.memory.models.memory_config import MemoryConfig
 from infrastructure.types.logger_interface import LoggerInterface

@@ -2,7 +2,6 @@ from datetime import UTC, datetime
 from typing import ClassVar, Optional
 
 import ulid
-
 from sqlmodel import Column, DateTime, Field, SQLModel
 
 
