@@ -9,7 +9,7 @@ function softCleanup() {
     docker rm "$instance_name"
   fi
   # Remove compose containers
-  DOCKER_TAG="silences-a-silly-warning" docker compose --file "./docker/docker-compose.yml" down || true
+  DOCKER_TAG="silences-a-silly-warning" docker compose --file "./docker/docker-compose.yml" down || docker compose down true
 }
 
 function fullCleanup() {
@@ -26,7 +26,7 @@ function fullCleanup() {
     docker rm "$instance_name"
   fi
   # Remove compose containers
-  DOCKER_TAG="silences-a-silly-warning" docker compose --file "./docker/docker-compose.yml" down || true
+  DOCKER_TAG="silences-a-silly-warning" docker compose --file "./docker/docker-compose.yml" down || docker compose down true
   # Remove persistant items
   if docker images --format "{{.Repository}}:{{.Tag}}" | grep "$project_name" | grep "$docker_image_tag"; then
     docker rmi "${project_name}:${docker_image_tag}"
