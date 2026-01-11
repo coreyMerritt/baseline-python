@@ -1,4 +1,5 @@
 import json
+import sys
 import traceback
 from dataclasses import asdict
 from datetime import datetime
@@ -395,6 +396,7 @@ class FooProjectNameLogger(LoggerInterface):
       print(json.dumps(asdict(log), indent=2))
     else:
       self._print_human_log(log, err)
+    sys.stdout.flush()
 
   def _print_human_log(self, log: BaseLog, err: Exception | None) -> None:
     if isinstance(log, SimpleLog):
@@ -409,6 +411,7 @@ class FooProjectNameLogger(LoggerInterface):
       print()
       self._console.print(Traceback.from_exception(type(err), err, err.__traceback__))
     print("─" * 120)
+    sys.stdout.flush()
 
   def _print_human_simple_log(self, simple_log: SimpleLog) -> None:
     level = self._get_colored_logger_level_tag(simple_log.level)
