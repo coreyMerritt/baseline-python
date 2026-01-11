@@ -17,18 +17,15 @@ from services.models.outputs.account.update_account_som import UpdateAccountSOM
 
 class AccountManager(BaseService):
   _account_repository: AccountRepositoryInterface
-  _membership_repository: MembershipRepositoryInterface
   _role_repository: RoleRepositoryInterface
 
   def __init__(
     self,
     logger: LoggerInterface,
     account_repository: AccountRepositoryInterface,
-    membership_repository: MembershipRepositoryInterface,
     role_repository: RoleRepositoryInterface
   ):
     self._account_repository = account_repository
-    self._membership_repository = membership_repository
     self._role_repository = role_repository
     super().__init__(logger)
 
@@ -40,17 +37,17 @@ class AccountManager(BaseService):
     except Exception as e:
       self._raise_service_exception(e)
     create_account_som = CreateAccountMapper.entity_to_som(created_account)
-    self._logger.debug(f"Successfully created account for ulid: {account.ulid}")
+    self._logger.debug(f"Successfully created account with ULID: {account.ulid}")
     return create_account_som
 
   def get_account(self, ulid: str) -> GetAccountSOM:
-    self._logger.debug(f"Attempting to retrieve account for ulid: {ulid}")
+    self._logger.debug(f"Attempting to retrieve account with ULID: {ulid}")
     try:
       account = self._account_repository.get(ulid)
     except Exception as e:
       self._raise_service_exception(e)
     get_account_som = GetAccountMapper.entity_to_som(account)
-    self._logger.debug(f"Successfully retrieved account for ulid: {ulid}")
+    self._logger.debug(f"Successfully retrieved account with ULID: {ulid}")
     return get_account_som
 
   def update_account(self, update_account_sim: UpdateAccountSIM) -> UpdateAccountSOM:
@@ -62,17 +59,17 @@ class AccountManager(BaseService):
     except Exception as e:
       self._raise_service_exception(e)
     get_account_som = UpdateAccountMapper.entity_to_som(account)
-    self._logger.debug(f"Successfully retrieved account for ulid: {account.ulid}")
+    self._logger.debug(f"Successfully retrieved account with ULID: {account.ulid}")
     return get_account_som
 
   def delete_account(self, ulid: str) -> DeleteAccountSOM:
-    self._logger.debug(f"Attempting to retrieve account for ulid: {ulid}")
+    self._logger.debug(f"Attempting to retrieve account with ULID: {ulid}")
     try:
       account = self._account_repository.delete(ulid)
     except Exception as e:
       self._raise_service_exception(e)
     delete_account_som = DeleteAccountMapper.entity_to_som(account)
-    self._logger.debug(f"Successfully retrieved account for ulid: {ulid}")
+    self._logger.debug(f"Successfully retrieved account with ULID: {ulid}")
     return delete_account_som
 
   # def invite_member(self, invite_member_sim: InviteMemberSIM) -> InviteMemberSOM:

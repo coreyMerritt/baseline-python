@@ -4,12 +4,12 @@ from composition.config_builders._helpers import get_final_config_var
 from infrastructure.config.parser import ConfigParser
 from infrastructure.cpu.models.cpu_config import CpuConfig
 from infrastructure.environment.models.env_var import EnvVar
-from infrastructure.logger.foo_project_name_logger import FooProjectNameLogger
+from infrastructure.types.logger_interface import LoggerInterface
 
 
 def build_final_cpu_config(
   config_parser: ConfigParser,
-  logger: FooProjectNameLogger,
+  logger: LoggerInterface,
   cpu_config_dict: Dict[str, Any]
 ) -> CpuConfig:
   _ = config_parser.parse_cpu_config(cpu_config_dict)

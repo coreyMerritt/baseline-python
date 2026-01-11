@@ -3,8 +3,7 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from infrastructure.types.logger_interface import LoggerInterface
-from interfaces.rest.mappers.foo_project_name_request_mapper import FooProjectNameRequestMapper
-from interfaces.rest.models.foo_project_name_request import FooProjectNameRequest
+from interfaces.rest.mappers.request_mapper import RequestMapper
 
 
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
@@ -16,8 +15,7 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
 
   async def dispatch(self, request: Request, call_next):
     logger = self._get_logger()
-    req = FooProjectNameRequest(request)
-    raw_http_req_log = FooProjectNameRequestMapper.to_raw_http_req_info(req)
+    raw_http_req_log = RequestMapper.to_raw_http_req_info(request)
     logger.http_req_info(
       message="HTTP Request",
       raw_http_req_info=raw_http_req_log

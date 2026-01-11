@@ -6,7 +6,6 @@ from interfaces.rest.health.dto.res.get_disk_health_report_res import GetDiskHea
 from interfaces.rest.health.dto.res.get_environment_health_report_res import GetEnvironmentHealthReportRes
 from interfaces.rest.health.dto.res.get_logger_health_report_res import GetLoggerHealthReportRes
 from interfaces.rest.health.dto.res.get_memory_health_report_res import GetMemoryHealthReportRes
-from interfaces.rest.health.dto.res.get_typicode_health_report_res import GetTypicodeHealthReportRes
 
 
 class GetFullHealthReportRes(GetHealthReportRes):
@@ -17,4 +16,3 @@ class GetFullHealthReportRes(GetHealthReportRes):
   environment: GetEnvironmentHealthReportRes
   logger: GetLoggerHealthReportRes
   memory: GetMemoryHealthReportRes
-  typicode: GetTypicodeHealthReportRes

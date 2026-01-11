@@ -6,7 +6,6 @@ from infrastructure.cpu.cpu import Cpu
 from infrastructure.database.database import Database
 from infrastructure.disk.disk import Disk
 from infrastructure.environment.environment import Environment
-from infrastructure.external_services.typicode_client import TypicodeClient
 from infrastructure.memory.memory import Memory
 from infrastructure.types.logger_interface import LoggerInterface
 from services.base_service import BaseService
@@ -21,7 +20,6 @@ class HealthManager(BaseService):
   _disk: Disk
   _environment: Environment
   _memory: Memory
-  _typicode_client: TypicodeClient
 
   def __init__(
     self,
@@ -31,8 +29,7 @@ class HealthManager(BaseService):
     database: Database,
     disk: Disk,
     environment: Environment,
-    memory: Memory,
-    typicode_client: TypicodeClient,
+    memory: Memory
   ):
     self._config_parser = config_parser
     self._cpu = cpu
@@ -40,7 +37,6 @@ class HealthManager(BaseService):
     self._disk = disk
     self._environment = environment
     self._memory = memory
-    self._typicode_client = typicode_client
     super().__init__(logger)
 
   def get_full_health_report(self) -> FullHealthReportSOM:
@@ -51,7 +47,6 @@ class HealthManager(BaseService):
     environment_health_report = self._environment.get_health_report()
     logger_health_report = self._logger.get_health_report()
     memory_health_report = self._memory.get_health_report()
-    typicode_health_report = self._typicode_client.get_health_report()
     full_health_report = FullHealthReportSOM(
       config_parser_health_report=config_parser_health_report,
       cpu_health_report=cpu_health_report,
@@ -59,8 +54,7 @@ class HealthManager(BaseService):
       disk_health_report=disk_health_report,
       environment_health_report=environment_health_report,
       logger_health_report=logger_health_report,
-      memory_health_report=memory_health_report,
-      typicode_health_report=typicode_health_report
+      memory_health_report=memory_health_report
     )
     self._logger.debug(f"System Health:\n{json.dumps(asdict(full_health_report), indent=2)}")
     return full_health_report

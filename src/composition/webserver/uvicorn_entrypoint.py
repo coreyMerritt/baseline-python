@@ -6,7 +6,7 @@ from composition.resources import get_uvicorn_config
 def run_webserver(
   host: str | None,
   port: int | None
-):
+) -> None:
   uvicorn_config = get_uvicorn_config()
   final_host = host if host else uvicorn_config.host
   final_port = port if port else uvicorn_config.port

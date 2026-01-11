@@ -1,10 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Request
 
 from interfaces.rest.models.foo_project_name_http_response import FooProjectNameHTTPResponse
-from interfaces.rest.models.foo_project_name_request import (
-  FooProjectNameRequest,
-  get_foo_project_name_request,
-)
 from interfaces.rest.v1.controllers.authentication_controller import AuthenticationController
 from interfaces.rest.v1.dto.req.auth.create_token_req import CreateTokenReq
 
@@ -19,7 +15,7 @@ router = APIRouter(prefix="/api/v1/auth")
 )
 async def create_token(
   body: CreateTokenReq,
-  req: FooProjectNameRequest = Depends(get_foo_project_name_request),
+  req: Request
 ) -> FooProjectNameHTTPResponse:
   return await controller.create_token(
     req=req,

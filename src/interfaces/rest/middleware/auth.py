@@ -33,7 +33,15 @@ class AuthMiddleware(BaseHTTPMiddleware):
     if auth_header is None:
       return await call_next(request)
     if not auth_header.startswith("Bearer "):
-      return JSONResponse(status_code=401, content={"error": "Invalid auth header"})
+      return JSONResponse(
+        status_code=401,
+        content={
+          "data": None,
+          "error": {
+            "message": "Unauthorized1"
+          }
+        }
+      )
     token = auth_header.removeprefix("Bearer ").strip()
     try:
       logger.debug("Attemping to authenticate...")
@@ -45,6 +53,14 @@ class AuthMiddleware(BaseHTTPMiddleware):
       TokenNotFoundErr,
       TokenRevokedErr,
       TokenExpiredErr,
-    ):
-      return JSONResponse(status_code=401, content={"error": "Unauthorized"})
+    ) as e:
+      return JSONResponse(
+        status_code=401,
+        content={
+          "data": None,
+          "error": {
+            "message": f"Unauthorized: {e}"
+          }
+        }
+      )
     return await call_next(request)

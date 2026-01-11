@@ -3,7 +3,7 @@ import secrets
 import sys
 import tomllib
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from subprocess import CalledProcessError, run
 
@@ -157,12 +157,12 @@ def require_sudo() -> None:
     critical("Run with sudo.")
 
 def get_now_formatted_fs_safe_str() -> str:
-  now = datetime.now()
+  now = datetime.now(tz=UTC)
   formatted = now.strftime("%Y-%m-%d_%H-%M-%S-") + f"{int(now.microsecond / 1000):03d}"
   return formatted
 
 def get_now_formatted_str() -> str:
-  now = datetime.now()
+  now = datetime.now(tz=UTC)
   formatted = now.strftime("%Y-%m-%d %H:%M:%S.") + f"{int(now.microsecond / 1000):03d}"
   return formatted
 

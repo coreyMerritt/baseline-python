@@ -2,13 +2,13 @@ import os
 from typing import TypeVar, cast
 
 from infrastructure.environment.models.env_var import EnvVar
-from infrastructure.logger.foo_project_name_logger import FooProjectNameLogger
+from infrastructure.types.logger_interface import LoggerInterface
 from shared.exceptions.undocumented_case_err import UndocumentedCaseErr
 
 T = TypeVar("T")
 
 def get_final_config_var(
-  logger: FooProjectNameLogger | None,
+  logger: LoggerInterface | None,
   config_var: T,
   env_var: EnvVar
 ) -> T:

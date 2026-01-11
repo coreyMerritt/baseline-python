@@ -7,7 +7,6 @@ from infrastructure.cpu.cpu import Cpu
 from infrastructure.database.database import Database
 from infrastructure.disk.disk import Disk
 from infrastructure.environment.environment import Environment
-from infrastructure.external_services.typicode_client import TypicodeClient
 from infrastructure.logger.enums.logger_level import LoggerLevel
 from infrastructure.memory.memory import Memory
 from infrastructure.types.logger_interface import LoggerInterface
@@ -21,8 +20,7 @@ def get_full_health_report(
   database: Database,
   disk: Disk,
   environment: Environment,
-  memory: Memory,
-  typicode_client: TypicodeClient
+  memory: Memory
 ) -> None:
   logger.set_level(LoggerLevel.WARNING)
   logger.set_json(False)
@@ -33,8 +31,7 @@ def get_full_health_report(
     database=database,
     disk=disk,
     environment=environment,
-    memory=memory,
-    typicode_client=typicode_client
+    memory=memory
   )
   health_report_som = health_manager.get_full_health_report()
   print(json.dumps(asdict(health_report_som), indent=2))

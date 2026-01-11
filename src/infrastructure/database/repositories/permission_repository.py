@@ -1,6 +1,7 @@
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlmodel import col, delete, select, update
 
+from domain.exceptions.repository_duplication_err import RepositoryDuplicationErr
 from domain.exceptions.repository_not_found_err import RepositoryNotFoundErr
 from domain.exceptions.repository_unavailable_err import RepositoryUnavailableErr
 from domain.interfaces.repositories.permission_repository_interface import PermissionRepositoryInterface
@@ -24,6 +25,11 @@ class PermissionRepository(PermissionRepositoryInterface):
         session.flush()      # Create a transaction in the DBMS -- "load the DBMS"
         session.refresh(permission_orm)  # Fetch the ORM from transaction -- give "permission_orm" id/timestamp/etc
         session.commit()
+      except IntegrityError as e:
+        session.rollback()
+        if "unique constraint" in str(e):
+          raise RepositoryDuplicationErr() from e
+        raise RepositoryUnavailableErr() from e
       except SQLAlchemyError as e:
         session.rollback()
         raise RepositoryUnavailableErr() from e

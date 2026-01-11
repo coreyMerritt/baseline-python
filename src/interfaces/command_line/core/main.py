@@ -8,7 +8,6 @@ from infrastructure.cpu.cpu import Cpu
 from infrastructure.database.database import Database
 from infrastructure.disk.disk import Disk
 from infrastructure.environment.environment import Environment
-from infrastructure.external_services.typicode_client import TypicodeClient
 from infrastructure.memory.memory import Memory
 from infrastructure.types.logger_interface import LoggerInterface
 from interfaces.command_line.core.get.health import get_full_health_report
@@ -57,8 +56,7 @@ def handle_args_routing(
   disk: Disk,
   environment: Environment,
   memory: Memory,
-  typicode_client: TypicodeClient,
-  run_webserver: Callable[[Any, Any], Any]
+  run_webserver: Callable[[str | None, int | None], None]
 ) -> None:
   if args.command.lower() == SubCommand.GET.value:
     if args.target.lower() == GetTarget.HEALTH_REPORT.value:
@@ -69,8 +67,7 @@ def handle_args_routing(
         database=database,
         disk=disk,
         environment=environment,
-        memory=memory,
-        typicode_client=typicode_client
+        memory=memory
       )
   elif args.command.lower() == SubCommand.RUN.value:
     if args.target.lower() == RunTarget.SERVER.value:

@@ -9,5 +9,4 @@ class ConfigFilenames(str, Enum):
   LOGGER = "logger.yml"
   MEMORY = "memory.yml"
   TOKEN_ISSUER = "token_issuer.yml"
-  TYPICODE = "typicode.yml"
   UVICORN = "uvicorn.yml"

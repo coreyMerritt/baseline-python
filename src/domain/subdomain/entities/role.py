@@ -1,17 +1,21 @@
+import ulid as ULID
+
 from domain.exceptions.validation_err import ValidationErr
 
 
 class Role:
-  _ulid: str
+  _ulid: str | None
   _name: str
 
-  def __init__(self, ulid: str, name: str):
-    self.ulid = ulid
+  def __init__(self, ulid: str | None, name: str):
+    self.ulid = str(ULID.new())
+    if ulid:
+      self.ulid = ulid
     self.name = name
     self._validate_properties()
 
   @property
-  def ulid(self) -> str:
+  def ulid(self) -> str | None:
     return self._ulid
 
   @ulid.setter

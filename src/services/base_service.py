@@ -1,4 +1,5 @@
 from domain.exceptions.repository_data_integrity_err import RepositoryDataIntegrityErr
+from domain.exceptions.repository_duplication_err import RepositoryDuplicationErr
 from domain.exceptions.repository_not_found_err import RepositoryNotFoundErr
 from domain.exceptions.repository_unavailable_err import RepositoryUnavailableErr
 from domain.exceptions.validation_err import ValidationErr
@@ -6,6 +7,7 @@ from infrastructure.types.logger_interface import LoggerInterface
 from services.exceptions.bad_input_err import BadInputErr
 from services.exceptions.item_not_found_err import ItemNotFoundErr
 from services.exceptions.service_unavailable_err import ServiceUnavailableErr
+from services.exceptions.uniqueness_violation_err import UniquenessViolationErr
 
 
 class BaseService():
@@ -18,6 +20,7 @@ class BaseService():
   def _raise_service_exception(self, e: Exception) -> None:
     mapping = {
       RepositoryDataIntegrityErr: BadInputErr,
+      RepositoryDuplicationErr: UniquenessViolationErr,
       RepositoryNotFoundErr: ItemNotFoundErr,
       RepositoryUnavailableErr: ServiceUnavailableErr,
       ValidationErr: BadInputErr,

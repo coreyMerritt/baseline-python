@@ -6,7 +6,6 @@ from interfaces.rest.health.mappers.get_disk_health_report_mapper import GetDisk
 from interfaces.rest.health.mappers.get_environment_health_report_mapper import GetEnvironmentHealthReportMapper
 from interfaces.rest.health.mappers.get_logger_health_report_mapper import GetLoggerHealthReportMapper
 from interfaces.rest.health.mappers.get_memory_health_report_mapper import GetMemoryHealthReportMapper
-from interfaces.rest.health.mappers.get_typicode_health_report_mapper import GetTypicodeHealthReportMapper
 from services.models.outputs.full_health_report_som import FullHealthReportSOM
 
 
@@ -34,9 +33,6 @@ class GetFullHealthReportMapper:
     get_memory_health_report_res = GetMemoryHealthReportMapper.infrastructure_model_to_res(
       som.memory_health_report
     )
-    get_typicode_health_report_res = GetTypicodeHealthReportMapper.infrastructure_model_to_res(
-      som.typicode_health_report
-    )
     return GetFullHealthReportRes(
       config_parser=get_config_parser_health_report_res,
       cpu=get_cpu_health_report_res,
@@ -45,6 +41,5 @@ class GetFullHealthReportMapper:
       environment=get_environment_health_report_res,
       logger=get_logger_health_report_res,
       memory=get_memory_health_report_res,
-      typicode=get_typicode_health_report_res,
       healthy=som.healthy
     )

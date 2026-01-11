@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Request
 
 from interfaces.rest.models.foo_project_name_http_response import FooProjectNameHTTPResponse
-from interfaces.rest.models.foo_project_name_request import FooProjectNameRequest, get_foo_project_name_request
 from interfaces.rest.v1.controllers.account_controller import AccountController
 from interfaces.rest.v1.dto.req.account.create_account_req import CreateAccountReq
 from interfaces.rest.v1.dto.req.account.update_account_req import UpdateAccountReq
@@ -16,7 +15,7 @@ router = APIRouter(prefix="/api/v1/account")
 )
 async def get_account(
   ulid: str,
-  req: FooProjectNameRequest = Depends(get_foo_project_name_request)
+  req: Request
 ) -> FooProjectNameHTTPResponse:
   return await controller.get_account(
     req=req,
@@ -30,7 +29,7 @@ async def get_account(
 )
 async def create_account(
   body: CreateAccountReq,
-  req: FooProjectNameRequest = Depends(get_foo_project_name_request)
+  req: Request
 ) -> FooProjectNameHTTPResponse:
   return await controller.create_account(
     req=req,
@@ -44,7 +43,7 @@ async def create_account(
 )
 async def update_account(
   body: UpdateAccountReq,
-  req: FooProjectNameRequest = Depends(get_foo_project_name_request)
+  req: Request
 ) -> FooProjectNameHTTPResponse:
   return  await controller.update_account(
     req=req,
@@ -58,7 +57,7 @@ async def update_account(
 )
 async def delete_account(
   ulid: str,
-  req: FooProjectNameRequest = Depends(get_foo_project_name_request)
+  req: Request
 ) -> FooProjectNameHTTPResponse:
   return await controller.delete_account(
     req=req,

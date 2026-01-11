@@ -28,7 +28,6 @@ startServer
 
 # Test
 bash "./tests/system/api/health-check.sh"
-bash "./tests/system/api/get-blog-post.sh"
 bash "./tests/system/api/post-and-get-account.sh"
 
 # Cleanup

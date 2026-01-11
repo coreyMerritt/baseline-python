@@ -36,23 +36,21 @@ class AuthenticationManager(BaseService):
 
   def create_token(self, sim: CreateTokenSIM) -> CreateTokenSOM:
     self._logger.debug("Attempting authentication")
-
     try:
       user = self._user_repository.get_by_username(sim.username)
       credentials = self._user_credential_repository.get(user.ulid)
+      if not self._password_verifier.verify(
+        plaintext=sim.password,
+        hashed=credentials.password_hash,
+      ):
+        self._logger.warning("Authentication failed: invalid credentials", error=None)
+        raise InvalidCredentialsErr()
+      membership = self._membership_repository.get_by_user_ulid(user.ulid)
+      token = self._token_issuer.issue(
+        user_ulid=user.ulid,
+        account_ulid=membership.account_ulid,
+      )
+      self._logger.debug(f"Issued auth token for user {user.ulid}")
     except Exception as e:
       self._raise_service_exception(e)
-
-    if not self._password_verifier.verify(
-      plaintext=sim.password,
-      hashed=credentials.password_hash,
-    ):
-      self._logger.warning("Authentication failed: invalid credentials", error=None)
-      raise InvalidCredentialsErr()
-    membership = self._membership_repository.get(user.ulid)
-    token = self._token_issuer.issue(
-      user_ulid=user.ulid,
-      account_ulid=membership.account_ulid,
-    )
-    self._logger.debug(f"Issued auth token for user {user.ulid}")
     return CreateTokenMapper.token_to_som(token)

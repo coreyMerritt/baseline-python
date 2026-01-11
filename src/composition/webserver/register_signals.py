@@ -2,10 +2,11 @@ import asyncio
 import signal
 import sys
 import threading
-from interfaces.rest.models.foo_project_name_fastapi import FooProjectNameFastAPI
+
+from fastapi import FastAPI
 
 
-def register_signals(app: FooProjectNameFastAPI) -> FooProjectNameFastAPI:
+def register_signals(app: FastAPI) -> FastAPI:
   try:
     loop = asyncio.get_running_loop()
   except RuntimeError:

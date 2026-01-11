@@ -1,11 +1,13 @@
 from datetime import datetime
 
+import ulid as ULID
+
 from domain.enums.membership_status import MembershipStatus
 from domain.exceptions.validation_err import ValidationErr
 
 
 class Membership:
-  _ulid: str
+  _ulid: str | None
   _user_ulid: str
   _account_ulid: str
   _role_ulid: str
@@ -15,7 +17,7 @@ class Membership:
 
   def __init__(
     self,
-    ulid: str,
+    ulid: str | None,
     user_ulid: str,
     account_ulid: str,
     role_ulid: str,
@@ -23,7 +25,9 @@ class Membership:
     joined_at: datetime,
     removed_at: datetime | None = None,
   ):
-    self.ulid = ulid
+    self.ulid = str(ULID.new())
+    if ulid:
+      self.ulid = ulid
     self.user_ulid = user_ulid
     self.account_ulid = account_ulid
     self.role_ulid = role_ulid
@@ -33,7 +37,7 @@ class Membership:
     self._validate_properties()
 
   @property
-  def ulid(self) -> str:
+  def ulid(self) -> str | None:
     return self._ulid
 
   @ulid.setter

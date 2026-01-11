@@ -1,9 +1,9 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from typing import ClassVar, Optional
 
 import ulid
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Column, DateTime, Field, SQLModel
 
 
 def generate_ulid() -> str:
@@ -31,9 +31,15 @@ class AuthTokenORM(SQLModel, table=True):
     nullable=False,
     max_length=255,
   )
-  expires_at: Optional[datetime] = Field(default=None)
-  revoked_at: Optional[datetime] = Field(default=None)
+  expires_at: Optional[datetime] = Field(
+    sa_column=Column(DateTime(timezone=True)),
+    default=None
+  )
+  revoked_at: Optional[datetime] = Field(
+    sa_column=Column(DateTime(timezone=True)),
+    default=None
+  )
   created_at: datetime = Field(
-    default_factory=lambda: datetime.now(tz=timezone.utc),
+    default_factory=lambda: datetime.now(tz=UTC),
     nullable=False,
   )

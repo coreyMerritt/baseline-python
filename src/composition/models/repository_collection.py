@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 
 from domain.interfaces.repositories.account_repository_interface import AccountRepositoryInterface
-from domain.interfaces.repositories.blog_post_repository_interface import BlogPostRepositoryInterface
 from domain.interfaces.repositories.membership_repository_interface import MembershipRepositoryInterface
 from domain.interfaces.repositories.role_repository_interface import RoleRepositoryInterface
 from domain.interfaces.repositories.user_credential_repository_interface import UserCredentialRepositoryInterface
@@ -10,7 +9,6 @@ from domain.interfaces.repositories.user_repository_interface import UserReposit
 @dataclass
 class RepositoryCollection:
   account: AccountRepositoryInterface
-  blog_post: BlogPostRepositoryInterface
   membership: MembershipRepositoryInterface
   role: RoleRepositoryInterface
   user: UserRepositoryInterface

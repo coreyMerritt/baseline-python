@@ -5,7 +5,6 @@ from infrastructure.cpu.models.cpu_health_report import CpuHealthReport
 from infrastructure.database.models.database_health_report import DatabaseHealthReport
 from infrastructure.disk.models.disk_health_report import DiskHealthReport
 from infrastructure.environment.models.environment_health_report import EnvironmentHealthReport
-from infrastructure.external_services.models.typicode_health_report import TypicodeHealthReport
 from infrastructure.logger.models.logger_health_report import LoggerHealthReport
 from infrastructure.memory.models.memory_health_report import MemoryHealthReport
 
@@ -20,7 +19,6 @@ class FullHealthReportSOM():
   environment_health_report: EnvironmentHealthReport
   logger_health_report: LoggerHealthReport
   memory_health_report: MemoryHealthReport
-  typicode_health_report: TypicodeHealthReport
 
   def __post_init__(self):
     self.healthy = (
@@ -31,5 +29,4 @@ class FullHealthReportSOM():
       and self.environment_health_report.healthy
       and self.logger_health_report.healthy
       and self.memory_health_report.healthy
-      and self.typicode_health_report.healthy
     )

@@ -1,14 +1,14 @@
 from fastapi import FastAPI, Request
 
 from interfaces.rest.exceptions.universal_exception_response import universal_exception_response
-from services.exceptions.item_not_found_err import ItemNotFoundErr
+from services.exceptions.uniqueness_violation_err import UniquenessViolationErr
 
 
-def register_404_not_found_handlers(app: FastAPI) -> None:
-  @app.exception_handler(ItemNotFoundErr)
-  async def handle_404(req: Request, exc: Exception):
-    MESSAGE = "Not found"
-    CODE = 404
+def register_409_conflict_handlers(app: FastAPI) -> None:
+  @app.exception_handler(UniquenessViolationErr)
+  async def handle_409(req: Request, exc: Exception):
+    MESSAGE = "Conflict"
+    CODE = 409
     logger = req.app.state.resources.infra.logger
     logger.error(
       message=MESSAGE,

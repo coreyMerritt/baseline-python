@@ -12,11 +12,11 @@ from composition.config_builders.external_services import build_final_external_s
 from composition.config_builders.logger import build_final_logger_config
 from composition.config_builders.memory import build_final_memory_config
 from composition.config_builders.token_issuer import build_final_token_issuer_config
-from composition.config_builders.typicode import build_final_typicode_config
 from composition.config_builders.uvicorn import build_final_uvicorn_config
 from composition.enums.config_filenames import ConfigFilenames
 from infrastructure.auth.authenticator import Authenticator
 from infrastructure.auth.models.token_issuer_config import TokenIssuerConfig
+from infrastructure.auth.password_hasher import PasswordHasher
 from infrastructure.auth.password_verifier import PasswordVerifier
 from infrastructure.auth.token_hasher import TokenHasher
 from infrastructure.auth.models.token_hasher_config import TokenHasherConfig
@@ -36,14 +36,12 @@ from infrastructure.disk.disk import Disk
 from infrastructure.disk.models.disk_config import DiskConfig
 from infrastructure.environment.environment import Environment
 from infrastructure.environment.models.env_var import EnvVar
-from infrastructure.external_services.blog_post_repository import BlogPostRepository
 from infrastructure.external_services.models.external_services_config import ExternalServicesConfig
-from infrastructure.external_services.models.typicode_config import TypicodeConfig
-from infrastructure.external_services.typicode_client import TypicodeClient
 from infrastructure.logger.models.logger_config import LoggerConfig
 from infrastructure.logger.foo_project_name_logger import FooProjectNameLogger
 from infrastructure.memory.memory import Memory
 from infrastructure.memory.models.memory_config import MemoryConfig
+from infrastructure.types.logger_interface import LoggerInterface
 from infrastructure.uvicorn.models.uvicorn_config import UvicornConfig
 
 
@@ -117,10 +115,11 @@ def _build_configs_dict(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  logger: FooProjectNameLogger
+  logger: LoggerInterface
 ) -> Dict[str, Any]:
   token_hasher_config = _build_token_hasher_config(
-    config_parser=config_parser
+    config_parser=config_parser,
+    logger=logger
   )
   cpu_config = _build_cpu_config(
     config_dir=config_dir,
@@ -159,15 +158,10 @@ def _build_configs_dict(
     logger=logger
   )
   token_hasher_config = _build_token_hasher_config(
-    config_parser=config_parser
-  )
-  token_issuer_config = _build_token_issuer_config(
-    config_dir=config_dir,
     config_parser=config_parser,
-    disk=disk,
     logger=logger
   )
-  typicode_config = _build_typicode_config(
+  token_issuer_config = _build_token_issuer_config(
     config_dir=config_dir,
     config_parser=config_parser,
     disk=disk,
@@ -188,7 +182,6 @@ def _build_configs_dict(
     "memory": memory_config,
     "token_hasher": token_hasher_config,
     "token_issuer": token_issuer_config,
-    "typicode": typicode_config,
     "uvicorn": uvicorn_config
   }
 
@@ -220,15 +213,12 @@ def _build_infra_dict(configs_dict: Dict[str, Any]) -> Dict[str, Any]:
   memory = _build_memory(
     memory_config=configs_dict["memory"]
   )
+  password_hasher = _build_password_hasher()
   password_verifier = _build_password_verifier()
   token_issuer = _build_token_issuer(
     token_issuer_config=configs_dict["token_issuer"],
     database=database,
     token_hasher=token_hasher
-  )
-  typicode_client = _build_typicode_client(
-    external_services_config=configs_dict["external_services"],
-    typicode_config=configs_dict["typicode"]
   )
   return {
     "authenticator": authenticator,
@@ -239,19 +229,15 @@ def _build_infra_dict(configs_dict: Dict[str, Any]) -> Dict[str, Any]:
     "environment": environment,
     "logger": logger,
     "memory": memory,
+    "password_hasher": password_hasher,
     "password_verifier": password_verifier,
     "token_hasher": token_hasher,
-    "token_issuer": token_issuer,
-    "typicode_client": typicode_client
+    "token_issuer": token_issuer
   }
 
 def _build_repos_dict(configs_dict: Dict[str, Any], database: Database) -> Dict[str, Any]:
   account_repository = AccountRepository(
     database=database
-  )
-  blog_post_repository = BlogPostRepository(
-    external_services_config=configs_dict["external_services"],
-    typicode_config=configs_dict["typicode"]
   )
   membership_repository = MembershipRepository(
     database=database
@@ -267,7 +253,6 @@ def _build_repos_dict(configs_dict: Dict[str, Any], database: Database) -> Dict[
   )
   return {
     "account": account_repository,
-    "blog_post": blog_post_repository,
     "membership": membership_repository,
     "role": role_repository,
     "user": user_repository,
@@ -279,7 +264,7 @@ def _build_cpu_config(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  logger:FooProjectNameLogger
+  logger:LoggerInterface
 ) -> CpuConfig:
   cpu_config_path = f"{config_dir}/{ConfigFilenames.CPU.value}"
   cpu_config_dict = disk.read_yaml(cpu_config_path)
@@ -294,7 +279,7 @@ def _build_database_config(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  logger: FooProjectNameLogger
+  logger: LoggerInterface
 ) -> DatabaseConfig:
   database_config_path = f"{config_dir}/{ConfigFilenames.DATABASE.value}"
   database_config_dict = disk.read_yaml(database_config_path)
@@ -309,7 +294,7 @@ def _build_disk_config(
   config_dir: str,
   config_parser: ConfigParser,
   temp_disk: Disk,
-  logger: FooProjectNameLogger
+  logger: LoggerInterface
 ) -> DiskConfig:
   disk_config_path = f"{config_dir}/{ConfigFilenames.DISK.value}"
   disk_config_dict = temp_disk.read_yaml(disk_config_path)
@@ -324,7 +309,7 @@ def _build_external_services_config(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  logger: FooProjectNameLogger
+  logger: LoggerInterface
 ) -> ExternalServicesConfig:
   external_service_config_path = f"{config_dir}/{ConfigFilenames.EXTERNAL_SERVICES.value}"
   external_services_config_dict = disk.read_yaml(external_service_config_path)
@@ -339,7 +324,7 @@ def _build_logger_config(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  temp_logger: FooProjectNameLogger | None
+  temp_logger: LoggerInterface | None
 ) -> LoggerConfig:
   logger_config_path = f"{config_dir}/{ConfigFilenames.LOGGER.value}"
   logger_config_dict = disk.read_yaml(logger_config_path)
@@ -354,7 +339,7 @@ def _build_memory_config(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  logger: FooProjectNameLogger
+  logger: LoggerInterface
 ) -> MemoryConfig:
   memory_config_path = f"{config_dir}/{ConfigFilenames.MEMORY.value}"
   memory_config_dict = disk.read_yaml(memory_config_path)
@@ -366,17 +351,19 @@ def _build_memory_config(
   )
 
 def _build_token_hasher_config(
-  config_parser: ConfigParser
+  config_parser: ConfigParser,
+  logger: LoggerInterface
 ) -> TokenHasherConfig:
   return build_final_token_hasher_config(
-    config_parser=config_parser
+    config_parser=config_parser,
+    logger=logger
   )
 
 def _build_token_issuer_config(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  logger: FooProjectNameLogger
+  logger: LoggerInterface
 ) -> TokenIssuerConfig:
   token_issuer_config_path = f"{config_dir}/{ConfigFilenames.TOKEN_ISSUER.value}"
   token_issuer_config_dict = disk.read_yaml(token_issuer_config_path)
@@ -386,26 +373,12 @@ def _build_token_issuer_config(
     logger=logger,
     token_issuer_config_dict=token_issuer_config_dict
   )
-def _build_typicode_config(
-  config_dir: str,
-  config_parser: ConfigParser,
-  disk: Disk,
-  logger: FooProjectNameLogger
-) -> TypicodeConfig:
-  typicode_config_path = f"{config_dir}/{ConfigFilenames.TYPICODE.value}"
-  typicode_config_dict = disk.read_yaml(typicode_config_path)
-  assert isinstance(typicode_config_dict, dict)
-  return build_final_typicode_config(
-    config_parser=config_parser,
-    logger=logger,
-    typicode_config_dict=typicode_config_dict
-  )
 
 def _build_uvicorn_config(
   config_dir: str,
   config_parser: ConfigParser,
   disk: Disk,
-  logger: FooProjectNameLogger
+  logger: LoggerInterface
 ) -> UvicornConfig:
   uvicorn_config_path = f"{config_dir}/{ConfigFilenames.UVICORN.value}"
   uvicorn_config_dict = disk.read_yaml(uvicorn_config_path)
@@ -441,7 +414,7 @@ def _build_cpu(cpu_config: CpuConfig) -> Cpu:
 
 def _build_database(
   database_config: DatabaseConfig,
-  logger: FooProjectNameLogger
+  logger: LoggerInterface
 ) -> Database:
   def _interruptible_sleep(seconds: float) -> None:
     end = time.time() + seconds
@@ -457,7 +430,6 @@ def _build_database(
   while time.time() - start_time < TIMEOUT:
     try:
       db = Database(database_config)
-      logger.info("Successfully connected to database.")
       return db
     except DatabaseInitializationErr as e:
       last_err = e
@@ -474,7 +446,7 @@ def _build_disk(disk_config: DiskConfig) -> Disk:
 
 def _build_logger(
   logger_config: LoggerConfig
-) -> FooProjectNameLogger:
+) -> LoggerInterface:
   return FooProjectNameLogger(
     logger_config=logger_config
   )
@@ -483,6 +455,9 @@ def _build_memory(memory_config: MemoryConfig) -> Memory:
   return Memory(
     memory_config=memory_config
   )
+
+def _build_password_hasher() -> PasswordHasher:
+  return PasswordHasher()
 
 def _build_password_verifier() -> PasswordVerifier:
   return PasswordVerifier()
@@ -502,9 +477,3 @@ def _build_token_issuer(
     database=database,
     token_hasher=token_hasher
   )
-
-def _build_typicode_client(
-  external_services_config: ExternalServicesConfig,
-  typicode_config: TypicodeConfig
-) -> TypicodeClient:
-  return TypicodeClient(external_services_config, typicode_config)

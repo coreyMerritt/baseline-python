@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Request
 
 from interfaces.rest.models.foo_project_name_http_response import FooProjectNameHTTPResponse
-from interfaces.rest.models.foo_project_name_request import FooProjectNameRequest, get_foo_project_name_request
 from interfaces.rest.v1.controllers.user_controller import UserController
 from interfaces.rest.v1.dto.req.user.create_user_req import CreateUserReq
 from interfaces.rest.v1.dto.req.user.update_user_req import UpdateUserReq
@@ -16,7 +15,7 @@ router = APIRouter(prefix="/api/v1/user")
 )
 async def get_user(
   ulid: str,
-  req: FooProjectNameRequest = Depends(get_foo_project_name_request)
+  req: Request
 ) -> FooProjectNameHTTPResponse:
   return await controller.get_user(
     req=req,
@@ -30,7 +29,7 @@ async def get_user(
 )
 async def create_user(
   body: CreateUserReq,
-  req: FooProjectNameRequest = Depends(get_foo_project_name_request)
+  req: Request
 ) -> FooProjectNameHTTPResponse:
   return await controller.create_user(
     req=req,
@@ -44,7 +43,7 @@ async def create_user(
 )
 async def update_user(
   body: UpdateUserReq,
-  req: FooProjectNameRequest = Depends(get_foo_project_name_request)
+  req: Request
 ) -> FooProjectNameHTTPResponse:
   return  await controller.update_user(
     req=req,
@@ -58,7 +57,7 @@ async def update_user(
 )
 async def delete_user(
   ulid: str,
-  req: FooProjectNameRequest = Depends(get_foo_project_name_request)
+  req: Request
 ) -> FooProjectNameHTTPResponse:
   return await controller.delete_user(
     req=req,

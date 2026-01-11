@@ -4,18 +4,18 @@ from composition.config_builders._helpers import get_final_config_var
 from infrastructure.config.parser import ConfigParser
 from infrastructure.auth.models.token_issuer_config import TokenIssuerConfig
 from infrastructure.environment.models.env_var import EnvVar
-from infrastructure.logger.foo_project_name_logger import FooProjectNameLogger
+from infrastructure.types.logger_interface import LoggerInterface
 
 
 def build_final_token_issuer_config(
   config_parser: ConfigParser,
-  logger: FooProjectNameLogger,
+  logger: LoggerInterface,
   token_issuer_config_dict: Dict[str, Any]
 ) -> TokenIssuerConfig:
   _ = config_parser.parse_token_issuer_config(token_issuer_config_dict)
-  token_issuer_config_dict["time_to_live"] = get_final_config_var(
+  token_issuer_config_dict["time_to_live_days"] = get_final_config_var(
     logger=logger,
-    config_var=token_issuer_config_dict["time_to_live"],
-    env_var=EnvVar.MEMORY_MAXIMUM_HEALTHY_USAGE_PERCENTAGE
+    config_var=token_issuer_config_dict["time_to_live_days"],
+    env_var=EnvVar.TOKEN_ISSUER_TIME_TO_LIVE_DAYS
   )
   return config_parser.parse_token_issuer_config(token_issuer_config_dict)

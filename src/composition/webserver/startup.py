@@ -1,13 +1,15 @@
 import asyncio
 
+from fastapi import FastAPI
+
 from composition.models.app_resources import AppResources
 from composition.models.infrastructure_collection import InfrastructureCollection
 from composition.models.repository_collection import RepositoryCollection
 from composition.resources import get_resources_dict
-from interfaces.rest.models.foo_project_name_fastapi import FooProjectNameFastAPI
+from domain.subdomain.entities.role import Role
 
 
-async def startup(app: FooProjectNameFastAPI) -> None:
+async def startup(app: FastAPI) -> None:
   resources_dict = await _get_resources_dict(app)
   infra = InfrastructureCollection(
     authenticator=resources_dict["infra"]["authenticator"],
@@ -18,14 +20,13 @@ async def startup(app: FooProjectNameFastAPI) -> None:
     environment=resources_dict["infra"]["environment"],
     logger=resources_dict["infra"]["logger"],
     memory=resources_dict["infra"]["memory"],
+    password_hasher=resources_dict["infra"]["password_hasher"],
     password_verifier=resources_dict["infra"]["password_verifier"],
     token_hasher=resources_dict["infra"]["token_hasher"],
-    token_issuer=resources_dict["infra"]["token_issuer"],
-    typicode_client=resources_dict["infra"]["typicode_client"]
+    token_issuer=resources_dict["infra"]["token_issuer"]
   )
   repos = RepositoryCollection(
     account=resources_dict["repos"]["account"],
-    blog_post=resources_dict["repos"]["blog_post"],
     membership=resources_dict["repos"]["membership"],
     role=resources_dict["repos"]["role"],
     user=resources_dict["repos"]["user"],
@@ -36,10 +37,13 @@ async def startup(app: FooProjectNameFastAPI) -> None:
     repos=repos
   )
   app.state.resources = resources
-  app.resources = resources
-  app.resources.infra.logger.info("Startup successful")
+  required = ["account_owner", "account_admin", "account_member"]
+  for name in required:
+    if not repos.role.exists_by_name(name):
+      repos.role.create(Role(ulid=None, name=name))
+  app.state.resources.infra.logger.info("Startup successful")
 
-async def _get_resources_dict(app: FooProjectNameFastAPI) -> dict:
+async def _get_resources_dict(app: FastAPI) -> dict:
   stop_event = app.state.stop_event
   blocking_task = asyncio.create_task(asyncio.to_thread(get_resources_dict))
   signal_task = asyncio.create_task(stop_event.wait())

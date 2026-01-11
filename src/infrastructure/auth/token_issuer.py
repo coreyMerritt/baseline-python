@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta, timezone
 import secrets
 
 from infrastructure.auth.models.token_issuer_config import TokenIssuerConfig
@@ -20,12 +20,12 @@ class TokenIssuer:
   ):
     self._database = database
     self._token_hasher = token_hasher
-    self._ttl = timedelta(seconds=token_issuer_config.time_to_live)
+    self._ttl = timedelta(days=token_issuer_config.time_to_live_days)
 
   def issue(self, *, user_ulid: str, account_ulid: str) -> str:
     plaintext_token = secrets.token_urlsafe(32)
     token_hash = self._token_hasher.hash(plaintext_token)
-    expires_at = datetime.now(tz=timezone.utc) + self._ttl
+    expires_at = datetime.now(tz=UTC) + self._ttl
     auth_token = AuthTokenORM(
       user_ulid=user_ulid,
       account_ulid=account_ulid,

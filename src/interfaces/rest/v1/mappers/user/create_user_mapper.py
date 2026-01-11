@@ -9,6 +9,7 @@ class CreateUserMapper:
   def req_to_sim(req: CreateUserReq) -> CreateUserSIM:
     return CreateUserSIM(
       username=req.username,
+      password=req.password,
       email_address=req.email_address
     )
 

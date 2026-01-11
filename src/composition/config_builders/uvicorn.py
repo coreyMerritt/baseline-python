@@ -2,14 +2,14 @@ from typing import Any, Dict
 
 from composition.config_builders._helpers import get_final_config_var
 from infrastructure.config.parser import ConfigParser
-from infrastructure.uvicorn.models.uvicorn_config import UvicornConfig
 from infrastructure.environment.models.env_var import EnvVar
-from infrastructure.logger.foo_project_name_logger import FooProjectNameLogger
+from infrastructure.types.logger_interface import LoggerInterface
+from infrastructure.uvicorn.models.uvicorn_config import UvicornConfig
 
 
 def build_final_uvicorn_config(
   config_parser: ConfigParser,
-  logger: FooProjectNameLogger,
+  logger: LoggerInterface,
   uvicorn_config_dict: Dict[str, Any]
 ) -> UvicornConfig:
   _ = config_parser.parse_uvicorn_config(uvicorn_config_dict)
