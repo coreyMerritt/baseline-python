@@ -24,8 +24,10 @@ fi
 source ".venv/bin/activate"
 
 # Ensure test resources exist
-# startServer
-bash ./run-server.sh
+startServer
+sleep 10
+cat /tmp/foo-project-name-exit-test.log
+sleep 10
 
 # Test
 bash "./tests/system/api/health-check.sh"
