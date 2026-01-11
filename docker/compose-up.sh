@@ -50,7 +50,8 @@ if ! which yq; then
 fi
 
 # Ensure everything is down before we starting messing with things
-DOCKER_TAG="silences-a-silly-warning" docker compose --file "./docker/docker-compose.yml" down || docker compose down true
+DOCKER_TAG="silences-a-silly-warning" docker compose --file "./docker/docker-compose.yml" down || true
+DOCKER_TAG="silences-a-silly-warning" docker compose down || true
 
 is_password="$(cat "./.env" | grep -oE "FOO_PROJECT_NAME_DATABASE_PASSWORD=.+")"
 if [[ ! -n "$is_password" ]]; then
