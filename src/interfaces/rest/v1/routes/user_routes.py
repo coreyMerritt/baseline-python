@@ -22,6 +22,20 @@ async def get_user(
     ulid=ulid
   )
 
+@router.get(
+  path="/client/read-only",
+  response_model=FooProjectNameHTTPResponse,
+  status_code=200
+)
+async def get_read_only_client_user(
+  ulid: str,
+  req: Request
+) -> FooProjectNameHTTPResponse:
+  return await controller.get_user(
+    req=req,
+    ulid=ulid
+  )
+
 @router.post(
   path="",
   response_model=FooProjectNameHTTPResponse,

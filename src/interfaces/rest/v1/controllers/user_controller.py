@@ -2,6 +2,7 @@ import asyncio
 
 from fastapi import HTTPException, Request
 
+from domain.enums.user_type import UserType
 from interfaces.rest.models.foo_project_name_http_response import FooProjectNameHTTPResponse
 from interfaces.rest.v1.dto.req.user.create_user_req import CreateUserReq
 from interfaces.rest.v1.dto.req.user.update_user_req import UpdateUserReq
@@ -35,6 +36,18 @@ class UserController:
       password_hasher=req.app.state.resources.infra.password_hasher,
       user_repository=req.app.state.resources.repos.user
     )
+    # If trying to create a privileged user, assert admin secret is present and correct
+    if body.user_type in (UserType.ADMIN.value, UserType.READ_ONLY_CLIENT.value, UserType.WRITE_CLIENT.value):
+      if not body.admin_secret:
+        raise HTTPException(
+          status_code=403,
+          detail="Not permitted to create this item",
+        )
+      if not body.admin_secret == req.app.state.resources.vars.users_admin_secret:
+        raise HTTPException(
+          status_code=401,
+          detail="Invalid admin secret",
+        )
     create_user_service_model = CreateUserMapper.req_to_sim(body)
     create_user_som = await asyncio.to_thread(user_manager.create_user, create_user_service_model)
     if not create_user_som:
@@ -78,14 +91,38 @@ class UserController:
   def _authorize_access_by_user_ulid(self, req: Request, some_user_ulid: str) -> None:
     if (
       not getattr(req.state, "is_authenticated", False)
-      or not getattr(req.state, "user_ulid", None)
+      or not getattr(req.state, "user", None)
     ):
       raise HTTPException(
         status_code=401,
         detail="Authentication required",
       )
-    if some_user_ulid != req.state.user_ulid:
+    authenticated_user = req.state.user
+    # Admins are always authorized
+    if authenticated_user.user_type == UserType.ADMIN:
+      return
+    # Read-only clients may not handle user data
+    if authenticated_user.user_type == UserType.READ_ONLY_CLIENT:
       raise HTTPException(
         status_code=403,
         detail="Not permitted to access this item",
       )
+    # Write clients may not handle user data
+    if authenticated_user.user_type == UserType.WRITE_CLIENT:
+      raise HTTPException(
+        status_code=403,
+        detail="Not permitted to access this item",
+      )
+    # Users may handle their own data only
+    if authenticated_user.user_type == UserType.STANDARD:
+      if some_user_ulid != req.state.user.ulid:
+        raise HTTPException(
+          status_code=403,
+          detail="Not permitted to access this item",
+        )
+      return
+    # This should never trigger
+    raise HTTPException(
+      status_code=400,
+      detail="Bad Request",
+    )

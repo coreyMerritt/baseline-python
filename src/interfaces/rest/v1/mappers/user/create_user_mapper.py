@@ -11,6 +11,7 @@ class CreateUserMapper:
       username=req.username,
       password=req.password,
       email_address=req.email_address,
+      user_type=req.user_type,
       admin_secret=req.admin_secret
     )
 

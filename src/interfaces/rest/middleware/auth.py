@@ -8,20 +8,24 @@ from infrastructure.auth.exceptions.token_expired_err import TokenExpiredErr
 from infrastructure.auth.exceptions.token_not_found_err import TokenNotFoundErr
 from infrastructure.auth.exceptions.token_revoked_err import TokenRevokedErr
 from infrastructure.types.logger_interface import LoggerInterface
+from services.user_manager import UserManager
 
 
 class AuthMiddleware(BaseHTTPMiddleware):
   _get_authenticator: Callable[[], AuthenticatorInterface]
   _get_logger: Callable[[], LoggerInterface]
+  _get_user_manager: Callable[[], UserManager]
 
   def __init__(
     self,
     app,
     get_authenticator: Callable[[], AuthenticatorInterface],
-    get_logger: Callable[[], LoggerInterface]
+    get_logger: Callable[[], LoggerInterface],
+    get_user_manager: Callable[[], UserManager]
   ):
     self._get_authenticator = get_authenticator
     self._get_logger = get_logger
+    self._get_user_manager = get_user_manager
     super().__init__(app)
 
   async def dispatch(self, request: Request, call_next):
@@ -38,7 +42,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
         content={
           "data": None,
           "error": {
-            "message": "Unauthorized1"
+            "message": "Unauthorized -- No Bearer prefix"
           }
         }
       )
@@ -46,20 +50,22 @@ class AuthMiddleware(BaseHTTPMiddleware):
     try:
       logger.debug("Attemping to authenticate...")
       user_ulid = authenticator.authenticate(token)
+      user_manager = self._get_user_manager()
+      user = user_manager.get_user(user_ulid)
       request.state.is_authenticated = True
-      request.state.user_ulid = user_ulid
+      request.state.user = user
       logger.info("Authentication Successful")
     except (
       TokenNotFoundErr,
       TokenRevokedErr,
       TokenExpiredErr,
-    ) as e:
+    ):
       return JSONResponse(
         status_code=401,
         content={
           "data": None,
           "error": {
-            "message": f"Unauthorized: {e}"
+            "message": "Unauthorized -- Token invalid"
           }
         }
       )
