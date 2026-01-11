@@ -2,6 +2,7 @@ from typing import Any
 
 from dacite import Config, from_dict
 
+from infrastructure.auth.models.accounts_config import AccountsConfig
 from infrastructure.auth.models.token_hasher_config import TokenHasherConfig
 from infrastructure.auth.models.token_issuer_config import TokenIssuerConfig
 from infrastructure.base_infrastructure import BaseInfrastructure
@@ -39,6 +40,18 @@ class ConfigParser(BaseInfrastructure):
     return ConfigParserHealthReport(
       healthy=True
     )
+
+  def parse_accounts_config(self, some_data: Any) -> AccountsConfig:
+    try:
+      return from_dict(
+        data_class=AccountsConfig,
+        data=some_data,
+        config=self._default_config
+      )
+    except Exception as e:
+      raise ConfigParserErr(
+        config_name="Accounts Config"
+      ) from e
 
   def parse_cpu_config(self, some_data: Any) -> CpuConfig:
     try:

@@ -1,9 +1,7 @@
 from dataclasses import dataclass
 
-from domain.interfaces.repositories.user_credential_repository_interface import UserCredentialRepositoryInterface
 from domain.interfaces.repositories.user_repository_interface import UserRepositoryInterface
 
 @dataclass
 class RepositoryCollection:
   user: UserRepositoryInterface
-  user_credential: UserCredentialRepositoryInterface

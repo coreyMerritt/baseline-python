@@ -8,5 +8,6 @@ class DeleteUserMapper:
     return DeleteUserSOM(
       ulid=entity.ulid,
       email_address=entity.email_address,
-      username=entity.username
+      username=entity.username,
+      user_type=entity.user_type
     )

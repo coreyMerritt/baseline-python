@@ -5,3 +5,4 @@ class UpdateUserRes(FooProjectNameHTTPData):
   ulid: str
   username: str
   email_address: str
+  user_type: str

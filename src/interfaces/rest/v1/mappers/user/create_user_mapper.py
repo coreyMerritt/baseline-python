@@ -10,7 +10,8 @@ class CreateUserMapper:
     return CreateUserSIM(
       username=req.username,
       password=req.password,
-      email_address=req.email_address
+      email_address=req.email_address,
+      admin_secret=req.admin_secret
     )
 
   @staticmethod
@@ -18,5 +19,6 @@ class CreateUserMapper:
     return CreateUserRes(
       ulid=som.ulid,
       username=som.username,
-      email_address=som.email_address
+      email_address=som.email_address,
+      user_type=som.user_type
     )

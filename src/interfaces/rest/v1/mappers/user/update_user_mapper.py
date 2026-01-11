@@ -12,7 +12,9 @@ class UpdateUserMapper:
       username=req.username,
       email_address=req.email_address,
       email_verified=req.email_verified,
-      disabled=req.disabled
+      disabled=req.disabled,
+      user_type=req.user_type,
+      admin_secret=req.admin_secret
     )
 
   @staticmethod
@@ -20,5 +22,6 @@ class UpdateUserMapper:
     return UpdateUserRes(
       ulid=som.ulid,
       username=som.username,
-      email_address=som.email_address
+      email_address=som.email_address,
+      user_type=som.user_type
     )

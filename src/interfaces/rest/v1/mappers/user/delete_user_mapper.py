@@ -8,5 +8,6 @@ class DeleteUserMapper:
     return DeleteUserRes(
       ulid=som.ulid,
       username=som.username,
-      email_address=som.email_address
+      email_address=som.email_address,
+      user_type=som.user_type
     )

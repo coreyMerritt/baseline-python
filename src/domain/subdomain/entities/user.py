@@ -2,6 +2,7 @@ from datetime import UTC, datetime
 
 import ulid as ULID
 
+from domain.enums.user_type import UserType
 from domain.exceptions.validation_err import ValidationErr
 
 
@@ -9,6 +10,8 @@ class User:
   _ulid: str
   _username: str
   _email_address: str
+  _password_hash: str
+  _user_type: UserType
   _email_verified: bool
   _created_at: datetime
   _disabled_at: datetime | None
@@ -17,6 +20,8 @@ class User:
     self,
     username: str,
     email_address: str,
+    password_hash: str,
+    user_type: UserType,
     ulid: str | None,
     email_verified: bool | None,
     created_at: datetime | None,
@@ -24,6 +29,8 @@ class User:
   ):
     self.username = username
     self.email_address = email_address
+    self.password_hash = password_hash
+    self.user_type = user_type
     self.ulid = str(ULID.new())
     if ulid:
       self.ulid = ulid
@@ -61,6 +68,22 @@ class User:
   @email_address.setter
   def email_address(self, email_address: str) -> None:
     self._email_address = email_address
+
+  @property
+  def user_type(self) -> UserType:
+    return self._user_type
+
+  @user_type.setter
+  def user_type(self, user_type: UserType) -> None:
+    self._user_type = user_type
+
+  @property
+  def password_hash(self) -> str:
+    return self._password_hash
+
+  @password_hash.setter
+  def password_hash(self, password_hash: str) -> None:
+    self._password_hash = password_hash
 
   @property
   def email_verified(self) -> bool:
@@ -104,6 +127,7 @@ class User:
       assert self.username.strip(), "username"
       assert isinstance(self.email_address, str), "email_address"
       assert "@" in self.email_address, "email_address"
+      assert isinstance(self.password_hash, str), "password_hash"
       assert isinstance(self.email_verified, bool), "email_verified"
       assert isinstance(self.created_at, datetime), "created_at"
       assert (

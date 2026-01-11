@@ -17,10 +17,10 @@ class UserController:
   async def get_user(self, req: Request, ulid: str) -> FooProjectNameHTTPResponse:
     self._authorize_access_by_user_ulid(req, ulid)
     user_manager = UserManager(
+      user_admin_secret=req.app.state.resources.vars.users_admin_secret,
       logger=req.app.state.resources.infra.logger,
       password_hasher=req.app.state.resources.infra.password_hasher,
-      user_repository=req.app.state.resources.repos.user,
-      user_credential_repository=req.app.state.resources.repos.user_credential
+      user_repository=req.app.state.resources.repos.user
     )
     get_user_som = await asyncio.to_thread(user_manager.get_user, ulid)
     get_user_res = GetUserMapper.som_to_res(get_user_som)
@@ -30,10 +30,10 @@ class UserController:
 
   async def create_user(self, req: Request, body: CreateUserReq) -> FooProjectNameHTTPResponse:
     user_manager = UserManager(
+      user_admin_secret=req.app.state.resources.vars.users_admin_secret,
       logger=req.app.state.resources.infra.logger,
       password_hasher=req.app.state.resources.infra.password_hasher,
-      user_repository=req.app.state.resources.repos.user,
-      user_credential_repository=req.app.state.resources.repos.user_credential
+      user_repository=req.app.state.resources.repos.user
     )
     create_user_service_model = CreateUserMapper.req_to_sim(body)
     create_user_som = await asyncio.to_thread(user_manager.create_user, create_user_service_model)
@@ -47,10 +47,10 @@ class UserController:
   async def update_user(self, req: Request, body: UpdateUserReq) -> FooProjectNameHTTPResponse:
     self._authorize_access_by_user_ulid(req, body.ulid)
     user_manager = UserManager(
+      user_admin_secret=req.app.state.resources.vars.users_admin_secret,
       logger=req.app.state.resources.infra.logger,
       password_hasher=req.app.state.resources.infra.password_hasher,
-      user_repository=req.app.state.resources.repos.user,
-      user_credential_repository=req.app.state.resources.repos.user_credential
+      user_repository=req.app.state.resources.repos.user
     )
     update_user_service_model = UpdateUserMapper.req_to_sim(body)
     update_user_som = await asyncio.to_thread(user_manager.update_user, update_user_service_model)
@@ -64,10 +64,10 @@ class UserController:
   async def delete_user(self, req: Request, ulid: str) -> FooProjectNameHTTPResponse:
     self._authorize_access_by_user_ulid(req, ulid)
     user_manager = UserManager(
+      user_admin_secret=req.app.state.resources.vars.users_admin_secret,
       logger=req.app.state.resources.infra.logger,
       password_hasher=req.app.state.resources.infra.password_hasher,
-      user_repository=req.app.state.resources.repos.user,
-      user_credential_repository=req.app.state.resources.repos.user_credential
+      user_repository=req.app.state.resources.repos.user
     )
     delete_user_som = await asyncio.to_thread(user_manager.delete_user, ulid)
     delete_user_res = DeleteUserMapper.som_to_res(delete_user_som)

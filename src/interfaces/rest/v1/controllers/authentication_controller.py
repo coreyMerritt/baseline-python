@@ -17,7 +17,6 @@ class AuthenticationController:
     authentication_manager = AuthenticationManager(
       logger=req.app.state.resources.infra.logger,
       user_repository=req.app.state.resources.repos.user,
-      user_credential_repository=req.app.state.resources.repos.user_credential,
       password_verifier=req.app.state.resources.infra.password_verifier,
       token_issuer=req.app.state.resources.infra.token_issuer
     )

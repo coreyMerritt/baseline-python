@@ -19,6 +19,14 @@ class UserORM(SQLModel, table=True):
     index=True,
     max_length=255
   )
+  password_hash: str = Field(
+    nullable=False,
+    max_length=255,
+  )
+  user_type: str = Field(
+    nullable=False,
+    max_length=255,
+  )
   email_verified: bool = Field(nullable=False)
   created_at: datetime = Field(
     default_factory=lambda: datetime.now(tz=timezone.utc),

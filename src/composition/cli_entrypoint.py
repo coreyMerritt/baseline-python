@@ -1,6 +1,7 @@
 from composition.models.app_resources import AppResources
 from composition.models.infrastructure_collection import InfrastructureCollection
 from composition.models.repository_collection import RepositoryCollection
+from composition.models.vars_collection import VarsCollection
 from composition.resources import get_resources_dict
 from composition.webserver.uvicorn_entrypoint import run_webserver
 from interfaces.command_line.core.main import add_default_command, build_args, handle_args_routing
@@ -39,12 +40,15 @@ def build_resources() -> AppResources:
     token_issuer=resources_dict["infra"]["token_issuer"]
   )
   repos = RepositoryCollection(
-    user=resources_dict["repos"]["user"],
-    user_credential=resources_dict["repos"]["user_credential"]
+    user=resources_dict["repos"]["user"]
+  )
+  app_vars = VarsCollection(
+    users_admin_secret=resources_dict["vars"]["users_admin_secret"]
   )
   resources = AppResources(
     infra=infra,
-    repos=repos
+    repos=repos,
+    vars=app_vars
   )
   return resources
 

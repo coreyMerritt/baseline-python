@@ -27,7 +27,6 @@ from infrastructure.cpu.models.cpu_config import CpuConfig
 from infrastructure.database.database import Database
 from infrastructure.database.exceptions.database_initialization_err import DatabaseInitializationErr
 from infrastructure.database.models.database_config import DatabaseConfig
-from infrastructure.database.repositories.user_credential_repository import UserCredentialRepository
 from infrastructure.database.repositories.user_repository import UserRepository
 from infrastructure.disk.disk import Disk
 from infrastructure.disk.models.disk_config import DiskConfig
@@ -96,10 +95,14 @@ def get_resources_dict() -> Dict[str, Any]:
   repos_dict = _build_repos_dict(
     database=infra_dict["database"]
   )
+  vars_dict = _build_vars_dict(
+    environment=infra_dict["environment"]
+  )
   return {
     "configs": configs_dict,
     "infra": infra_dict,
-    "repos": repos_dict
+    "repos": repos_dict,
+    "vars": vars_dict
   }
 
 #################### Final Dict Builders ####################
@@ -235,12 +238,14 @@ def _build_repos_dict(database: Database) -> Dict[str, Any]:
   user_repository = UserRepository(
     database=database
   )
-  user_credential_repository = UserCredentialRepository(
-    database=database
-  )
   return {
-    "user": user_repository,
-    "user_credential": user_credential_repository
+    "user": user_repository
+  }
+
+def _build_vars_dict(environment: Environment) -> Dict[str, Any]:
+  users_admin_secret = environment.get_env_var(EnvVar.USERS_ADMIN_SECRET.value)
+  return {
+    "users_admin_secret": users_admin_secret
   }
 
 #################### Config Builders ####################

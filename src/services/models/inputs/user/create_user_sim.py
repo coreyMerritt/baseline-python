@@ -6,3 +6,4 @@ class CreateUserSIM:
   username: str
   password: str
   email_address: str
+  admin_secret: str | None
