@@ -29,7 +29,7 @@ container_is_healthy=0
 didnt_time_out=0
 start_time=$(date +%s)
 while (( $(date +%s) - start_time < timeout )); do
-  if res="$(docker exec -it "$instance_name" curl --silent http://localhost:8000/api/health | jq)"; then
+  if res="$(docker exec "$instance_name" curl --silent http://localhost:8000/api/health | jq)"; then
     healthy="$(echo "$res" | jq .data.healthy)"
     if [[ "$healthy" == "true" ]]; then
       didnt_time_out=1
