@@ -6,7 +6,7 @@ set -u
 set -o pipefail
 set -x
 
-timeout=30
+timeout=5
 start_time=$(date +%s)
 current_time=$(date +%s)
 health_check_hit="false"
