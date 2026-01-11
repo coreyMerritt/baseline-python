@@ -56,12 +56,11 @@ fi
 # Dot env
 if [[ ! -f "./.env" ]]; then
   cp -r "./.env.model" "./.env"
-  sudo chmod 0644 "./.env"
-  sudo chown "$starting_user:$starting_group" "./.env"
 fi
+sudo chmod 0644 "./.env"
+sudo chown "$starting_user:$starting_group" "./.env"
 
 # Set deployment to prod to get some basic vars for installation
-./scripts/set-deployment-environment.sh "prod" || true
 [[ -f "./.env" ]] && source "./.env" || echo -e "\n\tWARNING: Proceeding without any .env file...\n"
 
 # Config files
