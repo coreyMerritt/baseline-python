@@ -8,30 +8,23 @@ from services.models.outputs.user.create_user_som import CreateUserSOM
 
 class CreateUserMapper:
   @staticmethod
-  def sim_to_entity(sim: CreateUserSIM, password_hash: str, admin_secret: str) -> User:
-    if sim.admin_secret is None:
-      return User(
-        username=sim.username,
-        email_address=sim.email_address,
-        password_hash=password_hash,
-        user_type=UserType.STANDARD,
-        ulid=None,
-        email_verified=None,
-        created_at=None,
-        disabled_at=None
-      )
-    if admin_secret == sim.admin_secret:
-      return User(
-        username=sim.username,
-        email_address=sim.email_address,
-        password_hash=password_hash,
-        user_type=UserType.ADMIN,
-        ulid=None,
-        email_verified=None,
-        created_at=None,
-        disabled_at=None
-      )
-    raise InvalidAdminSecretErr()
+  def sim_to_entity(sim: CreateUserSIM, password_hash: str, admin_secret: str | None) -> User:
+    if (
+      sim.admin_secret
+      or sim.user_type in (UserType.ADMIN.value, UserType.READ_ONLY_CLIENT.value, UserType.WRITE_CLIENT.value)
+    ):
+      if not admin_secret or admin_secret != sim.admin_secret:
+        raise InvalidAdminSecretErr()
+    return User(
+      username=sim.username,
+      email_address=sim.email_address,
+      password_hash=password_hash,
+      user_type=UserType(sim.user_type),
+      ulid=None,
+      email_verified=None,
+      created_at=None,
+      disabled_at=None
+    )
 
   @staticmethod
   def entity_to_som(entity: User) -> CreateUserSOM:
