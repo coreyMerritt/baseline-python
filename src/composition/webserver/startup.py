@@ -6,7 +6,6 @@ from composition.models.app_resources import AppResources
 from composition.models.infrastructure_collection import InfrastructureCollection
 from composition.models.repository_collection import RepositoryCollection
 from composition.resources import get_resources_dict
-from domain.subdomain.entities.role import Role
 
 
 async def startup(app: FastAPI) -> None:
@@ -26,9 +25,6 @@ async def startup(app: FastAPI) -> None:
     token_issuer=resources_dict["infra"]["token_issuer"]
   )
   repos = RepositoryCollection(
-    account=resources_dict["repos"]["account"],
-    membership=resources_dict["repos"]["membership"],
-    role=resources_dict["repos"]["role"],
     user=resources_dict["repos"]["user"],
     user_credential=resources_dict["repos"]["user_credential"]
   )
@@ -37,10 +33,6 @@ async def startup(app: FastAPI) -> None:
     repos=repos
   )
   app.state.resources = resources
-  required = ["account_owner", "account_admin", "account_member"]
-  for name in required:
-    if not repos.role.exists_by_name(name):
-      repos.role.create(Role(ulid=None, name=name))
   app.state.resources.infra.logger.info("Startup successful")
 
 async def _get_resources_dict(app: FastAPI) -> dict:

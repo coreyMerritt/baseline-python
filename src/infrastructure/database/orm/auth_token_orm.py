@@ -1,4 +1,4 @@
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from typing import ClassVar, Optional
 
 import ulid
@@ -19,11 +19,6 @@ class AuthTokenORM(SQLModel, table=True):
   )
   user_ulid: str = Field(
     foreign_key="user.ulid",
-    nullable=False,
-    max_length=26,
-  )
-  account_ulid: str = Field(
-    foreign_key="account.ulid",
     nullable=False,
     max_length=26,
   )

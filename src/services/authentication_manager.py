@@ -1,4 +1,3 @@
-from domain.interfaces.repositories.membership_repository_interface import MembershipRepositoryInterface
 from domain.interfaces.repositories.user_credential_repository_interface import UserCredentialRepositoryInterface
 from domain.interfaces.repositories.user_repository_interface import UserRepositoryInterface
 from infrastructure.auth.password_verifier import PasswordVerifier
@@ -12,7 +11,6 @@ from services.models.outputs.auth.create_token_som import CreateTokenSOM
 
 
 class AuthenticationManager(BaseService):
-  _membership_repository: MembershipRepositoryInterface
   _user_repository: UserRepositoryInterface
   _user_credential_repository: UserCredentialRepositoryInterface
   _password_verifier: PasswordVerifier
@@ -21,13 +19,11 @@ class AuthenticationManager(BaseService):
   def __init__(
     self,
     logger: LoggerInterface,
-    membership_repository: MembershipRepositoryInterface,
     user_repository: UserRepositoryInterface,
     user_credential_repository: UserCredentialRepositoryInterface,
     password_verifier: PasswordVerifier,
     token_issuer: TokenIssuer,
   ):
-    self._membership_repository = membership_repository
     self._user_repository = user_repository
     self._user_credential_repository = user_credential_repository
     self._password_verifier = password_verifier
@@ -45,10 +41,8 @@ class AuthenticationManager(BaseService):
       ):
         self._logger.warning("Authentication failed: invalid credentials", error=None)
         raise InvalidCredentialsErr()
-      membership = self._membership_repository.get_by_user_ulid(user.ulid)
       token = self._token_issuer.issue(
-        user_ulid=user.ulid,
-        account_ulid=membership.account_ulid,
+        user_ulid=user.ulid
       )
       self._logger.debug(f"Issued auth token for user {user.ulid}")
     except Exception as e:

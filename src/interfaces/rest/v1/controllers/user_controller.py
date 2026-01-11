@@ -9,25 +9,15 @@ from interfaces.rest.v1.mappers.user.create_user_mapper import CreateUserMapper
 from interfaces.rest.v1.mappers.user.delete_user_mapper import DeleteUserMapper
 from interfaces.rest.v1.mappers.user.get_user_mapper import GetUserMapper
 from interfaces.rest.v1.mappers.user.update_user_mapper import UpdateUserMapper
-from services.account_manager import AccountManager
-from services.models.outputs.user.get_user_som import GetUserSOM
 from services.user_manager import UserManager
 from services.exceptions.item_creation_err import ItemCreationErr
 
 
 class UserController:
   async def get_user(self, req: Request, ulid: str) -> FooProjectNameHTTPResponse:
-    self._ensure_info_matches_authenticated_user(req, ulid)
-    account_manager = AccountManager(
-      logger=req.app.state.resources.infra.logger,
-      account_repository=req.app.state.resources.repos.account,
-      role_repository=req.app.state.resources.repos.role
-    )
+    self._authorize_access_by_user_ulid(req, ulid)
     user_manager = UserManager(
       logger=req.app.state.resources.infra.logger,
-      account_manager=account_manager,
-      membership_repository=req.app.state.resources.repos.membership,
-      role_repository=req.app.state.resources.repos.role,
       password_hasher=req.app.state.resources.infra.password_hasher,
       user_repository=req.app.state.resources.repos.user,
       user_credential_repository=req.app.state.resources.repos.user_credential
@@ -39,22 +29,14 @@ class UserController:
     )
 
   async def create_user(self, req: Request, body: CreateUserReq) -> FooProjectNameHTTPResponse:
-    account_manager = AccountManager(
-      logger=req.app.state.resources.infra.logger,
-      account_repository=req.app.state.resources.repos.account,
-      role_repository=req.app.state.resources.repos.role
-    )
     user_manager = UserManager(
       logger=req.app.state.resources.infra.logger,
-      account_manager=account_manager,
-      membership_repository=req.app.state.resources.repos.membership,
-      role_repository=req.app.state.resources.repos.role,
       password_hasher=req.app.state.resources.infra.password_hasher,
       user_repository=req.app.state.resources.repos.user,
       user_credential_repository=req.app.state.resources.repos.user_credential
     )
     create_user_service_model = CreateUserMapper.req_to_sim(body)
-    create_user_som = user_manager.create_user(create_user_service_model)
+    create_user_som = await asyncio.to_thread(user_manager.create_user, create_user_service_model)
     if not create_user_som:
       raise ItemCreationErr()
     create_user_res = CreateUserMapper.som_to_res(create_user_som)
@@ -63,23 +45,15 @@ class UserController:
     )
 
   async def update_user(self, req: Request, body: UpdateUserReq) -> FooProjectNameHTTPResponse:
-    self._ensure_info_matches_authenticated_user(req, body.ulid)
-    account_manager = AccountManager(
-      logger=req.app.state.resources.infra.logger,
-      account_repository=req.app.state.resources.repos.account,
-      role_repository=req.app.state.resources.repos.role
-    )
+    self._authorize_access_by_user_ulid(req, body.ulid)
     user_manager = UserManager(
       logger=req.app.state.resources.infra.logger,
-      account_manager=account_manager,
-      membership_repository=req.app.state.resources.repos.membership,
-      role_repository=req.app.state.resources.repos.role,
       password_hasher=req.app.state.resources.infra.password_hasher,
       user_repository=req.app.state.resources.repos.user,
       user_credential_repository=req.app.state.resources.repos.user_credential
     )
     update_user_service_model = UpdateUserMapper.req_to_sim(body)
-    update_user_som = user_manager.update_user(update_user_service_model)
+    update_user_som = await asyncio.to_thread(user_manager.update_user, update_user_service_model)
     if not update_user_som:
       raise ItemCreationErr()
     update_user_res = UpdateUserMapper.som_to_res(update_user_som)
@@ -88,17 +62,9 @@ class UserController:
     )
 
   async def delete_user(self, req: Request, ulid: str) -> FooProjectNameHTTPResponse:
-    self._ensure_info_matches_authenticated_user(req, ulid)
-    account_manager = AccountManager(
-      logger=req.app.state.resources.infra.logger,
-      account_repository=req.app.state.resources.repos.account,
-      role_repository=req.app.state.resources.repos.role
-    )
+    self._authorize_access_by_user_ulid(req, ulid)
     user_manager = UserManager(
       logger=req.app.state.resources.infra.logger,
-      account_manager=account_manager,
-      membership_repository=req.app.state.resources.repos.membership,
-      role_repository=req.app.state.resources.repos.role,
       password_hasher=req.app.state.resources.infra.password_hasher,
       user_repository=req.app.state.resources.repos.user,
       user_credential_repository=req.app.state.resources.repos.user_credential
@@ -109,7 +75,7 @@ class UserController:
       data=delete_user_res
     )
 
-  def _ensure_info_matches_authenticated_user(self, req: Request, some_user_ulid: str) -> None:
+  def _authorize_access_by_user_ulid(self, req: Request, some_user_ulid: str) -> None:
     if (
       not getattr(req.state, "is_authenticated", False)
       or not getattr(req.state, "user_ulid", None)
@@ -118,28 +84,8 @@ class UserController:
         status_code=401,
         detail="Authentication required",
       )
-    authenticated_user_som = self._get_authenticated_user_som(req)
-    if not some_user_ulid == authenticated_user_som.ulid:
+    if some_user_ulid != req.state.user_ulid:
       raise HTTPException(
-        status_code=401,
-        detail="Authentication required",
+        status_code=403,
+        detail="Not permitted to access this item",
       )
-
-  def _get_authenticated_user_som(self, req: Request) -> GetUserSOM:
-    account_manager = AccountManager(
-      logger=req.app.state.resources.infra.logger,
-      account_repository=req.app.state.resources.repos.account,
-      role_repository=req.app.state.resources.repos.role
-    )
-    user_manager = UserManager(
-      logger=req.app.state.resources.infra.logger,
-      account_manager=account_manager,
-      membership_repository=req.app.state.resources.repos.membership,
-      role_repository=req.app.state.resources.repos.role,
-      password_hasher=req.app.state.resources.infra.password_hasher,
-      user_repository=req.app.state.resources.repos.user,
-      user_credential_repository=req.app.state.resources.repos.user_credential
-    )
-    authenticated_user_ulid = getattr(req.state, "user_ulid")
-    authenticated_user = user_manager.get_user(authenticated_user_ulid)
-    return authenticated_user

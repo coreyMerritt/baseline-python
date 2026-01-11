@@ -40,7 +40,7 @@ class UserRepository(UserRepositoryInterface):
     try:
       with self._database.get_session() as session:
         select_statement = select(UserORM).where(
-          col(UserORM.ulid) == ulid
+          UserORM.ulid == ulid
         )
         first_user_orm_match = session.exec(select_statement).first()
     except SQLAlchemyError as e:
@@ -54,7 +54,7 @@ class UserRepository(UserRepositoryInterface):
     try:
       with self._database.get_session() as session:
         select_statement = select(UserORM).where(
-          col(UserORM.username) == username
+          UserORM.username == username
         )
         first_user_orm_match = session.exec(select_statement).first()
     except SQLAlchemyError as e:
@@ -81,7 +81,7 @@ class UserRepository(UserRepositoryInterface):
         if result.rowcount == 0:
           raise RepositoryNotFoundErr()
         select_statement = select(UserORM).where(
-          col(UserORM.ulid) == user.ulid
+          UserORM.ulid == user.ulid
         )
         first_user_orm_match = session.exec(select_statement).first()
     except SQLAlchemyError as e:

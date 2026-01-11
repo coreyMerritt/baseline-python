@@ -27,9 +27,6 @@ from infrastructure.cpu.models.cpu_config import CpuConfig
 from infrastructure.database.database import Database
 from infrastructure.database.exceptions.database_initialization_err import DatabaseInitializationErr
 from infrastructure.database.models.database_config import DatabaseConfig
-from infrastructure.database.repositories.account_repository import AccountRepository
-from infrastructure.database.repositories.membership_repository import MembershipRepository
-from infrastructure.database.repositories.role_repository import RoleRepository
 from infrastructure.database.repositories.user_credential_repository import UserCredentialRepository
 from infrastructure.database.repositories.user_repository import UserRepository
 from infrastructure.disk.disk import Disk
@@ -97,7 +94,6 @@ def get_resources_dict() -> Dict[str, Any]:
     configs_dict=configs_dict
   )
   repos_dict = _build_repos_dict(
-    configs_dict=configs_dict,
     database=infra_dict["database"]
   )
   return {
@@ -235,16 +231,7 @@ def _build_infra_dict(configs_dict: Dict[str, Any]) -> Dict[str, Any]:
     "token_issuer": token_issuer
   }
 
-def _build_repos_dict(configs_dict: Dict[str, Any], database: Database) -> Dict[str, Any]:
-  account_repository = AccountRepository(
-    database=database
-  )
-  membership_repository = MembershipRepository(
-    database=database
-  )
-  role_repository = RoleRepository(
-    database=database
-  )
+def _build_repos_dict(database: Database) -> Dict[str, Any]:
   user_repository = UserRepository(
     database=database
   )
@@ -252,9 +239,6 @@ def _build_repos_dict(configs_dict: Dict[str, Any], database: Database) -> Dict[
     database=database
   )
   return {
-    "account": account_repository,
-    "membership": membership_repository,
-    "role": role_repository,
     "user": user_repository,
     "user_credential": user_credential_repository
   }

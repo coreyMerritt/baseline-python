@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import Request
 
 from interfaces.rest.models.foo_project_name_http_response import FooProjectNameHTTPResponse
@@ -14,14 +16,13 @@ class AuthenticationController:
   ) -> FooProjectNameHTTPResponse:
     authentication_manager = AuthenticationManager(
       logger=req.app.state.resources.infra.logger,
-      membership_repository=req.app.state.resources.repos.membership,
       user_repository=req.app.state.resources.repos.user,
       user_credential_repository=req.app.state.resources.repos.user_credential,
       password_verifier=req.app.state.resources.infra.password_verifier,
       token_issuer=req.app.state.resources.infra.token_issuer
     )
     sim = CreateTokenMapper.req_to_sim(body)
-    som = authentication_manager.create_token(sim)
+    som = await asyncio.to_thread(authentication_manager.create_token, sim)
     res = CreateTokenMapper.som_to_res(som)
     return FooProjectNameHTTPResponse(
       data=res

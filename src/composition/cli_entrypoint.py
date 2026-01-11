@@ -6,8 +6,6 @@ from composition.webserver.uvicorn_entrypoint import run_webserver
 from interfaces.command_line.core.main import add_default_command, build_args, handle_args_routing
 
 
-resources: AppResources | None
-
 def entrypoint():
   resources = build_resources()
   add_default_command()
@@ -41,9 +39,6 @@ def build_resources() -> AppResources:
     token_issuer=resources_dict["infra"]["token_issuer"]
   )
   repos = RepositoryCollection(
-    account=resources_dict["repos"]["account"],
-    membership=resources_dict["repos"]["membership"],
-    role=resources_dict["repos"]["role"],
     user=resources_dict["repos"]["user"],
     user_credential=resources_dict["repos"]["user_credential"]
   )

@@ -40,7 +40,7 @@ class UserCredentialRepository(UserCredentialRepositoryInterface):
     try:
       with self._database.get_session() as session:
         select_statement = select(UserCredentialORM).where(
-          col(UserCredentialORM.user_ulid) == user_ulid
+          UserCredentialORM.user_ulid == user_ulid
         )
         first_user_credential_orm_match = session.exec(select_statement).first()
     except SQLAlchemyError as e:
@@ -64,7 +64,7 @@ class UserCredentialRepository(UserCredentialRepositoryInterface):
         if result.rowcount == 0:
           raise RepositoryNotFoundErr()
         select_statement = select(UserCredentialORM).where(
-          col(UserCredentialORM.user_ulid) == user_credential.user_ulid
+          UserCredentialORM.user_ulid == user_credential.user_ulid
         )
         first_user_credential_orm_match = session.exec(select_statement).first()
     except SQLAlchemyError as e:
