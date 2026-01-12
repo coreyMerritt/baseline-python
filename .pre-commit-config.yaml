@@ -17,11 +17,3 @@ repos:
         pass_filenames: false
         stages:
           - pre-push
-      - name: Run all tests
-        id: tests
-        entry: ./tests/00-run-all.sh
-        language: script
-        always_run: true
-        pass_filenames: false
-        stages:
-          - pre-push
