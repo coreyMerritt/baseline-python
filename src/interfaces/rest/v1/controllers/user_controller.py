@@ -3,6 +3,7 @@ import asyncio
 from fastapi import HTTPException, Request
 
 from domain.enums.user_type import UserType
+from domain.subdomain.entities.user import User
 from interfaces.rest.models.foo_project_name_http_response import FooProjectNameHTTPResponse
 from interfaces.rest.v1.dto.req.user.create_user_req import CreateUserReq
 from interfaces.rest.v1.dto.req.user.update_user_req import UpdateUserReq
@@ -16,7 +17,27 @@ from services.user_manager import UserManager
 
 class UserController:
   async def get_user(self, req: Request, ulid: str) -> FooProjectNameHTTPResponse:
-    self._authorize_access_by_user_ulid(req, ulid)
+    authenticated_user: User = req.state.user
+    if (
+      not getattr(req.state, "is_authenticated", False)
+      or not getattr(req.state, "user", None)
+      or authenticated_user.user_type not in (
+        UserType.ADMIN,
+        UserType.WRITE_CLIENT,
+        UserType.READ_ONLY_CLIENT,
+        UserType.STANDARD
+      )
+    ):
+      raise HTTPException(
+        status_code=401,
+        detail="Permission denied",
+      )
+    if authenticated_user.user_type == UserType.STANDARD:
+      if not authenticated_user.ulid == ulid:
+        raise HTTPException(
+          status_code=401,
+          detail="Permission denied",
+        )
     user_manager = UserManager(
       user_admin_secret=req.app.state.resources.vars.users_admin_secret,
       logger=req.app.state.resources.infra.logger,
@@ -58,7 +79,26 @@ class UserController:
     )
 
   async def update_user(self, req: Request, body: UpdateUserReq) -> FooProjectNameHTTPResponse:
-    self._authorize_access_by_user_ulid(req, body.ulid)
+    authenticated_user: User = req.state.user
+    if (
+      not getattr(req.state, "is_authenticated", False)
+      or not getattr(req.state, "user", None)
+      or authenticated_user.user_type not in (
+        UserType.ADMIN,
+        UserType.WRITE_CLIENT,
+        UserType.STANDARD
+      )
+    ):
+      raise HTTPException(
+        status_code=401,
+        detail="Permission denied",
+      )
+    if authenticated_user.user_type == UserType.STANDARD:
+      if not authenticated_user.ulid == body.ulid:
+        raise HTTPException(
+          status_code=401,
+          detail="Permission denied",
+        )
     user_manager = UserManager(
       user_admin_secret=req.app.state.resources.vars.users_admin_secret,
       logger=req.app.state.resources.infra.logger,
@@ -75,7 +115,19 @@ class UserController:
     )
 
   async def delete_user(self, req: Request, ulid: str) -> FooProjectNameHTTPResponse:
-    self._authorize_access_by_user_ulid(req, ulid)
+    authenticated_user: User = req.state.user
+    if (
+      not getattr(req.state, "is_authenticated", False)
+      or not getattr(req.state, "user", None)
+      or authenticated_user.user_type not in (
+        UserType.ADMIN,
+        UserType.WRITE_CLIENT
+      )
+    ):
+      raise HTTPException(
+        status_code=401,
+        detail="Permission denied",
+      )
     user_manager = UserManager(
       user_admin_secret=req.app.state.resources.vars.users_admin_secret,
       logger=req.app.state.resources.infra.logger,
@@ -86,43 +138,4 @@ class UserController:
     delete_user_res = DeleteUserMapper.som_to_res(delete_user_som)
     return FooProjectNameHTTPResponse(
       data=delete_user_res
-    )
-
-  def _authorize_access_by_user_ulid(self, req: Request, some_user_ulid: str) -> None:
-    if (
-      not getattr(req.state, "is_authenticated", False)
-      or not getattr(req.state, "user", None)
-    ):
-      raise HTTPException(
-        status_code=401,
-        detail="Authentication required",
-      )
-    authenticated_user = req.state.user
-    # Admins are always authorized
-    if authenticated_user.user_type == UserType.ADMIN:
-      return
-    # Read-only clients may not handle user data
-    if authenticated_user.user_type == UserType.READ_ONLY_CLIENT:
-      raise HTTPException(
-        status_code=403,
-        detail="Not permitted to access this item",
-      )
-    # Write clients may not handle user data
-    if authenticated_user.user_type == UserType.WRITE_CLIENT:
-      raise HTTPException(
-        status_code=403,
-        detail="Not permitted to access this item",
-      )
-    # Users may handle their own data only
-    if authenticated_user.user_type == UserType.STANDARD:
-      if some_user_ulid != req.state.user.ulid:
-        raise HTTPException(
-          status_code=403,
-          detail="Not permitted to access this item",
-        )
-      return
-    # This should never trigger
-    raise HTTPException(
-      status_code=400,
-      detail="Bad Request",
     )
