@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import ClassVar, Optional
 
 import ulid
@@ -34,6 +34,6 @@ class AuthTokenORM(SQLModel, table=True):
     default=None
   )
   created_at: datetime = Field(
-    default_factory=lambda: datetime.now(tz=UTC),
+    default_factory=lambda: datetime.now(tz=timezone.utc),
     nullable=False,
   )
